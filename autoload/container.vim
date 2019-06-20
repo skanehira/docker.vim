@@ -1,0 +1,62 @@
+let s:save_cpo = &cpo
+set cpo&vim
+
+scriptencoding utf-8
+
+let s:V = vital#docker#new()
+let s:TABLE = s:V.import('Text.Table')
+
+function! s:_parse_ports(ports) abort
+    let _port = ""
+    for port in a:ports
+        if !has_key(port, 'PublicPort')
+            let _port .= printf("%d/%s ", port.PrivatePort, port.Type)
+        else
+            let _port .= printf("%s:%d->%d/%s ", port.IP, port.PrivatePort, port.PublicPort, port.Type)
+        endif
+    endfor
+    return _port
+endfunction
+
+function! s:_parse_container(container) abort
+    let _new = {}
+    let _new.Id = util#parse_id(a:container.Id)
+    let _new.Name = a:container.Names[0][1:]
+    let _new.Image = a:container.Image
+    let _new.Status = a:container.Status
+    let _new.Created = util#parse_unix_date(a:container.Created)
+    let _new.Ports = s:_parse_ports(a:container.Ports)
+    let _new.Command = a:container.Command
+    return _new
+endfunction
+
+function! container#get()
+    let l:containers = util#http_get("http://localhost/containers/json",{'all': 1})
+
+    let s:table = s:TABLE.new({
+                \ 'columns': [{},{},{},{},{},{}],
+                \ 'header' : ['ID', 'Name', 'Image', 'Status', 'Created', 'Ports'],
+                \ })
+
+    for row in l:containers
+        let l:container = s:_parse_container(row)
+        call s:table.add_row([
+                    \ l:container.Id,
+                    \ l:container.Name,
+                    \ l:container.Image,
+                    \ l:container.Status,
+                    \ l:container.Created,
+                    \ l:container.Ports
+                    \ ])
+    endfor
+
+    if has("patch-8.1.1561")
+        call util#popup_window(s:table.stringify())
+    else
+        call util#create_window(s:table.stringify())
+    endif
+endfunction
+
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
