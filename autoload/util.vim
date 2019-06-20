@@ -50,7 +50,8 @@ function! util#create_window(content) abort
     else
         call win_gotoid(l:buf_window_id[0])
     endif
-    call setline(1, content)
+    %d _
+    call setline(1, a:content)
 endfunction
 
 let &cpo = s:save_cpo

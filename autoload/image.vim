@@ -23,7 +23,7 @@ function! image#get() abort
 
     let s:table = s:TABLE.new({
                 \ 'columns': [{},{},{},{},{}],
-                \ 'header' : ['ID', 'Repository', 'Tag', 'Created', 'Size'],
+                \ 'header' : ['ID', 'REPOSITORY', 'TAG', 'CREATED', 'SIZE'],
                 \ })
 
     for row in images
@@ -40,7 +40,7 @@ function! image#get() abort
                     \ l:image.Size])
     endfor
 
-    if has("patch-8.1.1561")
+    if has("patch-8.1.1561") && !g:disable_popup_window
         call util#popup_window(s:table.stringify())
     else
         call util#create_window(s:table.stringify())

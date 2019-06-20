@@ -35,7 +35,7 @@ function! container#get()
 
     let s:table = s:TABLE.new({
                 \ 'columns': [{},{},{},{},{},{}],
-                \ 'header' : ['ID', 'Name', 'Image', 'Status', 'Created', 'Ports'],
+                \ 'header' : ['ID', 'NAME', 'IMAGE', 'STATUS', 'CREATED', 'PORTS'],
                 \ })
 
     for row in l:containers
@@ -50,7 +50,7 @@ function! container#get()
                     \ ])
     endfor
 
-    if has("patch-8.1.1561")
+    if has("patch-8.1.1561") && !g:disable_popup_window
         call util#popup_window(s:table.stringify())
     else
         call util#create_window(s:table.stringify())

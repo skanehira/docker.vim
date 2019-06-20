@@ -3,6 +3,8 @@ set cpo&vim
 
 scriptencoding utf-8
 
+let g:disable_popup_window = 0
+
 command! Images call image#get()
 command! Containers call container#get()
 
