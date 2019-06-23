@@ -6,6 +6,10 @@ scriptencoding utf-8
 let s:V = vital#docker#new()
 let s:TABLE = s:V.import('Text.Table')
 
+function! s:parse_id(id) abort
+    return a:id[0:11]
+endfunction
+
 function! s:_parse_ports(ports) abort
     let _port = ""
     for port in a:ports
@@ -20,7 +24,7 @@ endfunction
 
 function! s:_parse_container(container) abort
     let _new = {}
-    let _new.Id = util#parse_id(a:container.Id)
+    let _new.Id = s:parse_id(a:container.Id)
     let _new.Name = a:container.Names[0][1:]
     let _new.Image = a:container.Image
     let _new.Status = a:container.Status
@@ -31,14 +35,14 @@ function! s:_parse_container(container) abort
 endfunction
 
 function! container#get()
-    let l:containers = util#http_get("http://localhost/containers/json",{'all': 1})
 
     let s:table = s:TABLE.new({
                 \ 'columns': [{},{},{},{},{},{}],
                 \ 'header' : ['ID', 'NAME', 'IMAGE', 'STATUS', 'CREATED', 'PORTS'],
                 \ })
 
-    for row in l:containers
+    let l:containers = []
+    for row in util#http_get("http://localhost/containers/json",{'all': 1})
         let l:container = s:_parse_container(row)
         call s:table.add_row([
                     \ l:container.Id,
@@ -48,10 +52,11 @@ function! container#get()
                     \ l:container.Created,
                     \ l:container.Ports
                     \ ])
+        call add(l:containers, row)
     endfor
 
     if has("patch-8.1.1561") && !g:disable_popup_window
-        call util#popup_window(s:table.stringify())
+        call util#popup_window(s:table.stringify(), l:containers)
     else
         call util#create_window(s:table.stringify())
     endif
