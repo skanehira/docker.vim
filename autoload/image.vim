@@ -5,6 +5,7 @@ scriptencoding utf-8
 
 let s:V = vital#docker#new()
 let s:TABLE = s:V.import('Text.Table')
+let s:table = {}
 
 function! s:parse_id(id) abort
     return a:id[7:19]
@@ -22,14 +23,14 @@ function! s:_parse_image(image) abort
     return l:new_image
 endfunction
 
-function! image#get() abort
-
+" get images from docker
+function! s:get() abort
+    let l:images = []
     let s:table = s:TABLE.new({
                 \ 'columns': [{},{},{},{},{}],
                 \ 'header' : ['ID', 'REPOSITORY', 'TAG', 'CREATED', 'SIZE'],
                 \ })
 
-    let l:images = []
     for row in util#http_get("http://localhost/images/json",{})
         if row.RepoTags is v:null
             continue
@@ -44,14 +45,19 @@ function! image#get() abort
                     \ l:image.Size])
         call add(l:images, row)
     endfor
-
-    if has("patch-8.1.1561") && !g:disable_popup_window
-        call util#popup_window(s:table.stringify(), l:images)
-    else
-        call util#create_window(s:table.stringify())
+    if len(l:images) ==# 0
+        call util#echo_err("no images")
     endif
+
+    return l:images
 endfunction
 
+" get and popup images
+function! image#get()
+    let l:images = s:get()
+    let l:view_images = s:table.stringify()
+    call util#create_popup_window(l:view_images, images)
+endfunction
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

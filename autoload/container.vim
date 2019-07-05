@@ -5,6 +5,7 @@ scriptencoding utf-8
 
 let s:V = vital#docker#new()
 let s:TABLE = s:V.import('Text.Table')
+let s:table = {}
 
 function! s:parse_id(id) abort
     return a:id[0:11]
@@ -34,8 +35,7 @@ function! s:_parse_container(container) abort
     return _new
 endfunction
 
-function! container#get()
-
+function! s:get()
     let s:table = s:TABLE.new({
                 \ 'columns': [{},{},{},{},{},{}],
                 \ 'header' : ['ID', 'NAME', 'IMAGE', 'STATUS', 'CREATED', 'PORTS'],
@@ -55,13 +55,19 @@ function! container#get()
         call add(l:containers, row)
     endfor
 
-    if has("patch-8.1.1561") && !g:disable_popup_window
-        call util#popup_window(s:table.stringify(), l:containers)
-    else
-        call util#create_window(s:table.stringify())
+    if len(l:containers) ==# 0
+        call util#echo_err("no containers")
     endif
+
+    return l:containers
 endfunction
 
+" get and popup images
+function! container#get()
+    let l:containers = s:get()
+    let l:view_containers = s:table.stringify()
+    call util#create_popup_window(l:view_containers, l:containers)
+endfunction
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
