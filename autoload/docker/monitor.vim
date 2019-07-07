@@ -117,7 +117,7 @@ function! s:calculate_mem(response) abort
 	return  float2nr(usage * 1.0 / mem_stats.limit * 100)
 endfunction
 
-function! monitor#start_monitoring(id) abort
+function! docker#monitor#start_monitoring(id) abort
 	"not support windows
 	if has("win32") || has ("win64")
 		" TODO support windows
@@ -136,7 +136,7 @@ function! monitor#start_monitoring(id) abort
 	let s:docker_monitor_timer_id = timer_start(2000, function("s:update_stats", [a:id]), {"repeat": -1})
 endfunction
 
-function! monitor#stop_monitoring() abort
+function! docker#monitor#stop_monitoring() abort
 	silent call timer_stop(s:docker_monitor_timer_id)
 	call popup_close(s:docker_monitor_window)
 endfunction
