@@ -69,5 +69,13 @@ function! container#get()
 	call util#create_popup_window(l:view_containers, l:containers)
 endfunction
 
+function! container#start_monitor(id)
+	call monitor#start_monitoring(a:id)
+endfunction
+
+function! container#stop_monitor()
+	call monitor#stop_monitoring()
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

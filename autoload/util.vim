@@ -1,5 +1,5 @@
-let s:save_cpo = &cpo
-set cpo&vim
+"let s:save_cpo = &cpo
+"set cpo&vim
 
 scriptencoding utf-8
 
@@ -13,10 +13,10 @@ let s:last_popup_window = 0
 if !exists('g:loaded_select_highlight')
 	let g:loaded_select_highlight = 1
 	try
-		call prop_type_add('select', {'highlight': 'CursorLine'})
+		call prop_type_add('docker_select', {'highlight': 'CursorLine'})
 	catch /.*/
 		call util#echo_err(v:exception)
-	endtry 
+	endtry
 endif
 
 " echo error message
@@ -32,9 +32,10 @@ function! util#http_get(url, param) abort
 				\ 'unixSocket': '/var/run/docker.sock',
 				\ 'param': a:param
 				\ })
+
 	if l:response.status != 200
-		echoerr printf("status:%d response:%s", l:response.status, l:response.content)
-		return {}
+		util#echo_err(printf("status:%d response:%s", l:response.status, l:response.content))
+		return response
 	endif
 
 	return json_decode(l:response.content)
@@ -148,5 +149,5 @@ function! s:filter(ctx, id, key) abort
 	return 1
 endfunction
 
-let &cpo = s:save_cpo
-unlet s:save_cpo
+"let &cpo = s:save_cpo
+"unlet s:save_cpo
