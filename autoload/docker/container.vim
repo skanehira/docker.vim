@@ -45,9 +45,9 @@ function! docker#container#get() abort
 	" select is selected entry
 	let l:maxheight = 15
 	let l:top = l:maxheight - 4
-	let l:ctx = { 'type': 'container', 
-				\ 'title':'containers', 
-				\ 'select':0, 
+	let l:ctx = { 'type': 'container',
+				\ 'title':'[containers]',
+				\ 'select':0,
 				\ 'highlight_idx': 4,
 				\ 'content': s:get(0, l:top),
 				\ 'view_content': s:table.stringify(),

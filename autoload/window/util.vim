@@ -9,10 +9,11 @@ let s:TABLE = s:V.import('Text.Table')
 let s:last_buffer = 0
 let s:last_popup_window = 0
 
-if !exists('g:loaded_select_highlight')
-	let g:loaded_select_highlight = 1
+if !exists('s:docker_loaded_highlight')
+	let s:docker_loaded_highlight = 1
 	try
 		call prop_type_add('docker_select', {'highlight': 'PmenuSel'})
+		call prop_type_add('docker_status_running', {'highlight': 'DiffText'})
 	catch /.*/
 		call docker#util#echo_err(v:exception)
 	endtry
@@ -34,7 +35,7 @@ function! window#util#create_popup_window(ctx) abort
 				\ })
 
 	let s:last_popup_window = a:ctx.id
-	call s:select_highlight(a:ctx)
+	call s:update_highlight(a:ctx)
 endfunction
 
 " update popup window content
@@ -48,7 +49,7 @@ function! window#util#update_poup_window(ctx) abort
 	endif
 	call win_execute(l:win_buf, '%d_')
 	call setbufline(l:win_buf, 1, a:ctx.view_content)
-	call s:select_highlight(a:ctx)
+	call s:update_highlight(a:ctx)
 endfunction
 
 " create window
@@ -70,13 +71,11 @@ function! s:select_highlight(ctx) abort
 	let l:buf = winbufnr(a:ctx.id)
 	let l:length = len(a:ctx.view_content[0])
 	let l:lnum = a:ctx.highlight_idx
-	let l:lnum_end = len(a:ctx.view_content)
 
 	call prop_remove({
 				\ 'type': 'docker_select',
 				\ 'bufnr': l:buf,
-				\ }, 1, l:lnum_end,
-				\ )
+				\ })
 
 	call prop_add(l:lnum, 1, {
 				\ 'bufnr': l:buf,
@@ -84,6 +83,36 @@ function! s:select_highlight(ctx) abort
 				\ 'length': l:length,
 				\ })
 
+endfunction
+
+function! s:status_highlight(ctx) abort
+	let l:lnum = 4
+	let l:lnum_end = len(a:ctx.view_content)
+	let l:length = len(a:ctx.view_content[0])
+	let l:buf = winbufnr(a:ctx.id)
+
+	call prop_remove({
+				\ 'type': 'docker_status_running',
+				\ 'bufnr': l:buf,
+				\ })
+
+	for content in a:ctx.content[a:ctx.offset:a:ctx.offset + a:ctx.top-1]
+		if content.State ==# "running"
+			call prop_add(l:lnum, 1, {
+						\ 'bufnr': l:buf,
+						\ 'type': 'docker_status_running',
+						\ 'length': l:length,
+						\ })
+		endif
+		let l:lnum += 1
+	endfor
+endfunction
+
+function! s:update_highlight(ctx) abort
+	call s:select_highlight(a:ctx)
+	if a:ctx.type ==# 'container'
+		call s:status_highlight(a:ctx)
+	endif
 	call win_execute(a:ctx.id, 'redraw')
 endfunction
 
