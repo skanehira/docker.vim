@@ -26,16 +26,16 @@ function! window#util#create_popup_window(title, type, view_content, content) ab
 
 	call popup_close(s:last_popup_window)
 
-	" idx is highlight idx
+	" highlight_idx is highlight idx
 	" select is selected entry
-	let l:ctx = {'type': a:type, 'select':0, 'idx': 4, 'content': a:content, 'view_content': a:view_content, 'maxheight': 15, 'offset': 4}
+	let l:ctx = {'type': a:type, 'select':0, 'highlight_idx': 4, 'content': a:content, 'view_content': a:view_content, 'maxheight': 15, 'offset': 4}
 
 	let l:ctx.id = popup_create(a:view_content, {
 				\ 'filter': function('s:filter', [l:ctx]),
 				\ 'title': a:title,
 				\ })
 
-	call s:highlight(l:ctx)
+	call s:select_highlight(l:ctx)
 endfunction
 
 " update popup window content
@@ -66,10 +66,10 @@ function! window#util#create_window(content) abort
 endfunction
 
 " highlight table in popup window
-function! s:highlight(ctx) abort
+function! s:select_highlight(ctx) abort
 	let l:buf = winbufnr(a:ctx.id)
 	let l:length = len(a:ctx.view_content[a:ctx.select])
-	let l:lnum = a:ctx.idx
+	let l:lnum = a:ctx.highlight_idx
 	let l:lnum_end = len(a:ctx.view_content)
 
 	call prop_remove({
@@ -98,18 +98,18 @@ function! s:filter(ctx, id, key) abort
 	elseif a:key ==# "\n" || a:key ==# "\r"
 		return 1
 	elseif a:key ==# 'j'
-		let idx = a:ctx.idx ==# len(a:ctx.view_content) -1 ? 0 : 1
-		let a:ctx.idx += idx
+		let idx = a:ctx.highlight_idx ==# len(a:ctx.view_content) -1 ? 0 : 1
+		let a:ctx.highlight_idx += idx
 		let a:ctx.select += idx
 	elseif a:key ==# 'k'
-		let idx = a:ctx.idx ==# 4 ? 0 : 1
-		let a:ctx.idx -= idx
+		let idx = a:ctx.highlight_idx ==# 4 ? 0 : 1
+		let a:ctx.highlight_idx -= idx
 		let a:ctx.select -= idx
 	elseif a:key ==# '0'
-		let a:ctx.idx = 4
+		let a:ctx.highlight_idx = 4
 		let a:ctx.select = 0
 	elseif a:key ==# 'G'
-		let a:ctx.idx = len(a:ctx.view_content) -1
+		let a:ctx.highlight_idx = len(a:ctx.view_content) -1
 		let a:ctx.select = len(a:ctx.content) -1
 	elseif a:key ==# 'm'
 		if a:ctx.type == 'container'
@@ -118,7 +118,7 @@ function! s:filter(ctx, id, key) abort
 		endif
 		return 1
 	endif
-	call s:highlight(a:ctx)
+	call s:select_highlight(a:ctx)
 	return 1
 endfunction
 
