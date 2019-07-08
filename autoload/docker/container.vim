@@ -14,7 +14,7 @@ function! s:get() abort
 				\ })
 
 	let l:containers = []
-	for row in docker#util#http_get("http://localhost/containers/json",{'all': 1})
+	for row in docker#util#http_get('http://localhost/containers/json',{'all': 1})
 		let l:container = docker#util#parse_container(row)
 		call s:table.add_row([
 					\ l:container.Id,
@@ -28,7 +28,7 @@ function! s:get() abort
 	endfor
 
 	if len(l:containers) ==# 0
-		call util#echo_err("no containers")
+		call util#echo_err('no containers')
 	endif
 
 	return l:containers
@@ -38,7 +38,7 @@ endfunction
 function! docker#container#get() abort
 	let l:containers = s:get()
 	let l:view_containers = s:table.stringify()
-	call window#util#create_popup_window("container", l:view_containers, l:containers)
+	call window#util#create_popup_window('containers', 'container', l:view_containers, l:containers)
 endfunction
 
 function! docker#container#start_monitor(id) abort

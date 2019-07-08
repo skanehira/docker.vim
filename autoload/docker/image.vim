@@ -40,7 +40,7 @@ endfunction
 function! docker#image#get() abort
 	let l:images = s:get()
 	let l:view_images = s:table.stringify()
-	call window#util#create_popup_window("image", l:view_images, images)
+	call window#util#create_popup_window("images", "image", l:view_images, images)
 endfunction
 
 let &cpo = s:save_cpo

@@ -18,7 +18,7 @@ if !exists('g:loaded_select_highlight')
 endif
 
 " create popup windows
-function! window#util#create_popup_window(type, view_content, content) abort
+function! window#util#create_popup_window(title, type, view_content, content) abort
 	if !has("patch-8.1.1561")
 		call docker#util#echo_err("this version doesn't support popup window. please update version to 8.1.1561")
 		return
@@ -32,7 +32,7 @@ function! window#util#create_popup_window(type, view_content, content) abort
 
 	let l:ctx.id = popup_create(a:view_content, {
 				\ 'filter': function('s:filter', [l:ctx]),
-				"\ 'maxheight': l:ctx.maxheight,
+				\ 'title': a:title,
 				\ })
 
 	call s:highlight(l:ctx)
@@ -110,8 +110,10 @@ function! s:filter(ctx, id, key) abort
 		let a:ctx.idx = len(a:ctx.view_content) -1
 		let a:ctx.select = len(a:ctx.content) -1
 	elseif a:key ==# 'm'
-		call popup_close(a:id)
-		call docker#container#start_monitor(l:entry.Id)
+		if a:ctx.type == 'container'
+			call popup_close(a:id)
+			call docker#container#start_monitor(l:entry.Id)
+		endif
 		return 1
 	endif
 	call s:highlight(a:ctx)
