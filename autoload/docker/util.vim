@@ -29,7 +29,7 @@ function! docker#util#http_get(url, param) abort
 	return json_decode(l:response.content)
 endfunction
 
-function! docker#util#post_no_response(url, param, data) abort
+function! docker#util#http_post(url, param, data) abort
 	let l:response = s:HTTP.request(a:url, {
 				\ 'unixSocket': '/var/run/docker.sock',
 				\ 'method': 'POST',
@@ -37,9 +37,15 @@ function! docker#util#post_no_response(url, param, data) abort
 				\ 'data' : a:data,
 				\ })
 
-	if l:response.status != 204
+	if l:response.status !=# 204 || l:response.status !=# 200
 		call docker#util#echo_err(printf("status:%d response:%s", l:response.status, l:response.content))
+		return {}
 	endif
+
+	if has_key(l:response, 'content')
+		return json_decode(l:response.content)
+	endif
+	return {}
 endfunction
 
 " prase unix date

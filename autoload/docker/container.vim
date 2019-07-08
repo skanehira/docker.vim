@@ -60,14 +60,14 @@ endfunction
 
 function! s:docker_up_container(ctx) abort
 	let id = a:ctx.content[a:ctx.select].Id
-	call docker#util#post_no_response("http://localhost/containers/" .. id .. "/start", {}, {})
+	call docker#util#http_post("http://localhost/containers/" .. id .. "/start", {}, {})
 	let a:ctx.content = s:get(0, a:ctx.top)
 	let a:ctx.view_content = s:table.stringify()
 endfunction
 
 function! s:docker_stop_container(ctx) abort
 	let id = a:ctx.content[a:ctx.select].Id
-	call docker#util#post_no_response("http://localhost/containers/" .. id .. "/stop", {}, {})
+	call docker#util#http_post("http://localhost/containers/" .. id .. "/stop", {}, {})
 	let a:ctx.content = s:get(0, a:ctx.top)
 	let a:ctx.view_content = s:table.stringify()
 endfunction
