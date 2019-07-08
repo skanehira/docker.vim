@@ -4,7 +4,6 @@ set cpo&vim
 scriptencoding utf-8
 
 let s:V = vital#docker#new()
-let s:HTTP = s:V.import('Web.HTTP')
 let s:DATE = s:V.import('DateTime')
 
 " echo error message
@@ -12,40 +11,6 @@ function! docker#util#echo_err(message) abort
 	echohl ErrorMsg
 	echo a:message
 	echohl None
-endfunction
-
-" get response from docker
-function! docker#util#http_get(url, param) abort
-	let l:response = s:HTTP.request(a:url, {
-				\ 'unixSocket': '/var/run/docker.sock',
-				\ 'param': a:param
-				\ })
-
-	if l:response.status != 200
-		call docker#util#echo_err(printf("status:%d response:%s", l:response.status, l:response.content))
-		return response
-	endif
-
-	return json_decode(l:response.content)
-endfunction
-
-function! docker#util#http_post(url, param, data) abort
-	let l:response = s:HTTP.request(a:url, {
-				\ 'unixSocket': '/var/run/docker.sock',
-				\ 'method': 'POST',
-				\ 'param': a:param,
-				\ 'data' : a:data,
-				\ })
-
-	if l:response.status !=# 204 || l:response.status !=# 200
-		call docker#util#echo_err(printf("status:%d response:%s", l:response.status, l:response.content))
-		return {}
-	endif
-
-	if has_key(l:response, 'content')
-		return json_decode(l:response.content)
-	endif
-	return {}
 endfunction
 
 " prase unix date

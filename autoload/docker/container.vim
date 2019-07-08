@@ -5,28 +5,24 @@ scriptencoding utf-8
 
 let s:V = vital#docker#new()
 let s:TABLE = s:V.import('Text.Table')
-let s:table = {}
 
-" get container from docker
-function! s:get(offset, top) abort
-	let s:table = s:TABLE.new({
+" get container from docker engine
+" return
+" {
+" 'content': {images},
+" 'view_content': {table}'
+" }
+function! s:container_get(offset, top) abort
+	let l:table = s:TABLE.new({
 				\ 'columns': [{},{},{},{},{},{}],
 				\ 'header' : ['ID', 'NAME', 'IMAGE', 'STATUS', 'CREATED', 'PORTS'],
 				\ })
 
-	let l:containers = []
-	for row in docker#util#http_get('http://localhost/containers/json',{'all': 1})
-		call add(l:containers, row)
-	endfor
-
-	if len(l:containers) ==# 0
-		call util#echo_err('no containers')
-		return []
-	endif
+	let l:containers = docker#api#get_containers()
 
 	for row in l:containers[a:offset: a:offset + a:top -1]
 		let l:container = docker#util#parse_container(row)
-		call s:table.add_row([
+		call l:table.add_row([
 					\ l:container.Id,
 					\ l:container.Name,
 					\ l:container.Image,
@@ -36,21 +32,22 @@ function! s:get(offset, top) abort
 					\ ])
 	endfor
 
-	return l:containers
+	return {'content': l:containers,
+				\ 'view_content': l:table.stringify(),
+				\ }
 endfunction
 
 " get and popup images
 function! docker#container#get() abort
-	" highlight_idx is highlight idx
-	" select is selected entry
 	let l:maxheight = 15
 	let l:top = l:maxheight - 4
+	let l:contents = s:container_get(0, l:top)
 	let l:ctx = { 'type': 'container',
 				\ 'title':'[containers]',
 				\ 'select':0,
 				\ 'highlight_idx': 4,
-				\ 'content': s:get(0, l:top),
-				\ 'view_content': s:table.stringify(),
+				\ 'content': l:contents.content,
+				\ 'view_content': l:contents.view_content,
 				\ 'maxheight': l:maxheight,
 				\ 'top': l:top,
 				\ 'offset': 0}
@@ -58,18 +55,23 @@ function! docker#container#get() abort
 	call window#util#create_popup_window(l:ctx)
 endfunction
 
-function! s:docker_up_container(ctx) abort
-	let id = a:ctx.content[a:ctx.select].Id
-	call docker#util#http_post("http://localhost/containers/" .. id .. "/start", {}, {})
-	let a:ctx.content = s:get(0, a:ctx.top)
-	let a:ctx.view_content = s:table.stringify()
+" update contents
+function! s:docker_update_contents(ctx) abort
+	let l:contents = s:get(0, a:ctx.top)
+	let a:ctx.content = l:contents.content
+	let a:ctx.view_content = l:contents.view_content
 endfunction
 
+" start container
+function! s:docker_up_container(ctx) abort
+	call docker#api#up_container(a:ctx.content[a:ctx.select].Id)
+	call s:docker_update_contents(a:ctx)
+endfunction
+
+" stop container
 function! s:docker_stop_container(ctx) abort
-	let id = a:ctx.content[a:ctx.select].Id
-	call docker#util#http_post("http://localhost/containers/" .. id .. "/stop", {}, {})
-	let a:ctx.content = s:get(0, a:ctx.top)
-	let a:ctx.view_content = s:table.stringify()
+	call docker#api#down_container(a:ctx.content[a:ctx.select].Id)
+	call s:docker_update_contents(a:ctx)
 endfunction
 
 function! docker#container#functions(ctx, key) abort

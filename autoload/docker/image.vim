@@ -5,32 +5,24 @@ scriptencoding utf-8
 
 let s:V = vital#docker#new()
 let s:TABLE = s:V.import('Text.Table')
-let s:table = {}
 
-" get images from docker
-function! s:get(offset, top) abort
-	let s:table = s:TABLE.new({
+" get images from docker engine
+" return
+" {
+" 'content': {images},
+" 'view_content': {table}'
+" }
+function! s:image_get(offset, top) abort
+	let l:table = s:TABLE.new({
 				\ 'columns': [{},{},{},{},{}],
 				\ 'header' : ['ID', 'REPOSITORY', 'TAG', 'CREATED', 'SIZE'],
 				\ })
 
-	let l:images = []
-	for row in docker#util#http_get("http://localhost/images/json",{})
-		if row.RepoTags is v:null
-			continue
-		endif
-
-		call add(l:images, row)
-	endfor
-
-	if len(l:images) ==# 0
-		call docker#util#echo_err("no images")
-		return []
-	endif
+	let l:images = docker#api#get_images()
 
 	for row in l:images[a:offset: a:offset + a:top - 1]
 		let l:image = docker#util#parse_image(row)
-		call s:table.add_row([
+		call l:table.add_row([
 					\ l:image.Id,
 					\ l:image.Repo,
 					\ l:image.Tag,
@@ -39,21 +31,23 @@ function! s:get(offset, top) abort
 
 	endfor
 
-	return l:images
+	return {'content': l:images,
+				\ 'view_content': l:table.stringify(),
+				\ }
 endfunction
 
 " get and popup images
 function! docker#image#get() abort
-	" highlight_idx is highlight idx
-	" select is selected entry
 	let l:maxheight = 15
 	let l:top = l:maxheight - 4
+	let l:contents = s:image_get(0, l:top)
+
 	let l:ctx = { 'type': 'image',
 				\ 'title':'[imgaes]',
 				\ 'select':0,
 				\ 'highlight_idx': 4,
-				\ 'content': s:get(0, l:top),
-				\ 'view_content': s:table.stringify(),
+				\ 'content': l:contents.content,
+				\ 'view_content': l:contents.view_content,
 				\ 'maxheight': l:maxheight,
 				\ 'top': l:top,
 				\ 'offset': 0}
