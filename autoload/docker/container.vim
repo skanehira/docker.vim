@@ -58,6 +58,32 @@ function! docker#container#get() abort
 	call window#util#create_popup_window(l:ctx)
 endfunction
 
+function! s:docker_up_container(ctx) abort
+	let id = a:ctx.content[a:ctx.select].Id
+	call docker#util#post_no_response("http://localhost/containers/" .. id .. "/start", {}, {})
+	let a:ctx.content = s:get(0, a:ctx.top)
+	let a:ctx.view_content = s:table.stringify()
+endfunction
+
+function! s:docker_stop_container(ctx) abort
+	let id = a:ctx.content[a:ctx.select].Id
+	call docker#util#post_no_response("http://localhost/containers/" .. id .. "/stop", {}, {})
+	let a:ctx.content = s:get(0, a:ctx.top)
+	let a:ctx.view_content = s:table.stringify()
+endfunction
+
+function! docker#container#functions(ctx, key) abort
+	let l:entry = a:ctx.content[a:ctx.select]
+	if a:key ==# 'u'
+		call s:docker_up_container(a:ctx)
+	elseif a:key ==# 's'
+		call s:docker_stop_container(a:ctx)
+	elseif a:key ==# 'm'
+		call popup_close(a:ctx.id)
+		call docker#container#start_monitor(l:entry.Id)
+	endif
+endfunction
+
 function! docker#container#start_monitor(id) abort
 	call docker#monitor#start_monitoring(a:id)
 endfunction

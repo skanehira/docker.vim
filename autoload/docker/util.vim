@@ -22,11 +22,24 @@ function! docker#util#http_get(url, param) abort
 				\ })
 
 	if l:response.status != 200
-		util#echo_err(printf("status:%d response:%s", l:response.status, l:response.content))
+		call docker#util#echo_err(printf("status:%d response:%s", l:response.status, l:response.content))
 		return response
 	endif
 
 	return json_decode(l:response.content)
+endfunction
+
+function! docker#util#post_no_response(url, param, data) abort
+	let l:response = s:HTTP.request(a:url, {
+				\ 'unixSocket': '/var/run/docker.sock',
+				\ 'method': 'POST',
+				\ 'param': a:param,
+				\ 'data' : a:data,
+				\ })
+
+	if l:response.status != 204
+		call docker#util#echo_err(printf("status:%d response:%s", l:response.status, l:response.content))
+	endif
 endfunction
 
 " prase unix date

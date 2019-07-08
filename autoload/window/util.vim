@@ -119,8 +119,6 @@ endfunction
 " popup window filter
 function! s:filter(ctx, id, key) abort
 	"let l:buf = winbufnr(a:id)
-	let l:entry = a:ctx.content[a:ctx.select]
-
 	if a:key ==# 'q' || a:key ==# 'x'
 		call popup_close(a:id)
 		return 1
@@ -151,14 +149,12 @@ function! s:filter(ctx, id, key) abort
 		let a:ctx.highlight_idx = len(a:ctx.view_content) - 1
 		let a:ctx.select = len(a:ctx.content) - 1
 		let a:ctx.offset = len(a:ctx.content) - a:ctx.top
-
-	elseif a:key ==# 'm'
-		if a:ctx.type == 'container'
-			call popup_close(a:id)
-			call docker#container#start_monitor(l:entry.Id)
-		endif
-		return 1
 	endif
+
+	if a:ctx.type == 'container'
+		call docker#container#functions(a:ctx, a:key)
+	endif
+
 	call window#util#update_poup_window(a:ctx)
 	return 1
 endfunction
