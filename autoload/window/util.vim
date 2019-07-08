@@ -133,7 +133,6 @@ function! s:filter(ctx, id, key) abort
 			let a:ctx.offset = a:ctx.select - (a:ctx.top - 1)
 		endif
 
-		call window#util#update_poup_window(a:ctx)
 	elseif a:key ==# 'k'
 		let idx = a:ctx.highlight_idx ==# 4 ? 0 : 1
 		let a:ctx.highlight_idx -= idx
@@ -142,20 +141,17 @@ function! s:filter(ctx, id, key) abort
 			let a:ctx.offset = a:ctx.select
 		endif
 
-		call window#util#update_poup_window(a:ctx)
 	elseif a:key ==# '0'
 		let a:ctx.highlight_idx = 4
 		let a:ctx.select = 0
 		let a:ctx.offset = 0
 		let a:ctx.top = a:ctx.maxheight - 4
 
-		call window#util#update_poup_window(a:ctx)
 	elseif a:key ==# 'G'
-		let a:ctx.highlight_idx = len(a:ctx.view_content) -1
-		let a:ctx.select = len(a:ctx.content) -1
-		let a:ctx.offset = len(a:ctx.content) - a:ctx.top -1
+		let a:ctx.highlight_idx = len(a:ctx.view_content) - 1
+		let a:ctx.select = len(a:ctx.content) - 1
+		let a:ctx.offset = len(a:ctx.content) - a:ctx.top
 
-		call window#util#update_poup_window(a:ctx)
 	elseif a:key ==# 'm'
 		if a:ctx.type == 'container'
 			call popup_close(a:id)
@@ -163,6 +159,7 @@ function! s:filter(ctx, id, key) abort
 		endif
 		return 1
 	endif
+	call window#util#update_poup_window(a:ctx)
 	return 1
 endfunction
 
