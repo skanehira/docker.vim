@@ -72,9 +72,11 @@ function! s:highlight(ctx) abort
 	let l:lnum = a:ctx.idx
 	let l:lnum_end = len(a:ctx.view_content)
 
-	call prop_clear(1, l:lnum_end, {
+	call prop_remove({
+				\ 'type': 'docker_select',
 				\ 'bufnr': l:buf,
-				\ })
+				\ }, 1, l:lnum_end,
+				\ )
 
 	call prop_add(l:lnum, 1, {
 				\ 'bufnr': l:buf,
