@@ -39,14 +39,16 @@ endfunction
 
 " update popup window content
 function! window#util#update_poup_window(ctx) abort
+	call s:docker_update_view_content(a:ctx)
 	let l:win_buf = winbufnr(a:ctx.id)
 
 	if l:win_buf ==# -1
-		echo util#echo_err("no popup window")
+		call util#echo_err("no popup window")
 		return
 	endif
 	call win_execute(l:win_buf, '%d_')
 	call setbufline(l:win_buf, 1, a:ctx.view_content)
+	call s:select_highlight(a:ctx)
 endfunction
 
 " create window
@@ -102,7 +104,6 @@ function! s:filter(ctx, id, key) abort
 			let a:ctx.offset = a:ctx.select - (a:ctx.top - 1)
 		endif
 
-		call s:docker_update_view_content(a:ctx)
 		call window#util#update_poup_window(a:ctx)
 	elseif a:key ==# 'k'
 		let idx = a:ctx.highlight_idx ==# 4 ? 0 : 1
@@ -112,15 +113,20 @@ function! s:filter(ctx, id, key) abort
 			let a:ctx.offset = a:ctx.select
 		endif
 
-		echo a:ctx.select a:ctx.offset a:ctx.top
-		call s:docker_update_view_content(a:ctx)
 		call window#util#update_poup_window(a:ctx)
 	elseif a:key ==# '0'
 		let a:ctx.highlight_idx = 4
 		let a:ctx.select = 0
+		let a:ctx.offset = 0
+		let a:ctx.top = a:ctx.maxheight - 4
+
+		call window#util#update_poup_window(a:ctx)
 	elseif a:key ==# 'G'
 		let a:ctx.highlight_idx = len(a:ctx.view_content) -1
 		let a:ctx.select = len(a:ctx.content) -1
+		let a:ctx.offset = len(a:ctx.content) - a:ctx.top -1
+
+		call window#util#update_poup_window(a:ctx)
 	elseif a:key ==# 'm'
 		if a:ctx.type == 'container'
 			call popup_close(a:id)
@@ -128,7 +134,6 @@ function! s:filter(ctx, id, key) abort
 		endif
 		return 1
 	endif
-	call s:select_highlight(a:ctx)
 	return 1
 endfunction
 
