@@ -35,7 +35,7 @@ function! s:docker_http_post(url, param, data) abort
 				\ 'data' : a:data,
 				\ })
 
-	if l:response.status !=# 204 || l:response.status !=# 200
+	if l:response.status !=# 204 && l:response.status !=# 200 && l:response.status !=# 304
 		call docker#util#echo_err(printf("status:%d response:%s", l:response.status, l:response.content))
 		return {}
 	endif
