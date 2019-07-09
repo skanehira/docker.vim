@@ -57,29 +57,35 @@ endfunction
 
 " update contents
 function! s:docker_update_contents(ctx) abort
-	let l:contents = s:get(0, a:ctx.top)
+	let l:contents = s:container_get(0, a:ctx.top)
 	let a:ctx.content = l:contents.content
 	let a:ctx.view_content = l:contents.view_content
 endfunction
 
 " start container
-function! s:docker_up_container(ctx) abort
-	call docker#api#up_container(a:ctx.content[a:ctx.select].Id)
+function! s:docker_start_container(ctx) abort
+	call docker#api#start_container(a:ctx.content[a:ctx.select].Id)
 	call s:docker_update_contents(a:ctx)
 endfunction
 
 " stop container
 function! s:docker_stop_container(ctx) abort
-	call docker#api#down_container(a:ctx.content[a:ctx.select].Id)
+	call docker#api#stop_container(a:ctx.content[a:ctx.select].Id)
 	call s:docker_update_contents(a:ctx)
 endfunction
 
 function! docker#container#functions(ctx, key) abort
 	let l:entry = a:ctx.content[a:ctx.select]
 	if a:key ==# 'u'
-		call s:docker_up_container(a:ctx)
+		call s:docker_start_container(a:ctx)
 	elseif a:key ==# 's'
 		call s:docker_stop_container(a:ctx)
+	elseif a:key ==# 'd'
+		" TODO delete container
+	elseif a:key ==# 'r'
+		" TODO restart container
+	elseif a:key ==# 'R'
+		" TODO refresh containers
 	elseif a:key ==# 'm'
 		call popup_close(a:ctx.id)
 		call docker#container#start_monitor(l:entry.Id)

@@ -52,12 +52,12 @@ function! docker#api#get_containers() abort
 endfunction
 
 " start container
-function! docker#api#up_container(id) abort
+function! docker#api#start_container(id) abort
 	call s:docker_http_post("http://localhost/containers/" .. a:id .. "/start", {}, {})
 endfunction
 
 " stop container
-function! docker#api#down_container(id) abort
+function! docker#api#stop_container(id) abort
 	call s:docker_http_post("http://localhost/containers/" .. a:id .. "/stop", {}, {})
 endfunction
 
