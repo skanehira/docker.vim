@@ -44,7 +44,6 @@ function! window#util#update_poup_window(ctx) abort
 	let l:win_buf = winbufnr(a:ctx.id)
 
 	if l:win_buf ==# -1
-		call docker#util#echo_err("no popup window")
 		return
 	endif
 	call win_execute(l:win_buf, '%d_')
