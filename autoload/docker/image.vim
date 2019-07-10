@@ -12,7 +12,7 @@ let s:TABLE = s:V.import('Text.Table')
 " 'content': {images},
 " 'view_content': {table}'
 " }
-function! s:image_get(offset, top) abort
+function! s:docker_image_get(offset, top) abort
 	let l:table = s:TABLE.new({
 				\ 'columns': [{},{},{},{},{}],
 				\ 'header' : ['ID', 'REPOSITORY', 'TAG', 'CREATED', 'SIZE'],
@@ -40,7 +40,7 @@ endfunction
 function! docker#image#get() abort
 	let l:maxheight = 15
 	let l:top = l:maxheight - 4
-	let l:contents = s:image_get(0, l:top)
+	let l:contents = s:docker_image_get(0, l:top)
 
 	let l:ctx = { 'type': 'image',
 				\ 'title':'[imgaes]',

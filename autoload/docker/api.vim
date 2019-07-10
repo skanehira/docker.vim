@@ -13,64 +13,77 @@ let s:HTTP = s:V.import('Web.HTTP')
 
 " http get
 function! s:docker_http_get(url, param) abort
-	let l:response = s:HTTP.request(a:url, {
+	return s:HTTP.request(a:url, {
 				\ 'unixSocket': '/var/run/docker.sock',
 				\ 'param': a:param
 				\ })
-
-	if l:response.status != 200
-		call docker#util#echo_err(printf("status:%d response:%s", l:response.status, l:response.content))
-		return response
-	endif
-
-	return json_decode(l:response.content)
 endfunction
 
 " http post
 function! s:docker_http_post(url, param, data) abort
-	let l:response = s:HTTP.request(a:url, {
+	return s:HTTP.request(a:url, {
 				\ 'unixSocket': '/var/run/docker.sock',
 				\ 'method': 'POST',
 				\ 'param': a:param,
 				\ 'data' : a:data,
 				\ })
-
-	if l:response.status !=# 204 && l:response.status !=# 200 && l:response.status !=# 304
-		call docker#util#echo_err(printf("status:%d response:%s", l:response.status, l:response.content))
-		return {}
-	endif
-
-	if has_key(l:response, 'content')
-		return json_decode(l:response.content)
-	endif
-	return {}
 endfunction
 
 " get containers
 function! docker#api#get_containers() abort
-	return s:docker_http_get('http://localhost/containers/json', {'all': 1})
+	let l:response = s:docker_http_get('http://localhost/containers/json', {'all': 1})
+
+	if l:response.status ==# 400 || l:response.status ==# 500
+		call docker#util#echo_err(l:response.message)
+		return []
+	endif
+
+	return json_decode(l:response.content)
 endfunction
 
 " start container
 function! docker#api#start_container(id) abort
-	call s:docker_http_post("http://localhost/containers/" .. a:id .. "/start", {}, {})
+	echo 'starting' a:id
+	let l:response = s:docker_http_post("http://localhost/containers/" .. a:id .. "/start", {}, {})
+	if l:response.status ==# 304
+		echo "container already started"
+	elseif l:response.status ==# 404 || l:response.status ==# 500
+		call docker#util#echo_err(l:response.message)
+	else
+		echo ''
+	endif
 endfunction
 
 " stop container
 function! docker#api#stop_container(id) abort
-	call s:docker_http_post("http://localhost/containers/" .. a:id .. "/stop", {}, {})
+	echo 'stopping' a:id
+	let l:response = s:docker_http_post("http://localhost/containers/" .. a:id .. "/stop", {}, {})
+	if l:response.status ==# 304
+		echo "container already stopped"
+	elseif l:response.status ==# 404 || l:response.status ==# 500
+		call docker#util#echo_err(l:response.message)
+	else
+		echo ''
+	endif
 endfunction
 
 " get images
 function! docker#api#get_images() abort
+	let l:response = s:docker_http_get("http://localhost/images/json", {})
+
+	if l:response.status ==# 500
+		call docker#util#echo_err(l:response.message)
+		return []
+	endif
+
 	let l:images = []
-	for row in s:docker_http_get("http://localhost/images/json",{})
+	for content in json_decode(l:response.content)
 		" if repo is null not add to list
 		if row.RepoTags is v:null
 			continue
 		endif
 
-		call add(l:images, row)
+		call add(l:images, content)
 	endfor
 	return l:images
 endfunction

@@ -20,7 +20,7 @@ let s:docker_move_filter_disable = 0
 "     |  ■■■■■■      ■■■■■■  |
 " 0   ------------------------
 "       CPU(30%)     MEM(40%)
-function s:make_graph(cpu, mem) abort
+function s:docker_make_graph(cpu, mem) abort
 	let graph = []
 	call add(graph, '    ------------------------')
 	for line_num in [100,90,80,70,60,50,40,30,20,10]
@@ -51,17 +51,17 @@ function s:make_graph(cpu, mem) abort
 	return graph
 endfunction
 
-function! s:update_graph(cpu, mem) abort
+function! s:docker_update_graph(cpu, mem) abort
 	call win_execute(s:docker_monitor_window, '%d_')
-	call setbufline(winbufnr(s:docker_monitor_window), 1, s:make_graph(a:cpu, a:mem))
+	call setbufline(winbufnr(s:docker_monitor_window), 1, s:docker_make_graph(a:cpu, a:mem))
 endfunction
 
-function! s:stats_out_cb(ch, result) abort
+function! s:docker_stats_out_cb(ch, result) abort
 	let s:docker_stats_response = []
 	call add(s:docker_stats_response, json_decode(a:result))
 endfunction
 
-function! s:stats_exit_cb(job, status) abort
+function! s:docker_stats_exit_cb(job, status) abort
 	if empty(s:docker_stats_response)
 		call util#echo_err('response is empty')
 		call monitor#stop_monitoring()
@@ -70,22 +70,23 @@ function! s:stats_exit_cb(job, status) abort
 
 	let response = s:docker_stats_response[0]
 	if has_key(response, 'message')
+		call util#echo_err(response.message)
 		call monitor#stop_monitoring()
 		return
 	endif
-	call s:update_graph(s:calculate_cpu(response), s:calculate_mem(response))
+	call s:docker_update_graph(s:docker_calculate_cpu(response), s:docker_calculate_mem(response))
 endfunction
 
-function! s:update_stats(id, timer) abort
+function! s:docker_update_stats(id, timer) abort
 	let cmd = ['curl', '-s', '--unix-socket', '/var/run/docker.sock', 'http://localhost/containers/' .. a:id ..'/stats?stream=false']
 
 	call job_start(cmd, {
-				\'callback': function('s:stats_out_cb'),
-				\'exit_cb': function('s:stats_exit_cb'),
+				\'callback': function('s:docker_stats_out_cb'),
+				\'exit_cb': function('s:docker_stats_exit_cb'),
 				\})
 endfunction
 
-function! s:calculate_cpu(response) abort
+function! s:docker_calculate_cpu(response) abort
 	let cpu_percent = 0
 	let cpu_stats = a:response.cpu_stats
 	let precpu_stats = a:response.precpu_stats
@@ -106,7 +107,7 @@ function! s:calculate_cpu(response) abort
 	return float2nr(cpu_percent)
 endfunction
 
-function! s:calculate_mem(response) abort
+function! s:docker_calculate_mem(response) abort
 	let mem_stats = a:response.memory_stats
 	if !has_key(mem_stats, 'limit')
 		return 0
@@ -118,56 +119,39 @@ function! s:calculate_mem(response) abort
 	return  float2nr(usage * 1.0 / mem_stats.limit * 100)
 endfunction
 
-" move popup window
-" left  = 0
-" down  = 1
-" up    = 2
-" right = 3
-function! s:move_monitor_window(id, way) abort
+function! s:docker_move_monitor_window_filter(id, key) abort
+	if s:docker_move_filter_disable ==# 1
+		return 0
+	endif
+
+	echo "[move monitor window mode] h:left j:down k:up l:right enter:done"
+
 	let opt = popup_getoptions(a:id)
 	if type(opt) !=# type({})
 		return 0
 	endif
 
-	if a:way ==# 0
-		let opt.col -= 1
-	elseif a:way ==# 1
-		let opt.line += 1
-	elseif a:way ==# 2
-		let opt.line -= 1
-	elseif a:way ==# 3
-		let opt.col += 1
-	endif
-	call popup_move(a:id, opt)
-
-	return 1
-endfunction
-
-function! s:move_monitor_window_filter(id, key) abort
-	if s:docker_move_filter_disable ==# 1
-		return 0
-	endif
-
 	if a:key ==# 'h'
-		return s:move_monitor_window(a:id, 0)
+		let opt.col -= 2
 	elseif a:key ==# 'j'
-		return s:move_monitor_window(a:id, 1)
+		let opt.line += 2
 	elseif a:key ==# 'k'
-		return s:move_monitor_window(a:id, 2)
+		let opt.line -= 2
 	elseif a:key ==# 'l'
-		return s:move_monitor_window(a:id, 3)
+		let opt.col += 2
 	elseif a:key ==# "\n" || a:key ==# "\r"
 		let s:docker_move_filter_disable = 1
 		return 0
 	endif
+	call popup_move(a:id, opt)
 	return 1
 endfunction
 
-function! docker#monitor#start_monitoring(id) abort
+function! docker#monitor#start(id) abort
 	" not support windows
 	if has('win32') || has ('win64')
 		" TODO support windows
-		echoerr 'not support windows'
+		call docker#util#echo_err('not support windows')
 		return
 	endif
 
@@ -175,17 +159,28 @@ function! docker#monitor#start_monitoring(id) abort
 		call popup_close(s:docker_monitor_window)
 	endif
 
-	let s:docker_move_filter_disable = 0
-	let s:docker_monitor_window = popup_create(s:make_graph(0,0),{
-				\ 'filter': function('s:move_monitor_window_filter'),
+	let s:docker_move_filter_disable = 1
+	let s:docker_monitor_window = popup_create(s:docker_make_graph(0, 0),{
+				\ 'filter': function('s:docker_move_monitor_window_filter'),
+				\ 'callback': function('s:docker_stop_monitor_timer'),
+				\ 'line': &lines/2-6,
+				\ 'col': &columns/2-12,
 				\ })
 
-	let s:docker_monitor_timer_id = timer_start(2000, function('s:update_stats', [a:id]), {'repeat': -1})
+	let s:docker_monitor_timer_id = timer_start(2000, function('s:docker_update_stats', [a:id]), {'repeat': -1})
 endfunction
 
-function! docker#monitor#stop_monitoring() abort
+function! s:docker_stop_monitor_timer(id, result) abort
+	silent call timer_stop(s:docker_monitor_timer_id)
+endfunction
+
+function! docker#monitor#stop() abort
 	silent call timer_stop(s:docker_monitor_timer_id)
 	call popup_close(s:docker_monitor_window)
+endfunction
+
+function! docker#monitor#move() abort
+	let s:docker_move_filter_disable = 0
 endfunction
 
 let &cpo = s:save_cpo

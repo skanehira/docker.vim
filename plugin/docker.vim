@@ -1,14 +1,22 @@
+" Version: 0.0.1
+" Author : skanehira <sho19921005@gmail.com>
+" License: MIT
 let s:save_cpo = &cpo
 set cpo&vim
 
 scriptencoding utf-8
 
-let g:disable_popup_window = 0
+if exists('g:loaded_docker')
+	finish
+endif
 
-command! Images call docker#image#get()
-command! Containers call docker#container#get()
-command! -nargs=1 Monitor call docker#container#start_monitor(<f-args>)
-command! StopMonitor call docker#container#stop_monitor()
+let g:loaded_docker = 1
+
+command! DockerImages call docker#image#get()
+command! DockerContainers call docker#container#get()
+command! -nargs=1 DockerMonitor call docker#monitor#start(<f-args>)
+command! DockerMonitorStop call docker#monitor#stop()
+command! DockerMonitorMove call docker#monitor#move()
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

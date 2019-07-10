@@ -29,18 +29,18 @@ function! window#util#create_popup_window(ctx) abort
 	call popup_close(s:last_popup_window)
 
 	let a:ctx.id = popup_create(a:ctx.view_content, {
-				\ 'filter': function('s:popup_filter', [a:ctx]),
+				\ 'filter': function('s:docker_popup_filter', [a:ctx]),
 				\ 'title': a:ctx.title,
 				\ 'maxheight': a:ctx.maxheight,
 				\ })
 
 	let s:last_popup_window = a:ctx.id
-	call s:update_highlight(a:ctx)
+	call s:docker_update_highlight(a:ctx)
 endfunction
 
 " update popup window content
 function! window#util#update_poup_window(ctx) abort
-	call s:update_popup_view_content(a:ctx)
+	call s:docker_update_view_content(a:ctx)
 	let l:win_buf = winbufnr(a:ctx.id)
 
 	if l:win_buf ==# -1
@@ -48,7 +48,7 @@ function! window#util#update_poup_window(ctx) abort
 	endif
 	call win_execute(l:win_buf, '%d_')
 	call setbufline(l:win_buf, 1, a:ctx.view_content)
-	call s:update_highlight(a:ctx)
+	call s:docker_update_highlight(a:ctx)
 endfunction
 
 " create buffer window
@@ -67,7 +67,7 @@ function! window#util#create_buffer_window(content) abort
 endfunction
 
 " highlight table in popup window
-function! s:select_highlight(ctx) abort
+function! s:docker_select_highlight(ctx) abort
 	let l:buf = winbufnr(a:ctx.id)
 	let l:length = len(a:ctx.view_content[0])
 	let l:lnum = a:ctx.highlight_idx
@@ -86,7 +86,7 @@ function! s:select_highlight(ctx) abort
 endfunction
 
 " highlight running container
-function! s:status_highlight(ctx) abort
+function! s:docker_status_highlight(ctx) abort
 	let l:lnum = 4
 	let l:lnum_end = len(a:ctx.view_content)
 	let l:length = len(a:ctx.view_content[0])
@@ -110,22 +110,24 @@ function! s:status_highlight(ctx) abort
 endfunction
 
 " update table highlight
-function! s:update_highlight(ctx) abort
-	call s:select_highlight(a:ctx)
+function! s:docker_update_highlight(ctx) abort
+	call s:docker_select_highlight(a:ctx)
 	if a:ctx.type ==# 'container'
-		call s:status_highlight(a:ctx)
+		call s:docker_status_highlight(a:ctx)
 	endif
 	call win_execute(a:ctx.id, 'redraw')
 endfunction
 
 " popup window filter
-function! s:popup_filter(ctx, id, key) abort
+function! s:docker_popup_filter(ctx, id, key) abort
 	"let l:buf = winbufnr(a:id)
 	if a:key ==# 'q' || a:key ==# 'x'
 		call popup_close(a:id)
 		return 1
+
 	elseif a:key ==# "\n" || a:key ==# "\r"
 		return 1
+
 	elseif a:key ==# 'j'
 		let a:ctx.highlight_idx += a:ctx.highlight_idx ==# len(a:ctx.view_content) -1 ? 0 : 1
 		let a:ctx.select += a:ctx.select ==# len(a:ctx.content) -1 ? 0 : 1
@@ -161,7 +163,7 @@ function! s:popup_filter(ctx, id, key) abort
 	return 1
 endfunction
 
-function! s:update_popup_view_content(ctx) abort
+function! s:docker_update_view_content(ctx) abort
 	let idx = 0
 
 	if a:ctx.type ==# 'image'
