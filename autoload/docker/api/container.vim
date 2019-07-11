@@ -98,6 +98,17 @@ function! docker#api#container#kill(id) abort
 	endif
 endfunction
 
+" rename container
+function! docker#api#container#rename(id, name) abort
+	echo 'renaming to' a:name
+	let l:response = docker#api#http#post("http://localhost/containers/" .. a:id .. "/rename", { 'name': a:name }, {})
+	if l:response.status ==# 404 || l:response.status ==# 500 || l:response.status ==# 409
+		call docker#util#echo_err(json_decode(l:response.content).message)
+	else
+		echo ''
+	endif
+endfunction
+
 " check the container state
 " if the container is running then will return true
 function! docker#api#container#is_running(id) abort

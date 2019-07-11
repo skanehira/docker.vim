@@ -95,6 +95,12 @@ function! s:docker_kill_container(ctx) abort
 	call s:docker_update_contents(a:ctx)
 endfunction
 
+" rename container
+function! s:docker_rename_container(ctx, name) abort
+	call docker#api#container#rename(a:ctx.content[a:ctx.select].Id, a:name)
+	call docker#container#get()
+endfunction
+
 " this is popup window filter function
 function! docker#container#functions(ctx, key) abort
 	let l:entry = a:ctx.content[a:ctx.select]
@@ -116,6 +122,15 @@ function! docker#container#functions(ctx, key) abort
 		call docker#monitor#start(l:entry.Id)
 	elseif a:key ==# 'R'
 		call s:docker_update_contents(a:ctx)
+	elseif a:key ==# ''
+		call popup_close(a:ctx.id)
+		let name = input("new name:")
+		if name ==# ''
+			call docker#util#echo_err('please input container name')
+			call docker#container#get()
+			return
+		endif
+		call s:docker_rename_container(a:ctx, name)
 	elseif a:key ==# 'a'
 		call popup_close(a:ctx.id)
 		let cmd = input("command:")
