@@ -109,6 +109,13 @@ function! docker#container#functions(ctx, key) abort
 		call docker#monitor#start(l:entry.Id)
 	elseif a:key ==# 'R'
 		call s:docker_update_contents(a:ctx)
+	elseif a:key ==# 'a'
+		call popup_close(a:ctx.id)
+		let cmd = input("command:")
+		if cmd ==# ''
+			return
+		endif
+		call docker#api#attach_container(l:entry.Id, cmd)
 	endif
 endfunction
 

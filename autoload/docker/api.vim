@@ -90,6 +90,10 @@ endfunction
 
 " delete container
 function! docker#api#delete_container(id) abort
+	if docker#api#is_runiing_container(a:id)
+		call docker#util#echo_err('the container is running')
+		return
+	endif
 	echo 'deleting' a:id
 	let l:response = s:docker_http_delete("http://localhost/containers/" .. a:id, {}, {})
 	if l:response.status ==# 404 || l:response.status ==# 500 || l:response.status ==# 409
@@ -97,6 +101,31 @@ function! docker#api#delete_container(id) abort
 	else
 		echo ''
 	endif
+endfunction
+
+" attach to a container using docker command
+" TODO use attach api
+function! docker#api#attach_container(id, cmd) abort
+	if !executable('docker')
+		call docker#util#echo_err('not exsists docker command')
+		return
+	endif
+	if !docker#api#is_runiing_container(a:id)
+		call docker#util#echo_err('the container is not running')
+		return
+	endif
+	let command = 'term ++close bash -c "docker exec -it ' .. a:id  .. ' ' .. a:cmd .. '"'
+	exe command
+endfunction
+
+" check the container state
+" if the container is running then will return true
+function! docker#api#is_runiing_container(id) abort
+	let l:response = s:docker_http_get("http://localhost/containers/" .. a:id .. "/json", {})
+	if l:response.status ==# 404 || l:response.status ==# 500
+		call docker#util#echo_err(json_decode(l:response.content).message)
+	endif
+	return json_decode(l:response.content).State.Running
 endfunction
 
 " get images
