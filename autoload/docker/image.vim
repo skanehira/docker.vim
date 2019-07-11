@@ -55,5 +55,36 @@ function! docker#image#get() abort
 	call window#util#create_popup_window(l:ctx)
 endfunction
 
+" update contents
+function! s:docker_update_contents(ctx) abort
+	let l:contents = s:docker_image_get(a:ctx.offset, a:ctx.top)
+	let a:ctx.content = l:contents.content
+	let a:ctx.view_content = l:contents.view_content
+endfunction
+
+" delete image
+function! s:docker_delete_image(ctx, id, key) abort
+	if a:key ==# -1 || a:key ==# 0
+		return
+	endif
+	call docker#api#image#delete(a:ctx.content[a:ctx.select].Id)
+	call s:docker_update_contents(a:ctx)
+endfunction
+
+" this is popup window filter function
+function! docker#image#functions(ctx, key) abort
+	let l:entry = a:ctx.content[a:ctx.select]
+	if a:key ==# 'd'
+		call popup_create("Do you delete the image? y/n",{
+					\ 'border': [],
+					\ 'filter': 'popup_filter_yesno',
+					\ 'callback': function('s:docker_delete_image', [a:ctx]),
+					\ 'zindex': 51,
+					\ })
+	elseif a:key ==# 'R'
+		call s:docker_update_contents(a:ctx)
+	endif
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

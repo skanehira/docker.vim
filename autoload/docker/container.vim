@@ -121,6 +121,7 @@ function! docker#container#functions(ctx, key) abort
 		let cmd = input("command:")
 		if cmd ==# ''
 			call docker#util#echo_err('please input command')
+			call docker#container#get()
 			return
 		endif
 		call docker#api#container#attach(l:entry.Id, cmd)

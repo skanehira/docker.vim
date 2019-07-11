@@ -29,5 +29,16 @@ function! docker#api#image#get() abort
 	return l:images
 endfunction
 
+" delte image
+function! docker#api#image#delete(id) abort
+	echo 'deleting' a:id
+	let l:response = docker#api#http#delete("http://localhost/images/" .. a:id, {}, {})
+	if l:response.status ==# 404 || l:response.status ==# 409 || l:response.status ==# 500
+		call docker#util#echo_err(json_decode(l:response.content).message)
+	else
+		echo ''
+	endif
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

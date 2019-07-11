@@ -161,6 +161,8 @@ function! s:docker_popup_filter(ctx, id, key) abort
 
 	if a:ctx.type == 'container'
 		call docker#container#functions(a:ctx, a:key)
+	elseif a:ctx.type == 'image'
+		call docker#image#functions(a:ctx, a:key)
 	endif
 
 	if a:key != "\<CursorHold>"
