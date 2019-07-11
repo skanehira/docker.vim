@@ -14,9 +14,9 @@ let g:loaded_docker = 1
 
 command! DockerImages call docker#image#get()
 command! DockerContainers call docker#container#get()
-command! -nargs=1 DockerMonitor call docker#monitor#start(<f-args>)
+command! -nargs=1 DockerMonitorStart call docker#monitor#start(<f-args>)
 command! DockerMonitorStop call docker#monitor#stop()
-command! DockerMonitorMove call docker#monitor#move()
+command! DockerMonitorWindowMove call docker#monitor#move()
 command! DockerImagePull call docker#image#pull(<f-args>)
 
 let &cpo = s:save_cpo

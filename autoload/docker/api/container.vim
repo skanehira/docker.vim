@@ -59,7 +59,7 @@ endfunction
 
 " delete container
 function! docker#api#container#delete(id) abort
-	if docker#api#is_runiing_container(a:id)
+	if docker#api#container#is_running(a:id)
 		call docker#util#echo_err('the container is running')
 		return
 	endif

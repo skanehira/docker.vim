@@ -63,9 +63,9 @@ endfunction
 function! docker#util#parse_container(container) abort
 	let _new = {}
 	let _new.Id = docker#util#parse_container_id(a:container.Id)
-	let _new.Name = a:container.Names[0][1:][:20] . "..."
-	let _new.Image = a:container.Image[:20] . "..."
-	let _new.Status = a:container.Status
+	let _new.Name = a:container.Names[0][1:][:20] .. "..."
+	let _new.Image = a:container.Image[:20] .. "..."
+	let _new.Status = a:container.Status[:18] .. "..."
 	let _new.Created = docker#util#parse_unix_date(a:container.Created)
 	let _new.Ports = docker#util#parse_container_ports(a:container.Ports)
 	let _new.Command = a:container.Command
