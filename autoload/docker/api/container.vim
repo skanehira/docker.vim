@@ -79,8 +79,9 @@ function! docker#api#container#attach(id, cmd) abort
 		call docker#util#echo_err('not exsists docker command')
 		return
 	endif
-	if !docker#api#is_runiing_container(a:id)
+	if !docker#api#container#is_running(a:id)
 		call docker#util#echo_err('the container is not running')
+		call docker#container#get()
 		return
 	endif
 	exe 'term ++close bash -c "docker exec -it ' .. a:id  .. ' ' .. a:cmd .. '"'
@@ -99,7 +100,7 @@ endfunction
 
 " check the container state
 " if the container is running then will return true
-function! docker#api#container#is_runiing(id) abort
+function! docker#api#container#is_running(id) abort
 	let l:response = docker#api#http#get("http://localhost/containers/" .. a:id .. "/json", {})
 	if l:response.status ==# 404 || l:response.status ==# 500
 		call docker#util#echo_err(json_decode(l:response.content).message)
