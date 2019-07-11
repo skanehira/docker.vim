@@ -37,7 +37,7 @@ function! s:docker_container_get(offset, top) abort
 				\ }
 endfunction
 
-" get images and display on popup window
+" get containers and display on popup window
 function! docker#container#get() abort
 	let l:maxheight = 15
 	let l:top = l:maxheight - 4
@@ -74,6 +74,20 @@ function! s:docker_stop_container(ctx) abort
 	call s:docker_update_contents(a:ctx)
 endfunction
 
+" delete container
+function! s:docker_delete_container(ctx, id, key) abort
+	if a:key ==# -1 || a:key ==# 0
+		return
+	endif
+	call docker#api#delete_container(a:ctx.content[a:ctx.select].Id)
+	call s:docker_update_contents(a:ctx)
+endfunction
+
+function! s:docker_restart_container(ctx) abort
+	call docker#api#restart_container(a:ctx.content[a:ctx.select].Id)
+	call s:docker_update_contents(a:ctx)
+endfunction
+
 " this is popup window filter function
 function! docker#container#functions(ctx, key) abort
 	let l:entry = a:ctx.content[a:ctx.select]
@@ -82,14 +96,19 @@ function! docker#container#functions(ctx, key) abort
 	elseif a:key ==# 's'
 		call s:docker_stop_container(a:ctx)
 	elseif a:key ==# 'd'
-		" TODO delete container
+		call popup_create("Do you delete the container? y/n",{
+					\ 'border': [],
+					\ 'filter': 'popup_filter_yesno',
+					\ 'callback': function('s:docker_delete_container', [a:ctx]),
+					\ 'zindex': 51,
+					\ })
 	elseif a:key ==# 'r'
-		" TODO restart container
-	elseif a:key ==# 'R'
-		" TODO refresh containers
-	elseif a:key ==# 'm'
+		call s:docker_restart_container(a:ctx)
+	elseif a:key ==# "m"
 		call popup_close(a:ctx.id)
 		call docker#monitor#start(l:entry.Id)
+	elseif a:key ==# 'R'
+		call s:docker_update_contents(a:ctx)
 	endif
 endfunction
 

@@ -29,12 +29,22 @@ function! s:docker_http_post(url, param, data) abort
 				\ })
 endfunction
 
+" http post
+function! s:docker_http_delete(url, param, data) abort
+	return s:HTTP.request(a:url, {
+				\ 'unixSocket': '/var/run/docker.sock',
+				\ 'method': 'DELETE',
+				\ 'param': a:param,
+				\ 'data' : a:data,
+				\ })
+endfunction
+
 " get containers
 function! docker#api#get_containers() abort
 	let l:response = s:docker_http_get('http://localhost/containers/json', {'all': 1})
 
 	if l:response.status ==# 400 || l:response.status ==# 500
-		call docker#util#echo_err(l:response.message)
+		call docker#util#echo_err(json_decode(l:response.content).message)
 		return []
 	endif
 
@@ -48,7 +58,7 @@ function! docker#api#start_container(id) abort
 	if l:response.status ==# 304
 		echo "container already started"
 	elseif l:response.status ==# 404 || l:response.status ==# 500
-		call docker#util#echo_err(l:response.message)
+		call docker#util#echo_err(json_decode(l:response.content).message)
 	else
 		echo ''
 	endif
@@ -61,7 +71,29 @@ function! docker#api#stop_container(id) abort
 	if l:response.status ==# 304
 		echo "container already stopped"
 	elseif l:response.status ==# 404 || l:response.status ==# 500
-		call docker#util#echo_err(l:response.message)
+		call docker#util#echo_err(json_decode(l:response.content).message)
+	else
+		echo ''
+	endif
+endfunction
+
+" restart container
+function! docker#api#restart_container(id) abort
+	echo 'restarting' a:id
+	let l:response = s:docker_http_post("http://localhost/containers/" .. a:id .. "/restart", {}, {})
+	if l:response.status ==# 404 || l:response.status ==# 500
+		call docker#util#echo_err(json_decode(l:response.content).message)
+	else
+		echo ''
+	endif
+endfunction
+
+" delete container
+function! docker#api#delete_container(id) abort
+	echo 'deleting' a:id
+	let l:response = s:docker_http_delete("http://localhost/containers/" .. a:id, {}, {})
+	if l:response.status ==# 404 || l:response.status ==# 500 || l:response.status ==# 409
+		call docker#util#echo_err(json_decode(l:response.content).message)
 	else
 		echo ''
 	endif
@@ -72,7 +104,7 @@ function! docker#api#get_images() abort
 	let l:response = s:docker_http_get("http://localhost/images/json", {})
 
 	if l:response.status ==# 500
-		call docker#util#echo_err(l:response.message)
+		call docker#util#echo_err(json_decode(l:response.content).message)
 		return []
 	endif
 

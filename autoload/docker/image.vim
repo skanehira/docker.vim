@@ -36,7 +36,7 @@ function! s:docker_image_get(offset, top) abort
 				\ }
 endfunction
 
-" get and popup images
+" get images and display on popup window
 function! docker#image#get() abort
 	let l:maxheight = 15
 	let l:top = l:maxheight - 4
