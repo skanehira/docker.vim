@@ -18,7 +18,7 @@ function! s:docker_image_get(offset, top) abort
 				\ 'header' : ['ID', 'REPOSITORY', 'TAG', 'CREATED', 'SIZE'],
 				\ })
 
-	let l:images = docker#api#get_images()
+	let l:images = docker#api#image#get()
 
 	for row in l:images[a:offset: a:offset + a:top - 1]
 		let l:image = docker#util#parse_image(row)

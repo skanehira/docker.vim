@@ -18,7 +18,7 @@ function! s:docker_container_get(offset, top) abort
 				\ 'header' : ['ID', 'NAME', 'IMAGE', 'STATUS', 'CREATED', 'PORTS'],
 				\ })
 
-	let l:containers = docker#api#get_containers()
+	let l:containers = docker#api#container#get()
 
 	for row in l:containers[a:offset: a:offset + a:top -1]
 		let l:container = docker#util#parse_container(row)
@@ -64,13 +64,13 @@ endfunction
 
 " start container
 function! s:docker_start_container(ctx) abort
-	call docker#api#start_container(a:ctx.content[a:ctx.select].Id)
+	call docker#api#container#start(a:ctx.content[a:ctx.select].Id)
 	call s:docker_update_contents(a:ctx)
 endfunction
 
 " stop container
 function! s:docker_stop_container(ctx) abort
-	call docker#api#stop_container(a:ctx.content[a:ctx.select].Id)
+	call docker#api#container#stop(a:ctx.content[a:ctx.select].Id)
 	call s:docker_update_contents(a:ctx)
 endfunction
 
@@ -79,19 +79,19 @@ function! s:docker_delete_container(ctx, id, key) abort
 	if a:key ==# -1 || a:key ==# 0
 		return
 	endif
-	call docker#api#delete_container(a:ctx.content[a:ctx.select].Id)
+	call docker#api#container#delete(a:ctx.content[a:ctx.select].Id)
 	call s:docker_update_contents(a:ctx)
 endfunction
 
 " restart container
 function! s:docker_restart_container(ctx) abort
-	call docker#api#restart_container(a:ctx.content[a:ctx.select].Id)
+	call docker#api#container#restart(a:ctx.content[a:ctx.select].Id)
 	call s:docker_update_contents(a:ctx)
 endfunction
 
 " kill container
 function! s:docker_kill_container(ctx) abort
-	call docker#api#kill_container(a:ctx.content[a:ctx.select].Id)
+	call docker#api#container#kill(a:ctx.content[a:ctx.select].Id)
 	call s:docker_update_contents(a:ctx)
 endfunction
 
@@ -123,7 +123,7 @@ function! docker#container#functions(ctx, key) abort
 			call docker#util#echo_err('please input command')
 			return
 		endif
-		call docker#api#attach_container(l:entry.Id, cmd)
+		call docker#api#container#attach(l:entry.Id, cmd)
 	elseif a:key ==# 'K'
 		call s:docker_kill_container(a:ctx)
 	endif
