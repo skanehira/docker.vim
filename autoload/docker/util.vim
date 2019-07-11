@@ -32,7 +32,8 @@ endfunction
 function! docker#util#parse_image(image) abort
 	let l:repo_tags = split(a:image.RepoTags[0], ':')
 	let l:new_image = {}
-	let l:new_image.Repo = l:repo_tags[0]
+	let repo = l:repo_tags[0]
+	let l:new_image.Repo = len(repo) > 20 ? repo[:20] .. '...' : repo
 	let l:new_image.Tag = l:repo_tags[1]
 	let l:new_image.Id = docker#util#parse_image_id(a:image.Id)
 	let l:new_image.Created = docker#util#parse_unix_date(a:image.Created)
@@ -63,9 +64,12 @@ endfunction
 function! docker#util#parse_container(container) abort
 	let _new = {}
 	let _new.Id = docker#util#parse_container_id(a:container.Id)
-	let _new.Name = a:container.Names[0][1:][:20] .. "..."
-	let _new.Image = a:container.Image[:20] .. "..."
-	let _new.Status = a:container.Status[:18] .. "..."
+	let name = a:container.Names[0][1:]
+	let _new.Name = len(name) > 20 ? name[:20] .. "..." : name
+	let image = a:container.Image[:20]
+	let _new.Image =  len(image) > 20 ? image[:20] .. "..." : image
+	let status = a:container.Status
+	let _new.Status =  len(status) > 18 ? status[:18] .. "..." : status
 	let _new.Created = docker#util#parse_unix_date(a:container.Created)
 	let _new.Ports = docker#util#parse_container_ports(a:container.Ports)
 	let _new.Command = a:container.Command
