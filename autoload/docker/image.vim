@@ -86,5 +86,15 @@ function! docker#image#functions(ctx, key) abort
 	endif
 endfunction
 
+" pull image
+function! docker#image#pull() abort
+	let image = input("image:")
+	if image ==# ''
+		call docker#util#echo_err('please input command')
+		return
+	endif
+	call docker#api#image#pull(image)
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

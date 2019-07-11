@@ -124,9 +124,6 @@ function! s:docker_popup_filter(ctx, id, key) abort
 		call popup_close(a:id)
 		return 1
 
-	elseif a:key ==# "\n" || a:key ==# "\r"
-		return 1
-
 	elseif a:key ==# 'j'
 		let a:ctx.highlight_idx += a:ctx.highlight_idx ==# len(a:ctx.view_content) -1 ? 0 : 1
 		let a:ctx.select += a:ctx.select ==# len(a:ctx.content) -1 ? 0 : 1
@@ -155,14 +152,16 @@ function! s:docker_popup_filter(ctx, id, key) abort
 		let a:ctx.select = len(a:ctx.content) - 1
 		if len(a:ctx.content) > a:ctx.top
 			let a:ctx.offset = len(a:ctx.content) - a:ctx.top
+			call s:docker_update_view_content(a:ctx)
 		endif
-		call s:docker_update_view_content(a:ctx)
 	endif
 
 	if a:ctx.type == 'container'
 		call docker#container#functions(a:ctx, a:key)
+		call window#util#update_poup_window(a:ctx)
 	elseif a:ctx.type == 'image'
 		call docker#image#functions(a:ctx, a:key)
+		call window#util#update_poup_window(a:ctx)
 	endif
 
 	if a:key != "\<CursorHold>"

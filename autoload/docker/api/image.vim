@@ -40,5 +40,26 @@ function! docker#api#image#delete(id) abort
 	endif
 endfunction
 
+" pull image
+function! docker#api#image#pull(image) abort
+	let image_tag = split(a:image, ':')
+	if len(image_tag) < 2
+		call add(image_tag, 'latest')
+	endif
+
+	redraw
+	let param = join(image_tag, ":")
+	echo "pulling" param
+	let l:response = docker#api#http#post("http://localhost/images/create", {
+				\ 'fromImage': param,
+				\ }, {})
+	if l:response.status ==# 404 || l:response.status ==# 500
+		call docker#util#echo_err(json_decode(l:response.content).message)
+	else
+		echo ''
+		redraw
+	endif
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

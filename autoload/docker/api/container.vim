@@ -83,8 +83,7 @@ function! docker#api#container#attach(id, cmd) abort
 		call docker#util#echo_err('the container is not running')
 		return
 	endif
-	let command = 'term ++close bash -c "docker exec -it ' .. a:id  .. ' ' .. a:cmd .. '"'
-	exe command
+	exe 'term ++close bash -c "docker exec -it ' .. a:id  .. ' ' .. a:cmd .. '"'
 endfunction
 
 " kill container
