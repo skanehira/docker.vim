@@ -83,8 +83,15 @@ function! s:docker_delete_container(ctx, id, key) abort
 	call s:docker_update_contents(a:ctx)
 endfunction
 
+" restart container
 function! s:docker_restart_container(ctx) abort
 	call docker#api#restart_container(a:ctx.content[a:ctx.select].Id)
+	call s:docker_update_contents(a:ctx)
+endfunction
+
+" kill container
+function! s:docker_kill_container(ctx) abort
+	call docker#api#kill_container(a:ctx.content[a:ctx.select].Id)
 	call s:docker_update_contents(a:ctx)
 endfunction
 
@@ -113,9 +120,12 @@ function! docker#container#functions(ctx, key) abort
 		call popup_close(a:ctx.id)
 		let cmd = input("command:")
 		if cmd ==# ''
+			call docker#util#echo_err('please input command')
 			return
 		endif
 		call docker#api#attach_container(l:entry.Id, cmd)
+	elseif a:key ==# 'K'
+		call s:docker_kill_container(a:ctx)
 	endif
 endfunction
 

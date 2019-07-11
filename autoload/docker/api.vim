@@ -118,6 +118,17 @@ function! docker#api#attach_container(id, cmd) abort
 	exe command
 endfunction
 
+" kill container
+function! docker#api#kill_container(id) abort
+	echo 'killing' a:id
+	let l:response = s:docker_http_post("http://localhost/containers/" .. a:id .. "/kill", {}, {})
+	if l:response.status ==# 404 || l:response.status ==# 500 || l:response.status ==# 409
+		call docker#util#echo_err(json_decode(l:response.content).message)
+	else
+		echo ''
+	endif
+endfunction
+
 " check the container state
 " if the container is running then will return true
 function! docker#api#is_runiing_container(id) abort
