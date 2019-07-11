@@ -13,7 +13,7 @@ if !exists('s:docker_loaded_highlight')
 	let s:docker_loaded_highlight = 1
 	try
 		call prop_type_add('docker_select', {'highlight': 'PmenuSel'})
-		call prop_type_add('docker_status_running', {'highlight': 'DiffText'})
+		call prop_type_add('docker_status_running', {'highlight': 'DiffText', 'priority':1})
 	catch /.*/
 		call docker#util#echo_err(v:exception)
 	endtry
