@@ -40,7 +40,6 @@ endfunction
 
 " update popup window content
 function! window#util#update_poup_window(ctx) abort
-	call s:docker_update_view_content(a:ctx)
 	let l:win_buf = winbufnr(a:ctx.id)
 
 	if l:win_buf ==# -1
@@ -133,6 +132,7 @@ function! s:docker_popup_filter(ctx, id, key) abort
 		let a:ctx.select += a:ctx.select ==# len(a:ctx.content) -1 ? 0 : 1
 		if a:ctx.select >= a:ctx.offset + a:ctx.top
 			let a:ctx.offset = a:ctx.select - (a:ctx.top - 1)
+			call s:docker_update_view_content(a:ctx)
 		endif
 
 	elseif a:key ==# 'k'
@@ -141,6 +141,7 @@ function! s:docker_popup_filter(ctx, id, key) abort
 		let a:ctx.select -= a:ctx.select ==# 0 ? 0 : 1
 		if a:ctx.select < a:ctx.offset
 			let a:ctx.offset = a:ctx.select
+			call s:docker_update_view_content(a:ctx)
 		endif
 
 	elseif a:key ==# '0'
@@ -148,31 +149,34 @@ function! s:docker_popup_filter(ctx, id, key) abort
 		let a:ctx.select = 0
 		let a:ctx.offset = 0
 		let a:ctx.top = a:ctx.maxheight - 4
-
+		call s:docker_update_view_content(a:ctx)
 	elseif a:key ==# 'G'
 		let a:ctx.highlight_idx = len(a:ctx.view_content) - 1
 		let a:ctx.select = len(a:ctx.content) - 1
-		let a:ctx.offset = len(a:ctx.content) - a:ctx.top
+		if len(a:ctx.content) > a:ctx.top
+			let a:ctx.offset = len(a:ctx.content) - a:ctx.top
+		endif
+		call s:docker_update_view_content(a:ctx)
 	endif
 
 	if a:ctx.type == 'container'
 		call docker#container#functions(a:ctx, a:key)
 	endif
 
-	call window#util#update_poup_window(a:ctx)
+	if a:key != "\<CursorHold>"
+		call window#util#update_poup_window(a:ctx)
+	endif
 	return 1
 endfunction
 
 function! s:docker_update_view_content(ctx) abort
-	let idx = 0
-
 	if a:ctx.type ==# 'image'
 		let l:image_table = s:TABLE.new({
 					\ 'columns': [{},{},{},{},{}],
 					\ 'header' : ['ID', 'REPOSITORY', 'TAG', 'CREATED', 'SIZE'],
 					\ })
 
-		for row in a:ctx.content[a:ctx.offset:a:ctx.offset + a:ctx.top-1]
+		for row in a:ctx.content[a:ctx.offset:a:ctx.offset + a:ctx.top - 1]
 			let l:image = docker#util#parse_image(row)
 
 			call l:image_table.add_row([
@@ -190,7 +194,7 @@ function! s:docker_update_view_content(ctx) abort
 					\ 'header' : ['ID', 'NAME', 'IMAGE', 'STATUS', 'CREATED', 'PORTS'],
 					\ })
 
-		for row in a:ctx.content[a:ctx.offset: a:ctx.offset + a:ctx.top -1]
+		for row in a:ctx.content[a:ctx.offset: a:ctx.offset + a:ctx.top - 1]
 			let l:container = docker#util#parse_container(row)
 			call l:container_table.add_row([
 						\ l:container.Id,
