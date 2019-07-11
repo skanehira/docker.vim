@@ -102,7 +102,7 @@ function! docker#container#functions(ctx, key) abort
 		call s:docker_start_container(a:ctx)
 	elseif a:key ==# 's'
 		call s:docker_stop_container(a:ctx)
-	elseif a:key ==# 'd'
+	elseif a:key ==# ''
 		call popup_create("Do you delete the container? y/n",{
 					\ 'border': [],
 					\ 'filter': 'popup_filter_yesno',

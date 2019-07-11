@@ -74,7 +74,7 @@ endfunction
 " this is popup window filter function
 function! docker#image#functions(ctx, key) abort
 	let l:entry = a:ctx.content[a:ctx.select]
-	if a:key ==# 'd'
+	if a:key ==# ''
 		call popup_create("Do you delete the image? y/n",{
 					\ 'border': [],
 					\ 'filter': 'popup_filter_yesno',
