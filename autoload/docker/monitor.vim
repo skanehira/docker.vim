@@ -7,7 +7,13 @@ let s:docker_monitor_window = 0
 let s:docker_monitor_timer_id = 0
 let s:docker_stats_response = []
 let s:docker_move_filter_disable = 0
-
+let s:keys = {
+			\ 'left'  : 104,
+			\ 'down'  : 106,
+			\ 'up'    : 107,
+			\ 'right' : 108,
+			\ 'enter' : 13,
+			\ }
 " 100 -                      |
 "     |                      |
 " 80  -                      |
@@ -119,33 +125,39 @@ function! s:docker_calculate_mem(response) abort
 	return  float2nr(usage * 1.0 / mem_stats.limit * 100)
 endfunction
 
-function! s:docker_move_monitor_window_filter(id, key) abort
-	if s:docker_move_filter_disable ==# 1
-		return 0
+function! docker#monitor#move() abort
+	if s:docker_monitor_window ==# 0
+		call docker#util#echo_err('no monitor window')
+		return
 	endif
+	echo "[move monitor window] left:h down:j up:k right:l done:enter"
 
-	echo "[move monitor window mode] h:left j:down k:up l:right enter:done"
+	while 1
+		let opt = popup_getoptions(s:docker_monitor_window)
+		if type(opt) !=# type({}) || empty(opt)
+			call docker#util#echo_err('cannot get monitor window position')
+			break
+		endif
 
-	let opt = popup_getoptions(a:id)
-	if type(opt) !=# type({})
-		return 0
-	endif
+		let c = getchar()
+		if c ==# s:keys.enter
+			redraw
+			echo ''
+			break
+		endif
 
-	if a:key ==# 'h'
-		let opt.col -= 2
-	elseif a:key ==# 'j'
-		let opt.line += 2
-	elseif a:key ==# 'k'
-		let opt.line -= 2
-	elseif a:key ==# 'l'
-		let opt.col += 2
-	elseif a:key ==# "\n" || a:key ==# "\r"
-		echo ''
-		let s:docker_move_filter_disable = 1
-		return 0
-	endif
-	call popup_move(a:id, opt)
-	return 1
+		if c ==# s:keys.left
+			let opt.col -= 2
+		elseif c ==# s:keys.down
+			let opt.line += 2
+		elseif c ==# s:keys.up
+			let opt.line -= 2
+		elseif c ==# s:keys.right
+			let opt.col += 2
+		endif
+		call popup_move(s:docker_monitor_window, opt)
+		redraw
+	endwhile
 endfunction
 
 function! docker#monitor#start(id) abort
@@ -162,7 +174,6 @@ function! docker#monitor#start(id) abort
 
 	let s:docker_move_filter_disable = 1
 	let s:docker_monitor_window = popup_create(s:docker_make_graph(0, 0),{
-				\ 'filter': function('s:docker_move_monitor_window_filter'),
 				\ 'callback': function('s:docker_stop_monitor_timer'),
 				\ 'line': &lines/2-6,
 				\ 'col': &columns/2-12,
@@ -173,15 +184,11 @@ endfunction
 
 function! s:docker_stop_monitor_timer(id, result) abort
 	silent call timer_stop(s:docker_monitor_timer_id)
+	let s:docker_monitor_window = 0
 endfunction
 
 function! docker#monitor#stop() abort
-	silent call timer_stop(s:docker_monitor_timer_id)
 	call popup_close(s:docker_monitor_window)
-endfunction
-
-function! docker#monitor#move() abort
-	let s:docker_move_filter_disable = 0
 endfunction
 
 let &cpo = s:save_cpo
