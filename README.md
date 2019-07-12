@@ -71,10 +71,15 @@ containers
 | attach container   | a      |
 | delete container   | ctrl-d |
 | rename container   | ctrl-r |
+| scroll to top      | 0      |
+| scroll to bottom   | G      |
+
 
 images
 
-| operation      | key    |
-|----------------|--------|
-| refresh images | R      |
-| delete image   | ctrl-d |
+| operation        | key    |
+|------------------|--------|
+| refresh images   | R      |
+| delete image     | ctrl-d |
+| scroll to top    | 0      |
+| scroll to bottom | G      |
