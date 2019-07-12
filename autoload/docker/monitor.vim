@@ -140,6 +140,7 @@ function! s:docker_move_monitor_window_filter(id, key) abort
 	elseif a:key ==# 'l'
 		let opt.col += 2
 	elseif a:key ==# "\n" || a:key ==# "\r"
+		echo ''
 		let s:docker_move_filter_disable = 1
 		return 0
 	endif
