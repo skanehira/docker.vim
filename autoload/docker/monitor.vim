@@ -59,8 +59,7 @@ function s:docker_make_graph(cpu, mem) abort
 endfunction
 
 function! s:docker_update_graph(cpu, mem) abort
-	call win_execute(s:docker_monitor_window, '%d_')
-	call setbufline(winbufnr(s:docker_monitor_window), 1, s:docker_make_graph(a:cpu, a:mem))
+	call popup_settext(s:docker_monitor_window, s:docker_make_graph(a:cpu, a:mem))
 endfunction
 
 function! s:docker_stats_out_cb(ch, result) abort
@@ -75,7 +74,7 @@ function! s:docker_stats_exit_cb(job, status) abort
 	endif
 
 	if has_key(s:docker_stats_response, 'message')
-		call util#echo_err(s:docker_stats_response)
+		call util#echo_err(s:docker_stats_response.message)
 		call monitor#stop_monitoring()
 		return
 	endif
