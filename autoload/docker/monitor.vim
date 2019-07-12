@@ -5,7 +5,7 @@ scriptencoding utf-8
 
 let s:docker_monitor_window = 0
 let s:docker_monitor_timer_id = 0
-let s:docker_stats_response = []
+let s:docker_stats_response = {}
 let s:docker_move_filter_disable = 0
 let s:keys = {
 			\ 'left'  : 104,
@@ -14,6 +14,7 @@ let s:keys = {
 			\ 'right' : 108,
 			\ 'enter' : 13,
 			\ }
+
 " 100 -                      |
 "     |                      |
 " 80  -                      |
@@ -63,8 +64,7 @@ function! s:docker_update_graph(cpu, mem) abort
 endfunction
 
 function! s:docker_stats_out_cb(ch, result) abort
-	let s:docker_stats_response = []
-	call add(s:docker_stats_response, json_decode(a:result))
+	let s:docker_stats_response = json_decode(a:result)
 endfunction
 
 function! s:docker_stats_exit_cb(job, status) abort
@@ -74,13 +74,12 @@ function! s:docker_stats_exit_cb(job, status) abort
 		return
 	endif
 
-	let response = s:docker_stats_response[0]
-	if has_key(response, 'message')
-		call util#echo_err(response.message)
+	if has_key(s:docker_stats_response, 'message')
+		call util#echo_err(s:docker_stats_response)
 		call monitor#stop_monitoring()
 		return
 	endif
-	call s:docker_update_graph(s:docker_calculate_cpu(response), s:docker_calculate_mem(response))
+	call s:docker_update_graph(s:docker_calculate_cpu(s:docker_stats_response), s:docker_calculate_mem(s:docker_stats_response))
 endfunction
 
 function! s:docker_update_stats(id, timer) abort
@@ -185,9 +184,11 @@ endfunction
 function! s:docker_stop_monitor_timer(id, result) abort
 	silent call timer_stop(s:docker_monitor_timer_id)
 	let s:docker_monitor_window = 0
+	let s:docker_monitor_timer_id = 0
 endfunction
 
 function! docker#monitor#stop() abort
+	silent call timer_stop(s:docker_monitor_timer_id)
 	call popup_close(s:docker_monitor_window)
 endfunction
 
