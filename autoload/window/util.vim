@@ -45,8 +45,7 @@ function! window#util#update_poup_window(ctx) abort
 	if l:win_buf ==# -1
 		return
 	endif
-	call win_execute(l:win_buf, '%d_')
-	call setbufline(l:win_buf, 1, a:ctx.view_content)
+	call popup_settext(a:ctx.id, a:ctx.view_content)
 	call s:docker_update_highlight(a:ctx)
 endfunction
 
@@ -119,7 +118,10 @@ endfunction
 
 " popup window filter
 function! s:docker_popup_filter(ctx, id, key) abort
-	"let l:buf = winbufnr(a:id)
+	if a:ctx.disable_filter
+		return 0
+	endif
+
 	if a:key ==# 'q' || a:key ==# 'x'
 		call popup_close(a:id)
 		return 1

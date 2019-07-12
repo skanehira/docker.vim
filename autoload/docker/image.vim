@@ -50,7 +50,8 @@ function! docker#image#get() abort
 				\ 'view_content': l:contents.view_content,
 				\ 'maxheight': l:maxheight,
 				\ 'top': l:top,
-				\ 'offset': 0}
+				\ 'offset': 0,
+				\ 'disable_filter': 0}
 
 	call window#util#create_popup_window(l:ctx)
 endfunction
@@ -63,24 +64,23 @@ function! s:docker_update_contents(ctx) abort
 endfunction
 
 " delete image
-function! s:docker_delete_image(ctx, id, key) abort
-	if a:key ==# -1 || a:key ==# 0
-		return
+function! s:docker_delete_image(ctx) abort
+	let a:ctx.disable_filter = 1
+	let result = input('Do you delete the image? y/n:')
+	echo ''
+	redraw
+	if result ==# 'y' || result ==# 'Y'
+		call docker#api#image#delete(a:ctx.content[a:ctx.select].Id)
+		call s:docker_update_contents(a:ctx)
 	endif
-	call docker#api#image#delete(a:ctx.content[a:ctx.select].Id)
-	call s:docker_update_contents(a:ctx)
+	let a:ctx.disable_filter = 0
 endfunction
 
 " this is popup window filter function
 function! docker#image#functions(ctx, key) abort
 	let l:entry = a:ctx.content[a:ctx.select]
 	if a:key ==# ''
-		call popup_create("Do you delete the image? y/n",{
-					\ 'border': [],
-					\ 'filter': 'popup_filter_yesno',
-					\ 'callback': function('s:docker_delete_image', [a:ctx]),
-					\ 'zindex': 51,
-					\ })
+		call s:docker_delete_image(a:ctx)
 	elseif a:key ==# 'R'
 		call s:docker_update_contents(a:ctx)
 	endif
