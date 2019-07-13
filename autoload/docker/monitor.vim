@@ -6,7 +6,6 @@ scriptencoding utf-8
 let s:docker_monitor_window = 0
 let s:docker_monitor_timer_id = 0
 let s:docker_stats_response = {}
-let s:docker_move_filter_disable = 0
 let s:keys = {
 			\ 'left'  : 104,
 			\ 'down'  : 106,
@@ -15,6 +14,8 @@ let s:keys = {
 			\ 'enter' : 13,
 			\ }
 
+" id: 4ee503fb4646
+"     ------------------------
 " 100 -                      |
 "     |                      |
 " 80  -                      |
@@ -27,11 +28,11 @@ let s:keys = {
 "     |  ■■■■■■      ■■■■■■  |
 " 0   ------------------------
 "       CPU(30%)     MEM(40%)
-function s:docker_make_graph(cpu, mem) abort
+function s:docker_make_graph(id, cpu, mem) abort
 	let graph = []
+	call add(graph, 'id: ' .. a:id)
 	call add(graph, '    ------------------------')
 	for line_num in [100,90,80,70,60,50,40,30,20,10]
-		" 偶数行はパーセンテージの値を表示する
 		let line = ''
 		if line_num % 20 ==# 0
 			let line = printf('%3d -',line_num)
@@ -58,35 +59,35 @@ function s:docker_make_graph(cpu, mem) abort
 	return graph
 endfunction
 
-function! s:docker_update_graph(cpu, mem) abort
-	call popup_settext(s:docker_monitor_window, s:docker_make_graph(a:cpu, a:mem))
+function! s:docker_update_graph(id, cpu, mem) abort
+	call popup_settext(s:docker_monitor_window, s:docker_make_graph(a:id, a:cpu, a:mem))
 endfunction
 
 function! s:docker_stats_out_cb(ch, result) abort
 	let s:docker_stats_response = json_decode(a:result)
 endfunction
 
-function! s:docker_stats_exit_cb(job, status) abort
+function! s:docker_stats_exit_cb(id, job, status) abort
 	if empty(s:docker_stats_response)
-		call util#echo_err('response is empty')
-		call monitor#stop_monitoring()
+		call docker#util#echo_err('response is empty')
+		call docker#monitor#stop()
 		return
 	endif
 
 	if has_key(s:docker_stats_response, 'message')
-		call util#echo_err(s:docker_stats_response.message)
-		call monitor#stop_monitoring()
+		call docker#util#echo_err(s:docker_stats_response.message)
+		call docker#monitor#stop()
 		return
 	endif
-	call s:docker_update_graph(s:docker_calculate_cpu(s:docker_stats_response), s:docker_calculate_mem(s:docker_stats_response))
+	call s:docker_update_graph(a:id, s:docker_calculate_cpu(s:docker_stats_response), s:docker_calculate_mem(s:docker_stats_response))
 endfunction
 
 function! s:docker_update_stats(id, timer) abort
-	let cmd = ['curl', '-s', '--unix-socket', '/var/run/docker.sock', 'http://localhost/containers/' .. a:id ..'/stats?stream=false']
+	let cmd = ['curl', '-s', '--unix-socket', '/var/run/docker.sock', 'http://localhost/containers/' .. trim(a:id) ..'/stats?stream=false']
 
 	call job_start(cmd, {
 				\'callback': function('s:docker_stats_out_cb'),
-				\'exit_cb': function('s:docker_stats_exit_cb'),
+				\'exit_cb': function('s:docker_stats_exit_cb', [docker#util#parse_container_id(a:id)]),
 				\})
 endfunction
 
@@ -128,10 +129,10 @@ function! docker#monitor#move() abort
 		call docker#util#echo_err('no monitor window')
 		return
 	endif
-	echo "[move monitor window] left:h down:j up:k right:l done:enter"
+	echo '[move monitor window]... "h": left, "j": down, "k": up, "l": right, "Enter": finish'
 
 	while 1
-		let opt = popup_getoptions(s:docker_monitor_window)
+		let opt = popup_getpos(s:docker_monitor_window)
 		if type(opt) !=# type({}) || empty(opt)
 			call docker#util#echo_err('cannot get monitor window position')
 			break
@@ -166,12 +167,9 @@ function! docker#monitor#start(id) abort
 		return
 	endif
 
-	if s:docker_monitor_window !=# 0
-		call popup_close(s:docker_monitor_window)
-	endif
+	call docker#monitor#stop()
 
-	let s:docker_move_filter_disable = 1
-	let s:docker_monitor_window = popup_create(s:docker_make_graph(0, 0),{
+	let s:docker_monitor_window = popup_create(s:docker_make_graph(docker#util#parse_container_id(a:id), 0, 0),{
 				\ 'callback': function('s:docker_stop_monitor_timer'),
 				\ 'line': &lines/2-6,
 				\ 'col': &columns/2-12,
