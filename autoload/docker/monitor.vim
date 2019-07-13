@@ -5,7 +5,6 @@ scriptencoding utf-8
 
 let s:docker_monitor_window = 0
 let s:docker_monitor_timer_id = 0
-let s:docker_stats_response = {}
 let s:keys = {
 			\ 'left'  : 104,
 			\ 'down'  : 106,
@@ -63,31 +62,27 @@ function! s:docker_update_graph(id, cpu, mem) abort
 	call popup_settext(s:docker_monitor_window, s:docker_make_graph(a:id, a:cpu, a:mem))
 endfunction
 
-function! s:docker_stats_out_cb(ch, result) abort
-	let s:docker_stats_response = json_decode(a:result)
-endfunction
-
-function! s:docker_stats_exit_cb(id, job, status) abort
-	if empty(s:docker_stats_response)
+function! s:docker_stats_out_cb(id, ch, result) abort
+	let res = json_decode(a:result)
+	if empty(res)
 		call docker#util#echo_err('response is empty')
 		call docker#monitor#stop()
 		return
 	endif
 
-	if has_key(s:docker_stats_response, 'message')
-		call docker#util#echo_err(s:docker_stats_response.message)
+	if has_key(res, 'message')
+		call docker#util#echo_err(res.message)
 		call docker#monitor#stop()
 		return
 	endif
-	call s:docker_update_graph(a:id, s:docker_calculate_cpu(s:docker_stats_response), s:docker_calculate_mem(s:docker_stats_response))
+	call s:docker_update_graph(a:id, s:docker_calculate_cpu(res), s:docker_calculate_mem(res))
 endfunction
 
 function! s:docker_update_stats(id, timer) abort
 	let cmd = ['curl', '-s', '--unix-socket', '/var/run/docker.sock', 'http://localhost/containers/' .. trim(a:id) ..'/stats?stream=false']
 
 	call job_start(cmd, {
-				\'callback': function('s:docker_stats_out_cb'),
-				\'exit_cb': function('s:docker_stats_exit_cb', [docker#util#parse_container_id(a:id)]),
+				\'callback': function('s:docker_stats_out_cb', [docker#util#parse_container_id(a:id)]),
 				\})
 endfunction
 
