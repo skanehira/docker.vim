@@ -40,6 +40,15 @@ function! docker#api#image#delete(id) abort
 	endif
 endfunction
 
+" image pull callback
+function! s:docker_image_pull_cb(response) abort
+	if a:response.status ==# 200
+		echo 'pull image successed'
+	else
+		call docker#util#echo_err(a:response.content.message)
+	endif
+endfunction
+
 " pull image
 function! docker#api#image#pull(image) abort
 	let image_tag = split(a:image, ':')
@@ -50,15 +59,12 @@ function! docker#api#image#pull(image) abort
 	redraw
 	let param = join(image_tag, ":")
 	echo "pulling" param
-	let l:response = docker#api#http#post("http://localhost/images/create", {
-				\ 'fromImage': param,
-				\ }, {})
-	if l:response.status ==# 404 || l:response.status ==# 500
-		call docker#util#echo_err(json_decode(l:response.content).message)
-	else
-		echo ''
-		redraw
-	endif
+
+	call docker#api#http#async_post("http://localhost/images/create", 
+				\ {'fromImage': param},
+				\ {},
+				\ function('s:docker_image_pull_cb'),
+				\ )
 endfunction
 
 let &cpo = s:save_cpo
