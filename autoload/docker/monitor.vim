@@ -3,8 +3,8 @@ set cpo&vim
 
 scriptencoding utf-8
 
-let s:docker_monitor_window = 0
-let s:docker_monitor_timer_id = 0
+let s:monitor_window = 0
+let s:monitor_timer_id = 0
 let s:keys = {
 			\ 'left'  : 104,
 			\ 'down'  : 106,
@@ -27,7 +27,7 @@ let s:keys = {
 "     |  ■■■■■■      ■■■■■■  |
 " 0   ------------------------
 "       CPU(30%)     MEM(40%)
-function s:docker_make_graph(id, cpu, mem) abort
+function s:make_graph(id, cpu, mem) abort
 	let graph = []
 	call add(graph, 'id: ' .. a:id)
 	call add(graph, '    ------------------------')
@@ -58,11 +58,11 @@ function s:docker_make_graph(id, cpu, mem) abort
 	return graph
 endfunction
 
-function! s:docker_update_graph(id, cpu, mem) abort
-	call popup_settext(s:docker_monitor_window, s:docker_make_graph(a:id, a:cpu, a:mem))
+function! s:update_graph(id, cpu, mem) abort
+	call popup_settext(s:monitor_window, s:make_graph(a:id, a:cpu, a:mem))
 endfunction
 
-function! s:docker_stats_out_cb(id, ch, result) abort
+function! s:stats_out_cb(id, ch, result) abort
 	let res = json_decode(a:result)
 	if empty(res)
 		call docker#util#echo_err('response is empty')
@@ -75,18 +75,18 @@ function! s:docker_stats_out_cb(id, ch, result) abort
 		call docker#monitor#stop()
 		return
 	endif
-	call s:docker_update_graph(a:id, s:docker_calculate_cpu(res), s:docker_calculate_mem(res))
+	call s:update_graph(a:id, s:calculate_cpu(res), s:calculate_mem(res))
 endfunction
 
-function! s:docker_update_stats(id, timer) abort
+function! s:update_stats(id, timer) abort
 	let cmd = ['curl', '-s', '--unix-socket', '/var/run/docker.sock', 'http://localhost/containers/' .. trim(a:id) ..'/stats?stream=false']
 
 	call job_start(cmd, {
-				\'callback': function('s:docker_stats_out_cb', [docker#util#parse_container_id(a:id)]),
+				\'callback': function('s:stats_out_cb', [docker#util#parse_container_id(a:id)]),
 				\})
 endfunction
 
-function! s:docker_calculate_cpu(response) abort
+function! s:calculate_cpu(response) abort
 	let cpu_percent = 0
 	let cpu_stats = a:response.cpu_stats
 	let precpu_stats = a:response.precpu_stats
@@ -107,7 +107,7 @@ function! s:docker_calculate_cpu(response) abort
 	return float2nr(cpu_percent)
 endfunction
 
-function! s:docker_calculate_mem(response) abort
+function! s:calculate_mem(response) abort
 	let mem_stats = a:response.memory_stats
 	if !has_key(mem_stats, 'limit')
 		return 0
@@ -120,14 +120,14 @@ function! s:docker_calculate_mem(response) abort
 endfunction
 
 function! docker#monitor#move() abort
-	if s:docker_monitor_window ==# 0
+	if s:monitor_window ==# 0
 		call docker#util#echo_err('no monitor window')
 		return
 	endif
 	echo '[move monitor window]... "h": left, "j": down, "k": up, "l": right, "Enter": finish'
 
 	while 1
-		let opt = popup_getpos(s:docker_monitor_window)
+		let opt = popup_getpos(s:monitor_window)
 		if type(opt) !=# type({}) || empty(opt)
 			call docker#util#echo_err('cannot get monitor window position')
 			break
@@ -149,7 +149,7 @@ function! docker#monitor#move() abort
 		elseif c ==# s:keys.right
 			let opt.col += 2
 		endif
-		call popup_move(s:docker_monitor_window, opt)
+		call popup_move(s:monitor_window, opt)
 		redraw
 	endwhile
 endfunction
@@ -164,24 +164,24 @@ function! docker#monitor#start(id) abort
 
 	call docker#monitor#stop()
 
-	let s:docker_monitor_window = popup_create(s:docker_make_graph(docker#util#parse_container_id(a:id), 0, 0),{
-				\ 'callback': function('s:docker_stop_monitor_timer'),
+	let s:monitor_window = popup_create(s:make_graph(docker#util#parse_container_id(a:id), 0, 0),{
+				\ 'callback': function('s:stop_monitor_timer'),
 				\ 'line': &lines/2-6,
 				\ 'col': &columns/2-12,
 				\ })
 
-	let s:docker_monitor_timer_id = timer_start(2000, function('s:docker_update_stats', [a:id]), {'repeat': -1})
+	let s:monitor_timer_id = timer_start(2000, function('s:update_stats', [a:id]), {'repeat': -1})
 endfunction
 
-function! s:docker_stop_monitor_timer(id, result) abort
-	silent call timer_stop(s:docker_monitor_timer_id)
-	let s:docker_monitor_window = 0
-	let s:docker_monitor_timer_id = 0
+function! s:stop_monitor_timer(id, result) abort
+	silent call timer_stop(s:monitor_timer_id)
+	let s:monitor_window = 0
+	let s:monitor_timer_id = 0
 endfunction
 
 function! docker#monitor#stop() abort
-	silent call timer_stop(s:docker_monitor_timer_id)
-	call popup_close(s:docker_monitor_window)
+	silent call timer_stop(s:monitor_timer_id)
+	call popup_close(s:monitor_window)
 endfunction
 
 let &cpo = s:save_cpo

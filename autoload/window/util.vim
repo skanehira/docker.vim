@@ -9,11 +9,11 @@ let s:TABLE = s:V.import('Text.Table')
 let s:last_buffer = 0
 let s:last_popup_window = 0
 
-if !exists('s:docker_loaded_highlight')
-	let s:docker_loaded_highlight = 1
+if !exists('s:loaded_highlight')
+	let s:loaded_highlight = 1
 	try
-		call prop_type_add('docker_select', {'highlight': 'PmenuSel'})
-		call prop_type_add('docker_status_running', {'highlight': 'DiffText', 'priority':1})
+		call prop_type_add('select', {'highlight': 'PmenuSel'})
+		call prop_type_add('status_running', {'highlight': 'DiffText', 'priority':1})
 	catch /.*/
 		call docker#util#echo_err(v:exception)
 	endtry
@@ -29,13 +29,13 @@ function! window#util#create_popup_window(ctx) abort
 	call popup_close(s:last_popup_window)
 
 	let a:ctx.id = popup_create(a:ctx.view_content, {
-				\ 'filter': function('s:docker_popup_filter', [a:ctx]),
+				\ 'filter': function('s:popup_filter', [a:ctx]),
 				\ 'title': a:ctx.title,
 				\ 'maxheight': a:ctx.maxheight,
 				\ })
 
 	let s:last_popup_window = a:ctx.id
-	call s:docker_update_highlight(a:ctx)
+	call s:update_highlight(a:ctx)
 endfunction
 
 " update popup window content
@@ -46,7 +46,7 @@ function! window#util#update_poup_window(ctx) abort
 		return
 	endif
 	call popup_settext(a:ctx.id, a:ctx.view_content)
-	call s:docker_update_highlight(a:ctx)
+	call s:update_highlight(a:ctx)
 endfunction
 
 " create buffer window
@@ -65,33 +65,33 @@ function! window#util#create_buffer_window(content) abort
 endfunction
 
 " highlight table in popup window
-function! s:docker_select_highlight(ctx) abort
+function! s:select_highlight(ctx) abort
 	let l:buf = winbufnr(a:ctx.id)
 	let l:length = len(a:ctx.view_content[0])
 	let l:lnum = a:ctx.highlight_idx
 
 	call prop_remove({
-				\ 'type': 'docker_select',
+				\ 'type': 'select',
 				\ 'bufnr': l:buf,
 				\ })
 
 	call prop_add(l:lnum, 1, {
 				\ 'bufnr': l:buf,
-				\ 'type': 'docker_select',
+				\ 'type': 'select',
 				\ 'length': l:length,
 				\ })
 
 endfunction
 
 " highlight running container
-function! s:docker_status_highlight(ctx) abort
+function! s:status_highlight(ctx) abort
 	let l:lnum = 4
 	let l:lnum_end = len(a:ctx.view_content)
 	let l:length = len(a:ctx.view_content[0])
 	let l:buf = winbufnr(a:ctx.id)
 
 	call prop_remove({
-				\ 'type': 'docker_status_running',
+				\ 'type': 'status_running',
 				\ 'bufnr': l:buf,
 				\ })
 
@@ -99,7 +99,7 @@ function! s:docker_status_highlight(ctx) abort
 		if content.State ==# "running"
 			call prop_add(l:lnum, 1, {
 						\ 'bufnr': l:buf,
-						\ 'type': 'docker_status_running',
+						\ 'type': 'status_running',
 						\ 'length': l:length,
 						\ })
 		endif
@@ -108,16 +108,16 @@ function! s:docker_status_highlight(ctx) abort
 endfunction
 
 " update table highlight
-function! s:docker_update_highlight(ctx) abort
-	call s:docker_select_highlight(a:ctx)
+function! s:update_highlight(ctx) abort
+	call s:select_highlight(a:ctx)
 	if a:ctx.type ==# 'container'
-		call s:docker_status_highlight(a:ctx)
+		call s:status_highlight(a:ctx)
 	endif
 	call win_execute(a:ctx.id, 'redraw')
 endfunction
 
 " popup window filter
-function! s:docker_popup_filter(ctx, id, key) abort
+function! s:popup_filter(ctx, id, key) abort
 	if a:ctx.disable_filter
 		return 0
 	endif
@@ -131,7 +131,7 @@ function! s:docker_popup_filter(ctx, id, key) abort
 		let a:ctx.select += a:ctx.select ==# len(a:ctx.content) -1 ? 0 : 1
 		if a:ctx.select >= a:ctx.offset + a:ctx.top
 			let a:ctx.offset = a:ctx.select - (a:ctx.top - 1)
-			call s:docker_update_view_content(a:ctx)
+			call s:update_view_content(a:ctx)
 		endif
 
 	elseif a:key ==# 'k'
@@ -140,7 +140,7 @@ function! s:docker_popup_filter(ctx, id, key) abort
 		let a:ctx.select -= a:ctx.select ==# 0 ? 0 : 1
 		if a:ctx.select < a:ctx.offset
 			let a:ctx.offset = a:ctx.select
-			call s:docker_update_view_content(a:ctx)
+			call s:update_view_content(a:ctx)
 		endif
 
 	elseif a:key ==# '0'
@@ -148,13 +148,13 @@ function! s:docker_popup_filter(ctx, id, key) abort
 		let a:ctx.select = 0
 		let a:ctx.offset = 0
 		let a:ctx.top = a:ctx.maxheight - 4
-		call s:docker_update_view_content(a:ctx)
+		call s:update_view_content(a:ctx)
 	elseif a:key ==# 'G'
 		let a:ctx.highlight_idx = len(a:ctx.view_content) - 1
 		let a:ctx.select = len(a:ctx.content) - 1
 		if len(a:ctx.content) > a:ctx.top
 			let a:ctx.offset = len(a:ctx.content) - a:ctx.top
-			call s:docker_update_view_content(a:ctx)
+			call s:update_view_content(a:ctx)
 		endif
 	endif
 
@@ -172,7 +172,7 @@ function! s:docker_popup_filter(ctx, id, key) abort
 	return 1
 endfunction
 
-function! s:docker_update_view_content(ctx) abort
+function! s:update_view_content(ctx) abort
 	if a:ctx.type ==# 'image'
 		let l:image_table = s:TABLE.new({
 					\ 'columns': [{},{},{},{},{}],

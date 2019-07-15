@@ -41,7 +41,7 @@ function! docker#api#image#delete(id) abort
 endfunction
 
 " image pull callback
-function! s:docker_image_pull_cb(response) abort
+function! s:image_pull_cb(response) abort
 	if a:response.status ==# 200
 		echo 'pull image successed'
 	else
@@ -63,7 +63,7 @@ function! docker#api#image#pull(image) abort
 	call docker#api#http#async_post("http://localhost/images/create", 
 				\ {'fromImage': param},
 				\ {},
-				\ function('s:docker_image_pull_cb'),
+				\ function('s:image_pull_cb'),
 				\ )
 endfunction
 

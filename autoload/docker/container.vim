@@ -12,7 +12,7 @@ let s:TABLE = s:V.import('Text.Table')
 " 'content': {images},
 " 'view_content': {table}'
 " }
-function! s:docker_container_get(offset, top) abort
+function! s:container_get(offset, top) abort
 	let l:table = s:TABLE.new({
 				\ 'columns': [{},{},{},{},{},{}],
 				\ 'header' : ['ID', 'NAME', 'IMAGE', 'STATUS', 'CREATED', 'PORTS'],
@@ -41,7 +41,7 @@ endfunction
 function! docker#container#get() abort
 	let l:maxheight = 15
 	let l:top = l:maxheight - 4
-	let l:contents = s:docker_container_get(0, l:top)
+	let l:contents = s:container_get(0, l:top)
 	let l:ctx = { 'type': 'container',
 				\ 'title':'[containers]',
 				\ 'select':0,
@@ -57,51 +57,51 @@ function! docker#container#get() abort
 endfunction
 
 " update contents
-function! s:docker_update_contents(ctx) abort
-	let l:contents = s:docker_container_get(a:ctx.offset, a:ctx.top)
+function! s:update_contents(ctx) abort
+	let l:contents = s:container_get(a:ctx.offset, a:ctx.top)
 	let a:ctx.content = l:contents.content
 	let a:ctx.view_content = l:contents.view_content
 endfunction
 
 " start container
-function! s:docker_start_container(ctx) abort
+function! s:start_container(ctx) abort
 	call docker#api#container#start(a:ctx.content[a:ctx.select].Id)
-	call s:docker_update_contents(a:ctx)
+	call s:update_contents(a:ctx)
 endfunction
 
 " stop container
-function! s:docker_stop_container(ctx) abort
+function! s:stop_container(ctx) abort
 	call docker#api#container#stop(a:ctx.content[a:ctx.select].Id)
-	call s:docker_update_contents(a:ctx)
+	call s:update_contents(a:ctx)
 endfunction
 
 " delete container
-function! s:docker_delete_container(ctx) abort
+function! s:delete_container(ctx) abort
 	let a:ctx.disable_filter = 1
 	let result = input('Do you delete the container? y/n:')
 	echo ''
 	redraw
 	if result ==# 'y' || result ==# 'Y'
 		call docker#api#container#delete(a:ctx.content[a:ctx.select].Id)
-		call s:docker_update_contents(a:ctx)
+		call s:update_contents(a:ctx)
 	endif
 	let a:ctx.disable_filter = 0
 endfunction
 
 " restart container
-function! s:docker_restart_container(ctx) abort
+function! s:restart_container(ctx) abort
 	call docker#api#container#restart(a:ctx.content[a:ctx.select].Id)
-	call s:docker_update_contents(a:ctx)
+	call s:update_contents(a:ctx)
 endfunction
 
 " kill container
-function! s:docker_kill_container(ctx) abort
+function! s:kill_container(ctx) abort
 	call docker#api#container#kill(a:ctx.content[a:ctx.select].Id)
-	call s:docker_update_contents(a:ctx)
+	call s:update_contents(a:ctx)
 endfunction
 
 " rename container
-function! s:docker_rename_container(ctx, name) abort
+function! s:rename_container(ctx, name) abort
 	call docker#api#container#rename(a:ctx.content[a:ctx.select].Id, a:name)
 	call docker#container#get()
 endfunction
@@ -110,18 +110,18 @@ endfunction
 function! docker#container#functions(ctx, key) abort
 	let l:entry = a:ctx.content[a:ctx.select]
 	if a:key ==# 'u'
-		call s:docker_start_container(a:ctx)
+		call s:start_container(a:ctx)
 	elseif a:key ==# 's'
-		call s:docker_stop_container(a:ctx)
+		call s:stop_container(a:ctx)
 	elseif a:key ==# ''
-		call s:docker_delete_container(a:ctx)
+		call s:delete_container(a:ctx)
 	elseif a:key ==# 'r'
-		call s:docker_restart_container(a:ctx)
+		call s:restart_container(a:ctx)
 	elseif a:key ==# "m"
 		call popup_close(a:ctx.id)
 		call docker#monitor#start(l:entry.Id)
 	elseif a:key ==# 'R'
-		call s:docker_update_contents(a:ctx)
+		call s:update_contents(a:ctx)
 	elseif a:key ==# ''
 		call popup_close(a:ctx.id)
 		let name = input("new name:")
@@ -130,7 +130,7 @@ function! docker#container#functions(ctx, key) abort
 			call docker#container#get()
 			return
 		endif
-		call s:docker_rename_container(a:ctx, name)
+		call s:rename_container(a:ctx, name)
 	elseif a:key ==# 'a'
 		call popup_close(a:ctx.id)
 		let cmd = input("command:")
@@ -141,7 +141,7 @@ function! docker#container#functions(ctx, key) abort
 		endif
 		call docker#api#container#attach(l:entry.Id, cmd)
 	elseif a:key ==# 'K'
-		call s:docker_kill_container(a:ctx)
+		call s:kill_container(a:ctx)
 	endif
 endfunction
 

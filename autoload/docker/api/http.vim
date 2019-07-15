@@ -211,6 +211,7 @@ function! s:quote() abort
 	return &shell =~# 'sh$' ? "'" : '"'
 endfunction
 
+" curl error messages
 let s:errcode = {}
 let s:errcode[1] = 'Unsupported protocol. This build of curl has no support for this protocol.'
 let s:errcode[2] = 'Failed to initialize.'

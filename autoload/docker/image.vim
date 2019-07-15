@@ -12,7 +12,7 @@ let s:TABLE = s:V.import('Text.Table')
 " 'content': {images},
 " 'view_content': {table}'
 " }
-function! s:docker_image_get(offset, top) abort
+function! s:image_get(offset, top) abort
 	let l:table = s:TABLE.new({
 				\ 'columns': [{},{},{},{},{}],
 				\ 'header' : ['ID', 'REPOSITORY', 'TAG', 'CREATED', 'SIZE'],
@@ -40,7 +40,7 @@ endfunction
 function! docker#image#get() abort
 	let l:maxheight = 15
 	let l:top = l:maxheight - 4
-	let l:contents = s:docker_image_get(0, l:top)
+	let l:contents = s:image_get(0, l:top)
 
 	let l:ctx = { 'type': 'image',
 				\ 'title':'[imgaes]',
@@ -57,21 +57,21 @@ function! docker#image#get() abort
 endfunction
 
 " update contents
-function! s:docker_update_contents(ctx) abort
-	let l:contents = s:docker_image_get(a:ctx.offset, a:ctx.top)
+function! s:update_contents(ctx) abort
+	let l:contents = s:image_get(a:ctx.offset, a:ctx.top)
 	let a:ctx.content = l:contents.content
 	let a:ctx.view_content = l:contents.view_content
 endfunction
 
 " delete image
-function! s:docker_delete_image(ctx) abort
+function! s:delete_image(ctx) abort
 	let a:ctx.disable_filter = 1
 	let result = input('Do you delete the image? y/n:')
 	echo ''
 	redraw
 	if result ==# 'y' || result ==# 'Y'
 		call docker#api#image#delete(a:ctx.content[a:ctx.select].Id)
-		call s:docker_update_contents(a:ctx)
+		call s:update_contents(a:ctx)
 	endif
 	let a:ctx.disable_filter = 0
 endfunction
@@ -80,9 +80,9 @@ endfunction
 function! docker#image#functions(ctx, key) abort
 	let l:entry = a:ctx.content[a:ctx.select]
 	if a:key ==# ''
-		call s:docker_delete_image(a:ctx)
+		call s:delete_image(a:ctx)
 	elseif a:key ==# 'R'
-		call s:docker_update_contents(a:ctx)
+		call s:update_contents(a:ctx)
 	endif
 endfunction
 
