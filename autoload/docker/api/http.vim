@@ -137,6 +137,14 @@ function! s:request_exit_cb(dump, callback, ch, status) abort
 		echoerr s:errcode[a:status]
 	endif
 	let response = s:build_response(s:readfile(a:dump.header), s:readfile(a:dump.body))
+
+	" delete dump file
+	for file in values(a:dump)
+		if filereadable(file)
+			call delete(file)
+		endif
+	endfor
+
 	call call(a:callback, [response])
 endfunction
 
