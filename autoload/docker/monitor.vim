@@ -14,7 +14,7 @@ let s:keys = {
 			\ }
 
 " id: 4ee503fb4646
-"     ------------------------
+"     +----------------------+
 " 100 -                      |
 "     |                      |
 " 80  -                      |
@@ -25,12 +25,12 @@ let s:keys = {
 "     |              ■■■■■■  |
 " 20  -  ■■■■■■      ■■■■■■  |
 "     |  ■■■■■■      ■■■■■■  |
-" 0   ------------------------
+" 0   +----------------------+
 "       CPU(30%)     MEM(40%)
 function s:make_graph(id, cpu, mem) abort
 	let graph = []
 	call add(graph, 'id: ' .. a:id)
-	call add(graph, '    ------------------------')
+	call add(graph, '    +----------------------+')
 	for line_num in [100,90,80,70,60,50,40,30,20,10]
 		let line = ''
 		if line_num % 20 ==# 0
@@ -53,7 +53,7 @@ function s:make_graph(id, cpu, mem) abort
 		call add(graph, line)
 	endfor
 
-	call add(graph, printf('%3d ------------------------','0'))
+	call add(graph, printf('%3d +----------------------+','0'))
 	call add(graph, printf('      CPU(%d%%)    MEM(%d%%)', a:cpu, a:mem))
 	return graph
 endfunction
