@@ -125,6 +125,10 @@ endfunction
 " attach to a container using docker command
 " TODO use attach api
 function! docker#api#container#attach(id, cmd) abort
+	if !has('terminal')
+		call docker#util#echo_err('terminal is not support')
+		return
+	endif
 	exe printf('term ++close bash -c "docker exec -it %s %s"', a:id, a:cmd)
 endfunction
 
