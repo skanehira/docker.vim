@@ -12,7 +12,7 @@ scriptencoding utf-8
 function! docker#api#container#get() abort
 	let l:response = docker#api#http#get('http://localhost/containers/json', {'all': 1})
 
-	if l:response.status ==# 400 || l:response.status ==# 500
+	if l:response.status !=# 200
 		call docker#util#echo_err(json_decode(l:response.content).message)
 		return []
 	endif
@@ -20,101 +20,162 @@ function! docker#api#container#get() abort
 	return json_decode(l:response.content)
 endfunction
 
-" start container
-function! docker#api#container#start(id) abort
-	echo 'starting' a:id
-	let l:response = docker#api#http#post("http://localhost/containers/" .. a:id .. "/start", {}, {})
-	if l:response.status ==# 304
+" container start callback
+function! s:container_start_cb(ctx, updatefunc, response) abort
+	if a:response.status ==# 304
 		echo "container already started"
-	elseif l:response.status ==# 404 || l:response.status ==# 500
-		call docker#util#echo_err(json_decode(l:response.content).message)
+	elseif a:response.status !=# 204
+		call docker#util#echo_err(a:response.content.message)
 	else
 		echo ''
 	endif
+	call a:updatefunc(a:ctx)
+endfunction
+
+" start container
+function! docker#api#container#start(ctx, updatefunc) abort
+	let id = a:ctx.content[a:ctx.select].Id
+	echo 'starting' id
+	call docker#api#http#async_post("http://localhost/containers/" .. id .. "/start", 
+				\ {},
+				\ {},
+				\ function('s:container_start_cb', [a:ctx, a:updatefunc])
+				\ )
+endfunction
+
+" container stop callback
+function! s:container_stop_cb(ctx, updatefunc, response) abort
+	if a:response.status ==# 304
+		echo "container already stopped"
+	elseif a:response.status !=# 204
+		call docker#util#echo_err(a:response.content.message)
+	else
+		echo ''
+	endif
+	call a:updatefunc(a:ctx)
 endfunction
 
 " stop container
-function! docker#api#container#stop(id) abort
-	echo 'stopping' a:id
-	let l:response = docker#api#http#post("http://localhost/containers/" .. a:id .. "/stop", {}, {})
-	if l:response.status ==# 304
-		echo "container already stopped"
-	elseif l:response.status ==# 404 || l:response.status ==# 500
-		call docker#util#echo_err(json_decode(l:response.content).message)
+function! docker#api#container#stop(ctx, updatefunc) abort
+	let id = a:ctx.content[a:ctx.select].Id
+	echo 'stopping' id
+	call docker#api#http#async_post("http://localhost/containers/" .. id .. "/stop",
+				\ {},
+				\ {},
+				\ function('s:container_stop_cb', [a:ctx, a:updatefunc])
+				\ )
+endfunction
+
+" restart container callback
+function! s:container_restart_cb(ctx, updatefunc, response) abort
+	if a:response.status !=# 204
+		call docker#util#echo_err(a:response.content.message)
 	else
 		echo ''
 	endif
+	call a:updatefunc(a:ctx)
 endfunction
 
 " restart container
-function! docker#api#container#restart(id) abort
-	echo 'restarting' a:id
-	let l:response = docker#api#http#post("http://localhost/containers/" .. a:id .. "/restart", {}, {})
-	if l:response.status ==# 404 || l:response.status ==# 500
-		call docker#util#echo_err(json_decode(l:response.content).message)
-	else
-		echo ''
+function! docker#api#container#restart(ctx, updatefunc) abort
+	let id = a:ctx.content[a:ctx.select].Id
+	echo 'restarting' id
+	call docker#api#http#async_post("http://localhost/containers/" .. id .. "/restart",
+				\ {},
+				\ {},
+				\ function('s:container_restart_cb', [a:ctx, a:updatefunc])
+				\ )
+endfunction
+
+" delete container callback
+function! s:container_delete_cb(ctx, updatefunc, response) abort
+	if a:response.status !=# 204
+		call docker#util#echo_err(a:response.content.message)
 	endif
+
+	call a:updatefunc(a:ctx)
+	let a:ctx.disable_filter = 0
 endfunction
 
 " delete container
-function! docker#api#container#delete(id) abort
-	if docker#api#container#is_running(a:id)
-		call docker#util#echo_err('the container is running')
+function! docker#api#container#delete(ctx, updatefunc) abort
+	let id = a:ctx.content[a:ctx.select].Id
+
+	try
+		if docker#api#container#is_running(id)
+			call docker#util#echo_err('the container is running')
+			let a:ctx.disable_filter = 0
+			return
+		endif
+	catch /.*/
+		let a:ctx.disable_filter = 0
+		call docker#util#echo_err(v:exception)
 		return
-	endif
-	echo 'deleting' a:id
-	let l:response = docker#api#http#delete("http://localhost/containers/" .. a:id, {}, {})
-	if l:response.status ==# 404 || l:response.status ==# 500 || l:response.status ==# 409
-		call docker#util#echo_err(json_decode(l:response.content).message)
-	else
-		echo ''
-	endif
+	endtry
+
+	echo 'deleting' id
+	redraw
+
+	call docker#api#http#async_delete("http://localhost/containers/" .. id, 
+				\ {}, 
+				\ function('s:container_delete_cb', [a:ctx, a:updatefunc])
+				\ )
 endfunction
 
 " attach to a container using docker command
 " TODO use attach api
 function! docker#api#container#attach(id, cmd) abort
-	if !executable('docker')
-		call docker#util#echo_err('not exsists docker command')
-		return
+	exe printf('term ++close bash -c "docker exec -it %s %s"', a:id, a:cmd)
+endfunction
+
+function! s:container_kill_cb(ctx, updatefunc, response) abort
+	if a:response.status !=# 204
+		call docker#util#echo_err(a:response.content.message)
+	else
+		echo ''
 	endif
-	if !docker#api#container#is_running(a:id)
-		call docker#util#echo_err('the container is not running')
-		call docker#container#get()
-		return
-	endif
-	exe 'term ++close bash -c "docker exec -it ' .. a:id  .. ' ' .. a:cmd .. '"'
+	call a:updatefunc(a:ctx)
 endfunction
 
 " kill container
-function! docker#api#container#kill(id) abort
-	echo 'killing' a:id
-	let l:response = docker#api#http#post("http://localhost/containers/" .. a:id .. "/kill", {}, {})
-	if l:response.status ==# 404 || l:response.status ==# 500 || l:response.status ==# 409
-		call docker#util#echo_err(json_decode(l:response.content).message)
+function! docker#api#container#kill(ctx, updatefunc) abort
+	let id = a:ctx.content[a:ctx.select].Id
+	echo 'killing' id
+	call docker#api#http#async_post("http://localhost/containers/" .. id .. "/kill", 
+				\ {}, 
+				\ {},
+				\ function('s:container_kill_cb', [a:ctx, a:updatefunc]),
+				\ )
+endfunction
+
+" rename container callback
+function! s:container_rename(ctx, updatefunc, response) abort
+	if a:response.status !=# 204
+		call docker#util#echo_err(a:response.content.message)
 	else
 		echo ''
 	endif
+	let a:ctx.disable_filter = 0
+	call a:updatefunc(a:ctx)
 endfunction
 
 " rename container
-function! docker#api#container#rename(id, name) abort
+function! docker#api#container#rename(ctx, name, updatefunc) abort
+	let id = a:ctx.content[a:ctx.select].Id
 	echo 'renaming to' a:name
-	let l:response = docker#api#http#post("http://localhost/containers/" .. a:id .. "/rename", { 'name': a:name }, {})
-	if l:response.status ==# 404 || l:response.status ==# 500 || l:response.status ==# 409
-		call docker#util#echo_err(json_decode(l:response.content).message)
-	else
-		echo ''
-	endif
+	call docker#api#http#async_post("http://localhost/containers/" .. id .. "/rename",
+				\ {'name': a:name},
+				\ {},
+				\ function('s:container_rename', [a:ctx, a:updatefunc])
+				\ )
 endfunction
 
 " check the container state
 " if the container is running then will return true
 function! docker#api#container#is_running(id) abort
 	let l:response = docker#api#http#get("http://localhost/containers/" .. a:id .. "/json", {})
-	if l:response.status ==# 404 || l:response.status ==# 500
-		call docker#util#echo_err(json_decode(l:response.content).message)
+	if l:response.status !=# 200
+		throw json_decode(l:response.content).message
 	endif
 	return json_decode(l:response.content).State.Running
 endfunction

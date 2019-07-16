@@ -67,13 +67,13 @@ endfunction
 function! s:delete_image(ctx) abort
 	let a:ctx.disable_filter = 1
 	let result = input('Do you delete the image? y/n:')
-	echo ''
-	redraw
 	if result ==# 'y' || result ==# 'Y'
-		call docker#api#image#delete(a:ctx.content[a:ctx.select].Id)
-		call s:update_contents(a:ctx)
+		call docker#api#image#delete(a:ctx, function('s:update_contents'))
+	else
+		let a:ctx.disable_filter = 0
+		echo ''
+		redraw
 	endif
-	let a:ctx.disable_filter = 0
 endfunction
 
 " this is popup window filter function

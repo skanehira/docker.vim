@@ -70,7 +70,7 @@ function! docker#api#http#async_delete(url, param, callback) abort
 				\ 'url': a:url,
 				\ 'method': 'DELETE',
 				\ 'param': a:param,
-				\ 'callback': callback,
+				\ 'callback': a:callback,
 				\ }
 
 	call s:async_request(setting)
@@ -194,8 +194,10 @@ function! s:build_response(header, body) abort
 		endfor
 
 		let response.content = contents
-	else
+	elseif len(a:body) == 1
 		let response.content = json_decode(a:body[0])
+	else
+		let response.connect = {}
 	endif
 
 	return response

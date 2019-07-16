@@ -63,85 +63,90 @@ function! s:update_contents(ctx) abort
 	let a:ctx.view_content = l:contents.view_content
 endfunction
 
-" start container
-function! s:start_container(ctx) abort
-	call docker#api#container#start(a:ctx.content[a:ctx.select].Id)
-	call s:update_contents(a:ctx)
-endfunction
-
-" stop container
-function! s:stop_container(ctx) abort
-	call docker#api#container#stop(a:ctx.content[a:ctx.select].Id)
-	call s:update_contents(a:ctx)
-endfunction
-
 " delete container
 function! s:delete_container(ctx) abort
 	let a:ctx.disable_filter = 1
 	let result = input('Do you delete the container? y/n:')
-	echo ''
-	redraw
+
 	if result ==# 'y' || result ==# 'Y'
-		call docker#api#container#delete(a:ctx.content[a:ctx.select].Id)
-		call s:update_contents(a:ctx)
+		call docker#api#container#delete(a:ctx, function('s:update_contents'))
+	else
+		let a:ctx.disable_filter = 0
+		echo ''
+		redraw
 	endif
-	let a:ctx.disable_filter = 0
-endfunction
-
-" restart container
-function! s:restart_container(ctx) abort
-	call docker#api#container#restart(a:ctx.content[a:ctx.select].Id)
-	call s:update_contents(a:ctx)
-endfunction
-
-" kill container
-function! s:kill_container(ctx) abort
-	call docker#api#container#kill(a:ctx.content[a:ctx.select].Id)
-	call s:update_contents(a:ctx)
 endfunction
 
 " rename container
-function! s:rename_container(ctx, name) abort
-	call docker#api#container#rename(a:ctx.content[a:ctx.select].Id, a:name)
-	call docker#container#get()
+function! s:rename_container(ctx) abort
+	let a:ctx.disable_filter = 1
+	let name = input("new name:")
+	if name ==# ''
+		call docker#util#echo_err('please input container name')
+		let a:ctx.disable_filter = 0
+		call s:update_contents(a:ctx)
+		return
+	endif
+
+	call docker#api#container#rename(a:ctx, name, function('s:update_contents'))
+endfunction
+
+" attach container
+function! s:attach_container(ctx) abort
+	let a:ctx.disable_filter = 1
+	let cmd = input("command:")
+	if cmd ==# ''
+		call docker#util#echo_err('please input command')
+		call s:update_contents(a:ctx)
+		let a:ctx.disable_filter = 0
+		return
+	endif
+
+	if !executable('docker')
+		call docker#util#echo_err('not exsists docker command')
+		let a:ctx.disable_filter = 0
+		return
+	endif
+
+	let id = a:ctx.content[a:ctx.select].Id
+	try
+		if !docker#api#container#is_running(id)
+			call docker#util#echo_err('the container is not running')
+			call s:update_contents(a:ctx)
+			let a:ctx.disable_filter = 0
+			return
+		endif
+	catch /.*/
+		call docker#util#echo_err(v:exception)
+		let a:ctx.disable_filter = 0
+		return
+	endtry
+
+	call popup_close(a:ctx.id)
+	call docker#api#container#attach(id, cmd)
 endfunction
 
 " this is popup window filter function
 function! docker#container#functions(ctx, key) abort
-	let l:entry = a:ctx.content[a:ctx.select]
 	if a:key ==# 'u'
-		call s:start_container(a:ctx)
+		call docker#api#container#start(a:ctx, function('s:update_contents'))
 	elseif a:key ==# 's'
-		call s:stop_container(a:ctx)
+		call docker#api#container#stop(a:ctx, function('s:update_contents'))
 	elseif a:key ==# ''
 		call s:delete_container(a:ctx)
 	elseif a:key ==# 'r'
-		call s:restart_container(a:ctx)
+		call docker#api#container#restart(a:ctx, function('s:update_contents'))
 	elseif a:key ==# "m"
 		call popup_close(a:ctx.id)
-		call docker#monitor#start(l:entry.Id)
+		call docker#monitor#start(a:ctx.content[a:ctx.select].Id)
 	elseif a:key ==# 'R'
 		call s:update_contents(a:ctx)
 	elseif a:key ==# ''
-		call popup_close(a:ctx.id)
-		let name = input("new name:")
-		if name ==# ''
-			call docker#util#echo_err('please input container name')
-			call docker#container#get()
-			return
-		endif
-		call s:rename_container(a:ctx, name)
+		call s:rename_container(a:ctx)
 	elseif a:key ==# 'a'
-		call popup_close(a:ctx.id)
-		let cmd = input("command:")
-		if cmd ==# ''
-			call docker#util#echo_err('please input command')
-			call docker#container#get()
-			return
-		endif
-		call docker#api#container#attach(l:entry.Id, cmd)
+		call s:attach_container(a:ctx)
 	elseif a:key ==# 'K'
-		call s:kill_container(a:ctx)
+		call docker#api#container#kill(a:ctx, function('s:update_contents'))
 	endif
 endfunction
 

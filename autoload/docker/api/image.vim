@@ -29,21 +29,30 @@ function! docker#api#image#get() abort
 	return l:images
 endfunction
 
-" delte image
-function! docker#api#image#delete(id) abort
-	echo 'deleting' a:id
-	let l:response = docker#api#http#delete("http://localhost/images/" .. a:id, {}, {})
-	if l:response.status ==# 404 || l:response.status ==# 409 || l:response.status ==# 500
-		call docker#util#echo_err(json_decode(l:response.content).message)
-	else
-		echo ''
+" delete image callback
+function! s:image_delete_cb(ctx, updatefunc, response) abort
+	if a:response.status ==# 404 || a:response.status ==# 409 || a:response.status ==# 500
+		call docker#util#echo_err(a:response.content.message)
 	endif
+	call a:updatefunc(a:ctx)
+	let a:ctx.disable_filter = 0
+endfunction
+
+" delete image
+function! docker#api#image#delete(ctx, updatefunc) abort
+	let id = a:ctx.content[a:ctx.select].Id
+	echo 'deleting' id
+	redraw
+	call docker#api#http#async_delete("http://localhost/images/" .. id, 
+				\ {}, 
+				\ function('s:image_delete_cb', [a:ctx, a:updatefunc]),
+				\ )
 endfunction
 
 " image pull callback
-function! s:image_pull_cb(response) abort
+function! s:image_pull_cb(image, response) abort
 	if a:response.status ==# 200
-		echo 'pull image successed'
+		echo 'pull ' .. a:image .. ' successed'
 	else
 		call docker#util#echo_err(a:response.content.message)
 	endif
@@ -63,7 +72,7 @@ function! docker#api#image#pull(image) abort
 	call docker#api#http#async_post("http://localhost/images/create", 
 				\ {'fromImage': param},
 				\ {},
-				\ function('s:image_pull_cb'),
+				\ function('s:image_pull_cb', [param]),
 				\ )
 endfunction
 
