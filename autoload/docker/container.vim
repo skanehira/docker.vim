@@ -147,6 +147,9 @@ function! docker#container#functions(ctx, key) abort
 		call s:attach_container(a:ctx)
 	elseif a:key ==# 'K'
 		call docker#api#container#kill(a:ctx, function('s:update_contents'))
+	elseif a:key ==# 'l'
+		call popup_close(a:ctx.id)
+		call docker#api#container#logs(a:ctx.content[a:ctx.select].Id)
 	endif
 endfunction
 

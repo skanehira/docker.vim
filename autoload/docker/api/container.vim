@@ -174,6 +174,24 @@ function! docker#api#container#rename(ctx, name, updatefunc) abort
 				\ )
 endfunction
 
+" tail container logs
+" if container is not running, terminal does not close automatically
+function! docker#api#container#logs(id) abort
+	if !has('terminal')
+		call docker#util#echo_err('terminal is not support')
+		return
+	endif
+
+	let cmd = ''
+	if docker#api#container#is_running(a:id)
+		let cmd = printf('belowright term ++close bash -c "docker logs -f %s"', a:id)
+	else
+		let cmd = printf('belowright term bash -c "docker logs -f %s"', a:id)
+	endif
+	exe cmd
+	exe "wincmd k"
+endfunction
+
 " check the container state
 " if the container is running then will return true
 function! docker#api#container#is_running(id) abort

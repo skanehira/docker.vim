@@ -58,21 +58,28 @@ monitor window move
 :DockerMonitorWindowMove
 ```
 
+tail container logs
+```vim
+" if contaienr is not running, terminal does not close automatically
+:DockerContainerLogs {id or name}
+```
+
 ## key bindings
 containers
 
-| operation          | key    |
-|--------------------|--------|
-| start container    | u      |
-| stop container     | s      |
-| restart container  | r      |
-| refresh containers | R      |
-| kill container     | K      |
-| attach container   | a      |
-| delete container   | ctrl-d |
-| rename container   | ctrl-r |
-| scroll to top      | 0      |
-| scroll to bottom   | G      |
+| operation           | key    |
+|---------------------|--------|
+| start container     | u      |
+| stop container      | s      |
+| restart container   | r      |
+| refresh containers  | R      |
+| kill container      | K      |
+| attach container    | a      |
+| delete container    | ctrl-d |
+| rename container    | ctrl-r |
+| tail container logs | l      |
+| scroll to top       | 0      |
+| scroll to bottom    | G      |
 
 
 images
