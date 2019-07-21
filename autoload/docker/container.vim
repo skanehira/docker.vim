@@ -1,5 +1,5 @@
 " docker.vim
-" Version: 0.2.0
+" Version: 0.2.1
 " Author : skanehira <sho19921005@gmail.com>
 " License: MIT
 
@@ -98,15 +98,6 @@ endfunction
 
 " attach container
 function! s:attach_container(ctx) abort
-	let a:ctx.disable_filter = 1
-	let cmd = input("command:")
-	if cmd ==# ''
-		call docker#util#echo_err('please input command')
-		call s:update_contents(a:ctx)
-		let a:ctx.disable_filter = 0
-		return
-	endif
-
 	if !executable('docker')
 		call docker#util#echo_err('not exsists docker command')
 		let a:ctx.disable_filter = 0
@@ -126,6 +117,15 @@ function! s:attach_container(ctx) abort
 		let a:ctx.disable_filter = 0
 		return
 	endtry
+
+	let a:ctx.disable_filter = 1
+	let cmd = input("command:")
+	if cmd ==# ''
+		call docker#util#echo_err('please input command')
+		call s:update_contents(a:ctx)
+		let a:ctx.disable_filter = 0
+		return
+	endif
 
 	call popup_close(a:ctx.id)
 	call docker#api#container#attach(id, cmd)
