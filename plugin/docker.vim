@@ -1,6 +1,8 @@
-" Version: 0.0.1
+" docker.vim
+" Version: 0.1.0
 " Author : skanehira <sho19921005@gmail.com>
 " License: MIT
+"
 let s:save_cpo = &cpo
 set cpo&vim
 
