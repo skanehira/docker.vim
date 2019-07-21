@@ -129,7 +129,7 @@ function! docker#api#container#attach(id, cmd) abort
 		call docker#util#echo_err('terminal is not support')
 		return
 	endif
-	exe printf('term ++close bash -c "docker exec -it %s %s"', a:id, a:cmd)
+	exe printf('belowright term ++close bash -c "docker exec -it %s %s"', a:id, a:cmd)
 endfunction
 
 function! s:container_kill_cb(ctx, updatefunc, response) abort
