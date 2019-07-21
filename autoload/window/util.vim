@@ -12,8 +12,8 @@ let s:last_popup_window = 0
 if !exists('s:loaded_highlight')
 	let s:loaded_highlight = 1
 	try
-		call prop_type_add('select', {'highlight': 'PmenuSel'})
-		call prop_type_add('status_running', {'highlight': 'DiffText', 'priority':1})
+		call prop_type_add('select', {'highlight': 'PmenuSel', 'priority':1})
+		call prop_type_add('status_running', {'highlight': 'DiffText'})
 	catch /.*/
 		call docker#util#echo_err(v:exception)
 	endtry
