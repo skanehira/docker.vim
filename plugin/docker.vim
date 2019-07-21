@@ -1,5 +1,5 @@
 " docker.vim
-" Version: 0.1.0
+" Version: 0.2.0
 " Author : skanehira <sho19921005@gmail.com>
 " License: MIT
 "
@@ -21,6 +21,7 @@ command! DockerMonitorStop call docker#monitor#stop()
 command! DockerMonitorWindowMove call docker#monitor#move()
 command! DockerImagePull call docker#image#pull(<f-args>)
 command! -nargs=1 DockerContainerLogs call docker#api#container#logs(<f-args>)
+command! DockerVersion call docker#version#info()
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

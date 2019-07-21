@@ -64,6 +64,11 @@ tail container logs
 :DockerContainerLogs {id or name}
 ```
 
+show version info
+```vim
+:DockerVersion
+```
+
 ## key bindings
 containers
 
