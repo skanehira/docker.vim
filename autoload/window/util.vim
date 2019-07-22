@@ -272,7 +272,7 @@ function! window#util#notification(text, type) abort
 
 	" move notification window
 	call timer_start(20,
-				\ function('s:move_notification'), 
+				\ function('s:move_notification'),
 				\ {'repeat': 5}
 				\ )
 endfunction
