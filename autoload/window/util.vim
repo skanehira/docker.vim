@@ -45,11 +45,6 @@ endfunction
 
 " update popup window content
 function! window#util#update_poup_window(ctx) abort
-	let l:win_buf = winbufnr(a:ctx.id)
-
-	if l:win_buf ==# -1
-		return
-	endif
 	call popup_settext(a:ctx.id, a:ctx.view_content)
 	call s:update_highlight(a:ctx)
 endfunction
@@ -72,6 +67,10 @@ endfunction
 " highlight table in popup window
 function! s:select_highlight(ctx) abort
 	let l:buf = winbufnr(a:ctx.id)
+	if l:buf ==# -1
+		return
+	endif
+
 	let l:length = len(a:ctx.view_content[0])
 	let l:lnum = a:ctx.highlight_idx
 
