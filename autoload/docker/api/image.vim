@@ -69,7 +69,7 @@ function! docker#api#image#pull(image) abort
 	echo ''
 
 	let param = join(image_tag, ":")
-	let winid = window#util#notification(printf("%s... %s", "pulling", param), 'normal')
+	call window#util#notification(printf("%s... %s", "pulling", param), 'normal')
 
 	call docker#api#http#async_post("http://localhost/images/create", 
 				\ {'fromImage': param},

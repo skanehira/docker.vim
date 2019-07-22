@@ -268,14 +268,13 @@ function! window#util#notification(text, type) abort
 	endif
 
 	let s:last_notification_window = popup_create(a:text, option)
+	call win_execute(s:last_notification_window, 'setfiletype docker')
 
 	" move notification window
 	call timer_start(20,
 				\ function('s:move_notification'), 
 				\ {'repeat': 5}
 				\ )
-
-	return s:last_notification_window
 endfunction
 
 " move notification window
