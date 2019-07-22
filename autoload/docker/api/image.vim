@@ -10,10 +10,10 @@ scriptencoding utf-8
 
 " get images
 function! docker#api#image#get() abort
-	let l:response = docker#api#http#get("http://localhost/images/json", {})
+	let l:response = docker#api#http#get('http://localhost/images/json', {})
 
 	if l:response.status !=# 200
-		call docker#util#echo_err(json_decode(l:response.content).message)
+		call window#util#notification_failed(json_decode(l:response.content).message)
 		return []
 	endif
 
@@ -32,7 +32,9 @@ endfunction
 " delete image callback
 function! s:image_delete_cb(ctx, updatefunc, response) abort
 	if a:response.status !=# 200
-		call docker#util#echo_err(a:response.content.message)
+		call window#util#notification_failed(a:response.content.message)
+	else
+		call window#util#notification_success('deleted ' .. a:ctx.content[a:ctx.select].Id)
 	endif
 	call a:updatefunc(a:ctx)
 	let a:ctx.disable_filter = 0
@@ -41,20 +43,19 @@ endfunction
 " delete image
 function! docker#api#image#delete(ctx, updatefunc) abort
 	let id = a:ctx.content[a:ctx.select].Id
-	echo 'deleting' id
-	redraw
-	call docker#api#http#async_delete("http://localhost/images/" .. id, 
-				\ {}, 
+	call window#util#notification_normal('deleting... ' .. id)
+	call docker#api#http#async_delete('http://localhost/images/' .. id,
+				\ {},
 				\ function('s:image_delete_cb', [a:ctx, a:updatefunc]),
 				\ )
 endfunction
 
 " image pull callback
 function! s:image_pull_cb(image, response) abort
-	if a:response.status ==# 200
-		call window#util#notification_success(printf('pulling %s is successed', a:image))
-	else
+	if a:response.status !=# 200
 		call window#util#notification_failed(a:response.content.message)
+	else
+		call window#util#notification_success('pulled ' .. a:image)
 	endif
 endfunction
 
@@ -69,9 +70,9 @@ function! docker#api#image#pull(image) abort
 	echo ''
 
 	let param = join(image_tag, ":")
-	call window#util#notification(printf("%s... %s", "pulling", param), 'normal')
+	call window#util#notification_normal('pulling... ' .. param)
 
-	call docker#api#http#async_post("http://localhost/images/create", 
+	call docker#api#http#async_post('http://localhost/images/create',
 				\ {'fromImage': param},
 				\ {},
 				\ function('s:image_pull_cb', [param]),
