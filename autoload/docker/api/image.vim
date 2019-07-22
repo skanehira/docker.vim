@@ -12,7 +12,7 @@ scriptencoding utf-8
 function! docker#api#image#get() abort
 	let l:response = docker#api#http#get("http://localhost/images/json", {})
 
-	if l:response.status ==# 500
+	if l:response.status !=# 200
 		call docker#util#echo_err(json_decode(l:response.content).message)
 		return []
 	endif
@@ -31,7 +31,7 @@ endfunction
 
 " delete image callback
 function! s:image_delete_cb(ctx, updatefunc, response) abort
-	if a:response.status ==# 404 || a:response.status ==# 409 || a:response.status ==# 500
+	if a:response.status !=# 200
 		call docker#util#echo_err(a:response.content.message)
 	endif
 	call a:updatefunc(a:ctx)
