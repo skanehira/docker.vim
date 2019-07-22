@@ -52,9 +52,9 @@ endfunction
 " image pull callback
 function! s:image_pull_cb(image, response) abort
 	if a:response.status ==# 200
-		echo 'pull ' .. a:image .. ' successed'
+		call window#util#notification_success(printf('pulling %s is successed', a:image))
 	else
-		call docker#util#echo_err(a:response.content.message)
+		call window#util#notification_failed(a:response.content.message)
 	endif
 endfunction
 
@@ -66,8 +66,10 @@ function! docker#api#image#pull(image) abort
 	endif
 
 	redraw
+	echo ''
+
 	let param = join(image_tag, ":")
-	echo "pulling" param
+	let winid = window#util#notification(printf("%s... %s", "pulling", param), 'normal')
 
 	call docker#api#http#async_post("http://localhost/images/create", 
 				\ {'fromImage': param},

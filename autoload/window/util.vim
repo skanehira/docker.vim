@@ -13,6 +13,7 @@ let s:TABLE = s:V.import('Text.Table')
 
 let s:last_buffer = 0
 let s:last_popup_window = 0
+let s:last_notification_window = 0
 
 if !exists('s:loaded_highlight')
 	let s:loaded_highlight = 1
@@ -218,6 +219,77 @@ function! s:update_view_content(ctx) abort
 		endfor
 		let a:ctx.view_content = l:container_table.stringify()
 	endif
+endfunction
+
+" notification some message
+" this window does not close automatically
+function! window#util#notification_normal(text) abort
+	return window#util#notification(a:text, 'normal')
+endfunction
+
+" notification error message
+" when cursor moved then window will close
+function! window#util#notification_failed(text) abort
+	return window#util#notification(a:text, 'failed')
+endfunction
+
+" notification success message
+" this window does close automatically
+function! window#util#notification_success(text) abort
+	return window#util#notification(a:text, 'success')
+endfunction
+
+" popup notification
+" type is as below
+"  - 'success' is highlight the light blue
+"  - 'failed' is highlight the red
+"  - 'normal' is highlight the blue
+function! window#util#notification(text, type) abort
+	call popup_close(s:last_notification_window)
+
+	let option = {
+				\ 'highlight': 'notification_normal',
+				\ 'col': 1,
+				\ 'line': 3,
+				\ 'minwidth': 20,
+				\ 'tabpage': -1,
+				\ 'zindex': 300,
+				\ 'drag': 1,
+				\ 'border': [1, 1, 1, 1],
+				\ 'borderchars': ['-','|','-','|','+','+','+','+']
+				\ }
+
+	if a:type ==# 'success'
+		let option.highlight = 'notification_success'
+		let option['time'] = 3000
+	elseif a:type ==# 'failed'
+		let option.highlight = 'notification_failed'
+		let option['moved'] = 'any'
+	endif
+
+	let s:last_notification_window = popup_create(a:text, option)
+
+	" move notification window
+	call timer_start(20,
+				\ function('s:move_notification'), 
+				\ {'repeat': 5}
+				\ )
+
+	return s:last_notification_window
+endfunction
+
+" move notification window
+function! s:move_notification(timer) abort
+	let opt = popup_getpos(s:last_notification_window)
+	if type(opt) !=# type({}) || empty(opt)
+		call docker#util#echo_err('cannot get notification window position')
+		call timer_stopall(a:timer)
+		return
+	endif
+
+	let opt.col += 2
+	call popup_move(s:last_notification_window, opt)
+	redraw
 endfunction
 
 let &cpo = s:save_cpo
