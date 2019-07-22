@@ -93,6 +93,9 @@ function! s:status_highlight(ctx) abort
 	let l:lnum_end = len(a:ctx.view_content)
 	let l:length = len(a:ctx.view_content[0])
 	let l:buf = winbufnr(a:ctx.id)
+	if l:buf ==# -1
+		return
+	endif
 
 	call prop_remove({
 				\ 'type': 'status_running',
