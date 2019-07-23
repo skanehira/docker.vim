@@ -13,7 +13,7 @@ This is docker manager plugin.
 - start/stop/restart/kill container
 - delete container
 - attach container(require docker command)
-- monitoring container CPU/MEM
+- monitoring container logs and CPU/MEM
 
 # Requirements
 - curl >= 7.40.0
@@ -72,19 +72,19 @@ show version info
 ## key bindings
 containers
 
-| operation           | key    |
-|---------------------|--------|
-| start container     | u      |
-| stop container      | s      |
-| restart container   | r      |
-| refresh containers  | R      |
-| kill container      | K      |
-| attach container    | a      |
-| delete container    | ctrl-d |
-| rename container    | ctrl-r |
-| tail container logs | l      |
-| scroll to top       | 0      |
-| scroll to bottom    | G      |
+| operation                 | key    |
+|---------------------------|--------|
+| start container           | u      |
+| stop container            | s      |
+| restart container         | r      |
+| refresh containers        | R      |
+| kill container            | K      |
+| attach container          | a      |
+| delete container          | ctrl-d |
+| rename container          | ctrl-r |
+| monitoring container logs | l      |
+| scroll to top             | 0      |
+| scroll to bottom          | G      |
 
 
 images
