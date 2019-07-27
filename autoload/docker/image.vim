@@ -101,5 +101,62 @@ function! docker#image#pull() abort
 	call docker#api#image#pull(image)
 endfunction
 
+" search image
+function! s:image_search(term, offset, top) abort
+	let l:table = s:TABLE.new({
+				\ 'columns': [{},{},{},{},{}],
+				\ 'header' : ['NAME',  'DESCRIPTION', 'STARS', 'OFFICIAL', 'AUTOMATED'],
+				\ })
+
+	let l:search_images = docker#api#image#search(a:term)
+
+	let l:images = []
+	for row in l:search_images
+		let image = {
+					\ 'name': row.name,
+					\ 'description': row.description[:30],
+					\ 'stars': printf("%d", row.star_count),
+					\ 'official': row.is_official ? "[OK]" : "",
+					\ 'automated': row.is_automated ? "[OK]": ""
+					\ }
+
+		call add(l:images, image)
+
+	endfor
+
+	for image in l:images[a:offset: a:offset + a:top - 1]
+		call l:table.add_row([
+					\ image.name,
+					\ image.description,
+					\ image.stars,
+					\ image.official,
+					\ image.automated])
+	endfor
+
+	return {'content': l:images,
+				\ 'view_content': l:table.stringify(),
+				\ }
+endfunction
+
+" search image
+function! docker#image#search(term) abort
+	let l:maxheight = 15
+	let l:top = l:maxheight - 4
+	let l:contents = s:image_search(a:term, 0, l:top)
+
+	let l:ctx = { 'type': 'search',
+				\ 'title':'[search imgaes]',
+				\ 'select':0,
+				\ 'highlight_idx': 4,
+				\ 'content': l:contents.content,
+				\ 'view_content': l:contents.view_content,
+				\ 'maxheight': l:maxheight,
+				\ 'top': l:top,
+				\ 'offset': 0,
+				\ 'disable_filter': 0}
+
+	call window#util#create_popup_window(l:ctx)
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

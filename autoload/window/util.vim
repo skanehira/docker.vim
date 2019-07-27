@@ -172,6 +172,11 @@ function! s:popup_filter(ctx, id, key) abort
 	elseif a:ctx.type == 'image'
 		call docker#image#functions(a:ctx, a:key)
 		call window#util#update_poup_window(a:ctx)
+	elseif a:ctx.type == 'search'
+		if a:key ==# 'p'
+			call popup_close(a:id)
+			call docker#api#image#pull(a:ctx.content[a:ctx.select].name)
+		endif
 	endif
 
 	if a:key != "\<CursorHold>"
@@ -218,6 +223,21 @@ function! s:update_view_content(ctx) abort
 						\ ])
 		endfor
 		let a:ctx.view_content = l:container_table.stringify()
+	elseif a:ctx.type ==# 'search'
+		let l:search_table = s:TABLE.new({
+					\ 'columns': [{},{},{},{},{}],
+					\ 'header' : ['NAME',  'DESCRIPTION', 'STARS', 'OFFICIAL', 'AUTOMATED'],
+					\ })
+
+		for image in a:ctx.content[a:ctx.offset: a:ctx.offset + a:ctx.top - 1]
+			call l:search_table.add_row([
+						\ image.name,
+						\ image.description,
+						\ image.stars,
+						\ image.official,
+						\ image.automated])
+		endfor
+		let a:ctx.view_content = l:search_table.stringify()
 	endif
 endfunction
 

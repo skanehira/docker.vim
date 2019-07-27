@@ -79,5 +79,17 @@ function! docker#api#image#pull(image) abort
 				\ )
 endfunction
 
+" search images
+function! docker#api#image#search(term) abort
+	let l:response = docker#api#http#get('http://localhost/images/search', {'term': a:term})
+
+	if l:response.status !=# 200
+		call window#util#notification_failed(json_decode(l:response.content).message)
+		return []
+	endif
+
+	return json_decode(l:response.content)
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

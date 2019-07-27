@@ -8,8 +8,10 @@ This is docker manager plugin.
 - get images
 - delete image
 - pull image
+- search image
 
 ## containers
+- get containers
 - start/stop/restart/kill container
 - delete container
 - attach container(require docker command)
