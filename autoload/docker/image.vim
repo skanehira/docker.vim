@@ -47,6 +47,11 @@ function! docker#image#get() abort
 	let l:top = l:maxheight - 4
 	let l:contents = s:image_get(0, l:top)
 
+	if len(l:contents.content) ==# 0
+		call docker#util#echo_err('not found images')
+		return
+	endif
+
 	let l:ctx = { 'type': 'image',
 				\ 'title':'[imgaes]',
 				\ 'select':0,
@@ -114,7 +119,7 @@ function! s:image_search(term, offset, top) abort
 	for row in l:search_images
 		let image = {
 					\ 'name': row.name,
-					\ 'description': row.description[:30],
+					\ 'description': len(row.description) > 30 ? row.description[:30] .. "..." : row.description,
 					\ 'stars': printf("%d", row.star_count),
 					\ 'official': row.is_official ? "[OK]" : "",
 					\ 'automated': row.is_automated ? "[OK]": ""
@@ -139,10 +144,21 @@ function! s:image_search(term, offset, top) abort
 endfunction
 
 " search image
-function! docker#image#search(term) abort
+function! docker#image#search() abort
+	let term = input("image:")
+	if term ==# ''
+		call docker#util#echo_err('please input command')
+		return
+	endif
+
 	let l:maxheight = 15
 	let l:top = l:maxheight - 4
-	let l:contents = s:image_search(a:term, 0, l:top)
+	let l:contents = s:image_search(term, 0, l:top)
+
+	if len(l:contents.content) ==# 0
+		call docker#util#echo_err('not found images')
+		return
+	endif
 
 	let l:ctx = { 'type': 'search',
 				\ 'title':'[search imgaes]',

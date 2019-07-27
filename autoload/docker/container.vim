@@ -47,6 +47,12 @@ function! docker#container#get() abort
 	let l:maxheight = 15
 	let l:top = l:maxheight - 4
 	let l:contents = s:container_get(0, l:top)
+
+	if len(l:contents.content) ==# 0
+		call docker#util#echo_err('not found containers')
+		return
+	endif
+
 	let l:ctx = { 'type': 'container',
 				\ 'title':'[containers]',
 				\ 'select':0,
