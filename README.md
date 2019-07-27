@@ -58,7 +58,7 @@ monitor window move
 :DockerMonitorWindowMove
 ```
 
-tail container logs
+monitoring container logs
 ```vim
 " if contaienr is not running, terminal does not close automatically
 :DockerContainerLogs {id or name}
