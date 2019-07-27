@@ -97,3 +97,9 @@ images
 | delete image     | ctrl-d |
 | scroll to top    | 0      |
 | scroll to bottom | G      |
+
+search images
+
+|operation |key|
+|----------|---|
+|pull image|p  |
