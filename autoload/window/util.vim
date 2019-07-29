@@ -132,6 +132,7 @@ function! s:popup_filter(ctx, id, key) abort
 
 	if a:key ==# 'q' || a:key ==# 'x'
 		call popup_close(a:id)
+		call timer_stop(a:ctx.refresh_timer)
 		return 1
 
 	elseif a:key ==# 'j'

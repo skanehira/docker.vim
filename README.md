@@ -1,17 +1,17 @@
 # docker.vim
-This is docker manager plugin.
+This is management plugin for docker.
 
 ![](screenshots/docker.vim.gif)
 
 # Features
 ## images
-- get images
+- image list(udpate every 5 second)
 - delete image
 - pull image
 - search image
 
 ## containers
-- get containers
+- container list(udpate every 5 second)
 - start/stop/restart/kill container
 - delete container
 - attach container(require docker command)
@@ -72,6 +72,13 @@ show version info
 ```
 
 ## key bindings
+common operation
+
+| operation        | key |
+|------------------|-----|
+| scroll to top    | 0   |
+| scroll to bottom | G   |
+
 containers
 
 | operation                 | key    |
@@ -85,9 +92,6 @@ containers
 | delete container          | ctrl-d |
 | rename container          | ctrl-r |
 | monitoring container logs | l      |
-| scroll to top             | 0      |
-| scroll to bottom          | G      |
-
 
 images
 
@@ -95,11 +99,9 @@ images
 |------------------|--------|
 | refresh images   | R      |
 | delete image     | ctrl-d |
-| scroll to top    | 0      |
-| scroll to bottom | G      |
 
 search images
 
-|operation |key|
-|----------|---|
-|pull image|p  |
+| operation        | key |
+|------------------|-----|
+| pull image       | p   |

@@ -62,9 +62,24 @@ function! docker#container#get() abort
 				\ 'maxheight': l:maxheight,
 				\ 'top': l:top,
 				\ 'offset': 0,
-				\ 'disable_filter': 0}
+				\ 'disable_filter': 0,
+				\ 'refresh_timer': 0
+				\ }
 
 	call window#util#create_popup_window(l:ctx)
+
+	" update every 5 second
+	let ctx.refresh_timer = timer_start(5000,
+				\ function('s:update_contents_timer', [ctx]),
+				\ {'repeat': -1}
+				\ )
+endfunction
+
+" uupdate every specified time
+function! s:update_contents_timer(ctx, timer) abort
+	let l:contents = s:container_get(a:ctx.offset, a:ctx.top)
+	let a:ctx.view_content = l:contents.view_content
+	let a:ctx.content = l:contents.content
 endfunction
 
 " update contents
