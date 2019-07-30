@@ -208,8 +208,8 @@ function! s:update_view_content(ctx) abort
 		let a:ctx.view_content = l:image_table.stringify()
 	elseif a:ctx.type ==# 'container'
 		let l:container_table = s:TABLE.new({
-					\ 'columns': [{},{},{},{},{},{}],
-					\ 'header' : ['ID', 'NAME', 'IMAGE', 'STATUS', 'CREATED', 'PORTS'],
+					\ 'columns': [{},{},{},{},{},{},{}],
+					\ 'header' : ['ID', 'NAME', 'IMAGE', 'COMMAND', 'STATUS', 'CREATED', 'PORTS'],
 					\ })
 
 		for row in a:ctx.content[a:ctx.offset: a:ctx.offset + a:ctx.top - 1]
@@ -218,6 +218,7 @@ function! s:update_view_content(ctx) abort
 						\ l:container.Id,
 						\ l:container.Name,
 						\ l:container.Image,
+						\ l:container.Command,
 						\ l:container.Status,
 						\ l:container.Created,
 						\ l:container.Ports

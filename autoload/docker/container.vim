@@ -19,8 +19,8 @@ let s:TABLE = s:V.import('Text.Table')
 " }
 function! s:container_get(offset, top) abort
 	let l:table = s:TABLE.new({
-				\ 'columns': [{},{},{},{},{},{}],
-				\ 'header' : ['ID', 'NAME', 'IMAGE', 'STATUS', 'CREATED', 'PORTS'],
+				\ 'columns': [{},{},{},{},{},{},{}],
+				\ 'header' : ['ID', 'NAME', 'IMAGE', 'COMMAND', 'STATUS', 'CREATED', 'PORTS'],
 				\ })
 
 	let l:containers = docker#api#container#get()
@@ -31,6 +31,7 @@ function! s:container_get(offset, top) abort
 					\ l:container.Id,
 					\ l:container.Name,
 					\ l:container.Image,
+					\ l:container.Command,
 					\ l:container.Status,
 					\ l:container.Created,
 					\ l:container.Ports
