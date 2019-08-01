@@ -74,24 +74,26 @@ show version info
 ## key bindings
 common operation
 
-| operation        | key |
-|------------------|-----|
-| scroll to top    | 0   |
-| scroll to bottom | G   |
+| operation          | key |
+|--------------------|-----|
+| scroll to top      | 0   |
+| scroll to bottom   | G   |
+| close popup window | q   |
 
 containers
 
-| operation                 | key    |
-|---------------------------|--------|
-| start container           | u      |
-| stop container            | s      |
-| restart container         | r      |
-| refresh containers        | R      |
-| kill container            | K      |
-| attach container          | a      |
-| delete container          | ctrl-d |
-| rename container          | ctrl-r |
-| monitoring container logs | l      |
+| operation                             | key    |
+|---------------------------------------|--------|
+| start container                       | u      |
+| stop container                        | s      |
+| restart container                     | r      |
+| refresh containers                    | R      |
+| kill container                        | K      |
+| attach container                      | a      |
+| monitor container's cpu nad mem usage | a      |
+| delete container                      | ctrl-d |
+| rename container                      | ctrl-r |
+| monitoring container logs             | l      |
 
 images
 
