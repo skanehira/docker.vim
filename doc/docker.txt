@@ -1,0 +1,253 @@
+*docker.txt*	a summary
+
+Version : 0.2.1
+Author  : skanehira
+License : MIT license  {{{
+    Permission is hereby granted, free of charge, to any person obtaining
+    a copy of this software and associated documentation files (the
+    "Software"), to deal in the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to
+    the following conditions:
+    The above copyright notice and this permission notice shall be included
+    in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+}}}
+
+==============================================================================
+CONTENTS					*docker-contents*
+
+INTRODUCTION			|docker-introduction|
+USAGE				|docker-usage|
+INTERFACE			|docker-interface|
+  COMMANDS			  |docker-commands|
+  FUNCTIONS			  |docker-functions|
+  MAPPINGS			  |docker-mappings|
+TODO				|docker-todo|
+CHANGELOG			|docker-changelog|
+
+
+==============================================================================
+INTRODUCTION					*docker-introduction*
+
+*docker* is a Vim plugin
+
+Latest version:
+https://github.com/skanehira/docker.vim
+
+==============================================================================
+INSTALL						*docker-install*
+
+Requirements:
+* Vim 8.1.1618 or above
+* curl 7.40.0 or above
+* docker command
+
+==============================================================================
+USAGE						*docker-usage*
+
+
+
+==============================================================================
+INTERFACE					*docker-interface*
+
+------------------------------------------------------------------------------
+COMMANDS					*docker-commands*
+
+							*:DockerImages*
+:DockerImages
+	Display docker images in popup window.(not inclued <none> images)
+	update list at interval of 5 second.
+
+							*:DockerContainers*
+:DockerContainers
+	Diplay docker containers in popup window.
+	update list at interval of 5 second.
+	Use <q> to close window.
+
+							*:DockerMonitorStart*
+:DockerMonitorStart {id} or {name}
+	Start monitoring container's mem and cpu usage at interval of 2 second..
+
+							*:DockerMonitorStop*
+:DockerMonitorStop
+	Stop monitoring.
+
+							*:DockerMonitorWindowMove*
+:DockerMonitorWindowMove
+	Start move the monitoring window.
+
+							*:DockerImagePull*
+:DockerImagePull
+	Pull docker image from DockerHub.
+
+							*:DockerContainerLogs*
+:DockerContainerLogs {id} or {name}
+	Start monitoring container's log.
+	Use <C-c> to stop monitoring.
+	When container is not running, log wlll be display in buffer.
+
+							*:DockerVersion*
+:DockerVersion
+	Display docker engine version info.
+
+							*:DockerImageSearch*
+:DockerImageSearch
+	Search image from DockerHub.
+
+------------------------------------------------------------------------------
+FUNCTIONS					*docker-functions*
+
+					*docker#api#container#attach()*
+docker#api#container#attach({id}, {cmd})
+	Run {cmd} and attach container.
+	{id} can specify the container name.
+	This function is execute `docker exec -it {id} {cmd}` in terminal-job mode
+
+docker#api#container#logs({id})			*docker#api#container#logs()*
+	Start monitoring container's log.
+	This function called by |DockerContainerLogs|
+
+docker#api#image#pull({image})			*docker#api#image#pull()*
+	Pull {image} from DockerHub.
+	This function called by |DockerImagePull|
+
+docker#api#image#search({term})			*docker#api#image#search()*
+	Search {term} from DockerHub.
+	This function called by |DockerImageSearch|
+
+docker#container#get()				*docker#container#get()*
+	Display containers in popup window.
+	This function called by |DockerContainers|
+
+docker#image#get()				*docker#image#get()*
+	Display images in poup window.
+	This function called by |DockerImages|
+
+docker#image#pull()				*docker#image#pull()*
+	Pull image.
+	This function called by |DockerImagePull|
+
+docker#image#search()				*docker#image#search()*
+	Search image.
+	This function called by |DockerImageSearch|
+
+docker#monitor#move()				*docker#monitor#move()*
+	Start move monitor window.
+	This function called by |DockerMonitorWindowMove|
+
+docker#monitor#start({id})			*docker#monitor#start()*
+	Start monitoring container's cpu and mem usage.
+	This function called by |DockerMonitorStart|
+
+docker#monitor#stop()				*docker#monitor#stop()*
+	Stop monitoring.
+	This function called by |DockerMonitorStop|
+
+docker#version#info()				*docker#version#info()*
+	Display docker engine version info.
+	This function called by |DockerVersion|
+
+------------------------------------------------------------------------------
+MAPPINGS					*docker-mappings*
+
+						*docker-images-mappings*
+docker images window mappings ~
+
+						*docker-images_R*
+R		Update image list.
+
+						*docker-images_ctrl-d*
+<CTRL-d>	Delete image.
+
+						*docker-images_0*
+0		Scroll to top.
+
+						*docker-images_G*
+G		Scroll to bottom.
+
+						*docker-images_q*
+q		close popup window.
+
+						*docker-containers-mappings*
+docker containers window mappings ~
+
+						*docker-containers_u*
+u		Start container.
+
+						*docker-containers_s*
+s		Stop container.
+
+						*docker-containers_r*
+r		Restart container.
+
+						*docker-containers_R*
+R		Update container list.
+
+						*docker-containers_K*
+K		Kill container.
+
+						*docker-containers_a*
+a		Attach container.
+
+						*docker-containers_ctrl-d*
+<CTRL-d>	Delete container.
+
+						*docker-containers_ctrl-r*
+<CTRL-r>	Rename container.
+
+						*docker-containers_l*
+l		Start monitoring container log.
+
+						*docker-containers_m*
+m		Start monitoring container's cpu and mem usage.
+
+						*docker-containers_0*
+0		Scroll to top.
+
+						*docker-containers_G*
+G		Scroll to bottom.
+
+						*docker-containers_q*
+q		close popup window.
+
+						*docker-search-images-mappings*
+docker search images window mappings ~
+
+						*docker-search-images_p*
+p		Pull image.
+
+						*docker-search-images_0*
+0		Scroll to top.
+
+						*docker-search-images_G*
+G		Scroll to bottom.
+
+						*docker-search-images_q*
+q		close popup window.
+
+						*docker-version-info-mappings*
+docker version info window mappings ~
+
+						*docker-version-info_q*
+q		close popup window.
+
+==============================================================================
+TODO						*docker-todo*
+
+
+
+==============================================================================
+CHANGELOG					*docker-changelog*
+
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:noet:fen:
