@@ -77,7 +77,7 @@ function! docker#util#parse_container(container) abort
 	let _new.Status =  len(status) > 18 ? status[:18] .. "..." : status
 	let _new.Created = docker#util#parse_unix_date(a:container.Created)
 	let _new.Ports = docker#util#parse_container_ports(a:container.Ports)
-	let _new.Command = a:container.Command
+	let _new.Command = len(a:container.Command) > 18 ? a:container.Command[:18] .. "..." : a:container.Command
 	return _new
 endfunction
 
