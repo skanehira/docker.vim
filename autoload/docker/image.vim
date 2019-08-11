@@ -184,7 +184,9 @@ function! docker#image#search() abort
 				\ 'maxheight': l:maxheight,
 				\ 'top': l:top,
 				\ 'offset': 0,
-				\ 'disable_filter': 0}
+				\ 'disable_filter': 0,
+				\ 'refresh_timer': 0,
+				\ }
 
 	call window#util#create_popup_window(l:ctx)
 endfunction
