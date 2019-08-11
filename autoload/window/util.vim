@@ -38,7 +38,7 @@ function! window#util#create_popup_window(ctx) abort
 				\ 'filter': function('s:popup_filter', [a:ctx]),
 				\ 'title': a:ctx.title,
 				\ 'maxheight': a:ctx.maxheight,
-				\ 'mapping': 0,'
+				\ 'mapping': 0,
 				\ })
 
 	let s:last_popup_window = a:ctx.id
