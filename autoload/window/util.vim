@@ -27,7 +27,7 @@ endif
 
 " create popup windows
 function! window#util#create_popup_window(ctx) abort
-	if !has("patch-8.1.1561")
+	if !has("patch-8.1.1799")
 		call docker#util#echo_err("this version doesn't support popup window. please update version to 8.1.1561")
 		return
 	endif
@@ -38,6 +38,7 @@ function! window#util#create_popup_window(ctx) abort
 				\ 'filter': function('s:popup_filter', [a:ctx]),
 				\ 'title': a:ctx.title,
 				\ 'maxheight': a:ctx.maxheight,
+				\ 'mapping': 0,'
 				\ })
 
 	let s:last_popup_window = a:ctx.id

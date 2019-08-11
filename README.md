@@ -19,7 +19,7 @@ This is management plugin for docker.
 
 # Requirements
 - curl >= 7.40.0
-- Vim version >= 8.1.1618
+- Vim version >= 8.1.1799
 - docker command
 
 # Installation
