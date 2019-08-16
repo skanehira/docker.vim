@@ -130,7 +130,13 @@ function! docker#api#container#attach(id, cmd) abort
 		call window#util#notification_failed('terminal is not support')
 		return
 	endif
-	exe printf('belowright term ++close bash -c "docker exec -it %s %s"', a:id, a:cmd)
+
+	if !executable('docker')
+		call docker#util#echo_err('no executable command: docker')
+		return
+	endif
+
+	exe printf('bo term ++close docker exec -it %s %s', a:id, a:cmd)
 endfunction
 
 function! s:container_kill_cb(ctx, updatefunc, response) abort
@@ -184,12 +190,17 @@ function! docker#api#container#logs(id) abort
 		return
 	endif
 
+	if !executable('docker')
+		call docker#util#echo_err('no executable command: docker')
+		return
+	endif
+
 	try
 		let cmd = ''
 		if docker#api#container#is_running(a:id)
-			let cmd = printf('belowright term ++close bash -c "docker logs -f %s"', a:id)
+			let cmd = printf('bo term ++close docker logs -f %s', a:id)
 		else
-			let cmd = printf('belowright term bash -c "docker logs -f %s"', a:id)
+			let cmd = printf('bo term docker logs -f %s', a:id)
 		endif
 		exe cmd
 		exe "wincmd k"
