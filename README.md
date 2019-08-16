@@ -104,6 +104,7 @@ images
 
 search images
 
-| operation        | key |
-|------------------|-----|
-| pull image       | p   |
+| operation                 | key |
+|---------------------------|-----|
+| pull image                | p   |
+| open DockerHub in browser | o   |

@@ -10,6 +10,7 @@ scriptencoding utf-8
 
 let s:V = vital#docker#new()
 let s:DATE = s:V.import('DateTime')
+let s:docker_hub_url = 'https://hub.docker.com/'
 
 " echo error message
 function! docker#util#echo_err(message) abort
@@ -79,6 +80,24 @@ function! docker#util#parse_container(container) abort
 	let _new.Ports = docker#util#parse_container_ports(a:container.Ports)
 	let _new.Command = len(a:container.Command) > 18 ? a:container.Command[:18] .. "..." : a:container.Command
 	return _new
+endfunction
+
+" open docker hub in browser
+function! docker#util#open_docker_hub(image) abort
+	if !executable(g:docker_open_browser_cmd)
+		call docker#util#echo_err('no executable command: ' .. g:docker_open_browser_cmd)
+		return
+	endif
+
+	let s:url = s:docker_hub_url
+	if a:image.official ==# '[OK]'
+		let s:url = s:url .. '_/'
+	else
+		let s:url = s:url .. 'r/'
+	endif
+
+	let s:url = s:url .. a:image.name
+	exe "silent term ++close " .. g:docker_open_browser_cmd s:url
 endfunction
 
 let &cpo = s:save_cpo

@@ -59,6 +59,10 @@ USAGE						*docker-usage*
 ==============================================================================
 INTERFACE					*docker-interface*
 
+VARIABLES					*vsession-variables*
+
+let g:docker_open_browser_cmd 			*g:docker_open_browser_cmd*
+	default value: "open"
 ------------------------------------------------------------------------------
 COMMANDS					*docker-commands*
 
@@ -175,7 +179,7 @@ R		Update image list.
 G		Scroll to bottom.
 
 						*docker-images_q*
-q		close popup window.
+q		Close popup window.
 
 						*docker-containers-mappings*
 docker containers window mappings ~
@@ -232,7 +236,10 @@ p		Pull image.
 G		Scroll to bottom.
 
 						*docker-search-images_q*
-q		close popup window.
+q		Close popup window.
+
+						*docker-search-images_o*
+o		Open Docker Hub in browser
 
 						*docker-version-info-mappings*
 docker version info window mappings ~

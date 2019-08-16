@@ -176,6 +176,8 @@ function! s:popup_filter(ctx, id, key) abort
 		if a:key ==# 'p'
 			call popup_close(a:id)
 			call docker#api#image#pull(a:ctx.content[a:ctx.select].name)
+		elseif a:key ==# 'o'
+			call docker#util#open_docker_hub(a:ctx.content[a:ctx.select])
 		endif
 	endif
 

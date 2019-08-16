@@ -13,6 +13,7 @@ if exists('g:loaded_docker')
 endif
 
 let g:loaded_docker = 1
+let g:docker_open_browser_cmd = 'open'
 
 command! DockerImages call docker#image#get()
 command! DockerContainers call docker#container#get()

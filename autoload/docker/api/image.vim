@@ -82,7 +82,7 @@ endfunction
 " search images
 function! docker#api#image#search(term) abort
 	redraw
-	echo 'saerching' a:term '...'
+	echo 'saerching' a:term .. '...'
 	let l:response = docker#api#http#get('http://localhost/images/search', {'term': a:term})
 
 	if l:response.status !=# 200
