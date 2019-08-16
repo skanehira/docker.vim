@@ -32,7 +32,7 @@ repo = 'skanehira/docker.vim'
 
 # Usage
 ## settings
-```
+```vim
 " open browser command, deafult is 'open'
 let g:docker_open_browser_cmd = 'open'
 ```
