@@ -9,6 +9,7 @@ This is management plugin for docker.
 - delete image
 - pull image
 - search image
+- open DockerHub in browser
 
 ## containers
 - container list(udpate every 5 second)
@@ -30,6 +31,12 @@ repo = 'skanehira/docker.vim'
 ```
 
 # Usage
+## settings
+```
+" open browser command, deafult is 'open'
+let g:docker_open_browser_cmd = 'open'
+```
+
 ## commands
 images
 ```vim
