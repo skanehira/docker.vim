@@ -59,7 +59,7 @@ USAGE						*docker-usage*
 ==============================================================================
 INTERFACE					*docker-interface*
 
-VARIABLES					*vsession-variables*
+VARIABLES					*docker-variables*
 
 let g:docker_open_browser_cmd 			*g:docker_open_browser_cmd*
 	default value: "open"
