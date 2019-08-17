@@ -15,6 +15,8 @@ endif
 let g:loaded_docker = 1
 let g:docker_open_browser_cmd = 'open'
 
+exe 'runtime syntax/docker.vim'
+
 command! DockerImages call docker#image#get()
 command! DockerContainers call docker#container#get()
 command! -nargs=1 DockerMonitorStart call docker#monitor#start(<f-args>)

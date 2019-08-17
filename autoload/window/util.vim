@@ -170,8 +170,10 @@ function! s:popup_filter(ctx, id, key) abort
 
 	if a:ctx.type == 'container'
 		call docker#container#functions(a:ctx, a:key)
+		call window#util#update_poup_window(a:ctx)
 	elseif a:ctx.type == 'image'
 		call docker#image#functions(a:ctx, a:key)
+		call window#util#update_poup_window(a:ctx)
 	elseif a:ctx.type == 'search'
 		if a:key ==# 'p'
 			call popup_close(a:id)
@@ -294,7 +296,7 @@ function! window#util#notification(text, type) abort
 	call win_execute(s:last_notification_window, 'setfiletype docker')
 
 	" move notification window
-	call timer_start(20,
+	call timer_start(10,
 				\ function('s:move_notification'),
 				\ {'repeat': 5}
 				\ )
