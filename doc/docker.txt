@@ -63,6 +63,9 @@ VARIABLES					*docker-variables*
 
 let g:docker_open_browser_cmd 			*g:docker_open_browser_cmd*
 	default value: "open"
+
+let g:docker_terminal_open 			*g:docker_terminal_open*
+	default value: "bo"
 ------------------------------------------------------------------------------
 COMMANDS					*docker-commands*
 

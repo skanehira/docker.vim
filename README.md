@@ -35,6 +35,9 @@ repo = 'skanehira/docker.vim'
 ```vim
 " open browser command, deafult is 'open'
 let g:docker_open_browser_cmd = 'open'
+" split temrinal windows, can use vert or tab, etc...
+" see :h vert
+let g:docker_terminal_open = 'bo'
 ```
 
 ## commands

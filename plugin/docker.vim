@@ -13,8 +13,11 @@ if exists('g:loaded_docker')
 endif
 
 let g:loaded_docker = 1
+" open browser command
 let g:docker_open_browser_cmd = 'open'
-
+" see :h vert
+let g:docker_terminal_open = 'bo'
+" load syntax
 exe 'runtime syntax/docker.vim'
 
 command! DockerImages call docker#image#get()
