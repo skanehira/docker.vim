@@ -15,7 +15,7 @@ let s:last_buffer = 0
 let s:last_popup_window = 0
 let s:last_notification_window = 0
 
-if !exists('s:loaded_highlight')
+if !exists('s:loaded_highlight') && !has('nvim')
 	let s:loaded_highlight = 1
 	try
 		call prop_type_add('select', {'highlight': 'PmenuSel', 'priority':1})
@@ -32,6 +32,10 @@ endfunction
 
 " create popup windows
 function! window#util#create_popup_window(ctx) abort
+	if has('nvim')
+		call docker#util#echo_err("this plugin doesn't support neo vim. please use vim that version 8.1.1561 or above")
+		return
+	endif
 	if !has("patch-8.1.1799")
 		call docker#util#echo_err("this version doesn't support popup window. please update version to 8.1.1561")
 		return
