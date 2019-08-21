@@ -14,9 +14,13 @@ endif
 
 let g:loaded_docker = 1
 " open browser command
-let g:docker_open_browser_cmd = 'open'
+if !exists('g:docker_open_browser_cmd')
+	let g:docker_open_browser_cmd = 'open'
+endif
 " see :h vert
-let g:docker_terminal_open = 'bo'
+if !exists('g:docker_terminal_open')
+	let g:docker_terminal_open = 'bo'
+endif
 " load syntax
 exe 'runtime syntax/docker.vim'
 
