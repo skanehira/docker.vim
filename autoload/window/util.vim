@@ -25,6 +25,11 @@ if !exists('s:loaded_highlight')
 	endtry
 endif
 
+" poup window close callback
+function! s:popup_window_close_cb(ctx, id, result) abort
+	call timer_stop(a:ctx.refresh_timer)
+endfunction
+
 " create popup windows
 function! window#util#create_popup_window(ctx) abort
 	if !has("patch-8.1.1799")
@@ -38,6 +43,7 @@ function! window#util#create_popup_window(ctx) abort
 				\ 'filter': function('s:popup_filter', [a:ctx]),
 				\ 'title': a:ctx.title,
 				\ 'maxheight': a:ctx.maxheight,
+				\ 'callback': function('s:popup_window_close_cb', [a:ctx]),
 				\ 'mapping': 0,
 				\ })
 
