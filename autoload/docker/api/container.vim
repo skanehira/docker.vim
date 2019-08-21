@@ -136,7 +136,6 @@ function! docker#api#container#attach(id, cmd) abort
 		return
 	endif
 
-	echo g:docker_terminal_open
 	exe printf('%s term ++close docker exec -it %s %s', g:docker_terminal_open, a:id, a:cmd)
 endfunction
 
