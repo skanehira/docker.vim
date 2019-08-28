@@ -97,7 +97,7 @@ function! docker#util#open_docker_hub(image) abort
 	endif
 
 	let s:url = s:url .. a:image.name
-	exe "silent term ++close " .. g:docker_open_browser_cmd s:url
+	call job_start(printf('%s %s', g:docker_open_browser_cmd, s:url))
 endfunction
 
 let &cpo = s:save_cpo
