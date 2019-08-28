@@ -41,6 +41,13 @@ let g:docker_terminal_open = 'bo'
 ```
 
 ## commands
+docker wrap command
+
+```vim
+" result will display in terminal buffer.
+:Docker ps -a
+```
+
 images
 ```vim
 :DockerImages

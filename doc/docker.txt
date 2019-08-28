@@ -69,6 +69,11 @@ let g:docker_terminal_open 			*g:docker_terminal_open*
 ------------------------------------------------------------------------------
 COMMANDS					*docker-commands*
 
+							*:Docker*
+:Docker
+	Docker is wrap docker command.
+	Command result will display in terminal buffer.
+	e.g. `:Docker ps -a` is similar `docker ps -a` .
 							*:DockerImages*
 :DockerImages
 	Display docker images in popup window.(not inclued <none> images)
@@ -242,7 +247,7 @@ G		Scroll to bottom.
 q		Close popup window.
 
 						*docker-search-images_o*
-o		Open Docker Hub in browser
+o		Open Docker Hub in default browser
 
 						*docker-version-info-mappings*
 docker version info window mappings ~
