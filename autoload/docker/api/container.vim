@@ -127,7 +127,7 @@ endfunction
 function! docker#api#container#attach(id, cmd) abort
 	echo ''
 	if !has('terminal')
-		call window#util#notification_failed('terminal is not support')
+		call docker#util#echo_err('terminal is not support')
 		return
 	endif
 
