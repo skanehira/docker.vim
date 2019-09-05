@@ -48,7 +48,7 @@ function! docker#image#get() abort
 	let l:contents = s:image_get(0, l:top)
 
 	if len(l:contents.content) ==# 0
-		call docker#util#echo_err('not found images')
+		call docker#util#echo_err('there are no images')
 		return
 	endif
 
@@ -91,7 +91,7 @@ endfunction
 " delete image
 function! s:delete_image(ctx) abort
 	let a:ctx.disable_filter = 1
-	let result = input('Do you delete the image? y/n:')
+	let result = input('do you want to delete the image? y/n:')
 	if result ==# 'y' || result ==# 'Y'
 		call docker#api#image#delete(a:ctx, function('s:update_contents'))
 	else

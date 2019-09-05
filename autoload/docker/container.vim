@@ -50,7 +50,7 @@ function! docker#container#get() abort
 	let l:contents = s:container_get(0, l:top)
 
 	if len(l:contents.content) ==# 0
-		call docker#util#echo_err('not found containers')
+		call docker#util#echo_err('there are no containers')
 		return
 	endif
 
@@ -93,7 +93,7 @@ endfunction
 " delete container
 function! s:delete_container(ctx) abort
 	let a:ctx.disable_filter = 1
-	let result = input('Do you delete the container? y/n:')
+	let result = input('do you want to delete the container? y/n:')
 
 	if result ==# 'y' || result ==# 'Y'
 		call docker#api#container#delete(a:ctx, function('s:update_contents'))
@@ -107,7 +107,7 @@ endfunction
 " rename container
 function! s:rename_container(ctx) abort
 	let a:ctx.disable_filter = 1
-	let name = input("new name:")
+	let name = input("new container name:")
 	if name ==# ''
 		call docker#util#echo_err('please input container name')
 		let a:ctx.disable_filter = 0
