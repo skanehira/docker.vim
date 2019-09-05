@@ -138,7 +138,7 @@ function! s:attach_container(ctx) abort
 	endtry
 
 	let a:ctx.disable_filter = 1
-	let cmd = input("command:")
+	let cmd = input("execute command:")
 	let a:ctx.disable_filter = 0
 	if cmd ==# ''
 		call docker#util#echo_err('please input command')
