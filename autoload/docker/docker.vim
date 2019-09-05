@@ -9,7 +9,7 @@ set cpo&vim
 " wrap docker command
 function! docker#docker#execute(...) abort
 	if !executable('docker')
-		call docker#util#echo_err('not exsists docker command')
+		call docker#util#echo_err('there are no docker command')
 		return
 	endif
 
