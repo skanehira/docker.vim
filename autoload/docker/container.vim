@@ -78,9 +78,7 @@ endfunction
 
 " update every specified time
 function! s:update_contents_timer(ctx, timer) abort
-	let l:contents = s:container_get(a:ctx.offset, a:ctx.top)
-	let a:ctx.view_content = l:contents.view_content
-	let a:ctx.content = l:contents.content
+	call s:update_contents(a:ctx)
 endfunction
 
 " update contents
@@ -88,6 +86,7 @@ function! s:update_contents(ctx) abort
 	let l:contents = s:container_get(a:ctx.offset, a:ctx.top)
 	let a:ctx.content = l:contents.content
 	let a:ctx.view_content = l:contents.view_content
+	call window#util#update_poup_window(a:ctx)
 endfunction
 
 " delete container

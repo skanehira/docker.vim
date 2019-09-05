@@ -148,6 +148,8 @@ function! s:popup_filter(ctx, id, key) abort
 		if a:ctx.select >= a:ctx.offset + a:ctx.top
 			let a:ctx.offset = a:ctx.select - (a:ctx.top - 1)
 			call s:update_view_content(a:ctx)
+		else
+			call s:update_highlight(a:ctx)
 		endif
 
 	elseif a:key ==# 'k'
@@ -157,8 +159,11 @@ function! s:popup_filter(ctx, id, key) abort
 		if a:ctx.select < a:ctx.offset
 			let a:ctx.offset = a:ctx.select
 			call s:update_view_content(a:ctx)
+		else
+			call s:update_highlight(a:ctx)
 		endif
 
+		call window#util#update_poup_window(a:ctx)
 	elseif a:key ==# '0'
 		let a:ctx.highlight_idx = 4
 		let a:ctx.select = 0
@@ -171,15 +176,15 @@ function! s:popup_filter(ctx, id, key) abort
 		if len(a:ctx.content) > a:ctx.top
 			let a:ctx.offset = len(a:ctx.content) - a:ctx.top
 			call s:update_view_content(a:ctx)
+		else
+			call s:update_highlight(a:ctx)
 		endif
 	endif
 
 	if a:ctx.type == 'container'
 		call docker#container#functions(a:ctx, a:key)
-		call window#util#update_poup_window(a:ctx)
 	elseif a:ctx.type == 'image'
 		call docker#image#functions(a:ctx, a:key)
-		call window#util#update_poup_window(a:ctx)
 	elseif a:ctx.type == 'search'
 		if a:key ==# 'p'
 			call popup_close(a:id)
@@ -189,9 +194,7 @@ function! s:popup_filter(ctx, id, key) abort
 		endif
 	endif
 
-	if a:key != "\<CursorHold>"
-		call window#util#update_poup_window(a:ctx)
-	endif
+	redraw
 	return 1
 endfunction
 
@@ -251,6 +254,7 @@ function! s:update_view_content(ctx) abort
 		endfor
 		let a:ctx.view_content = l:search_table.stringify()
 	endif
+	call window#util#update_poup_window(a:ctx)
 endfunction
 
 " notification some message
