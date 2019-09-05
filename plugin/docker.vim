@@ -8,7 +8,7 @@ set cpo&vim
 
 scriptencoding utf-8
 
-if exists('g:loaded_docker')
+if exists('g:loaded_docker') || has('nvim')
 	finish
 endif
 
