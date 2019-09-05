@@ -160,7 +160,7 @@ function! docker#api#container#kill(ctx, updatefunc) abort
 endfunction
 
 " rename container callback
-function! s:container_rename(ctx, updatefunc, response) abort
+function! s:container_rename_cb(ctx, updatefunc, response) abort
 	if a:response.status !=# 204
 		call window#util#notification_failed(a:response.content.message)
 	else
@@ -178,7 +178,7 @@ function! docker#api#container#rename(ctx, name, updatefunc) abort
 	call docker#api#http#async_post('http://localhost/containers/' .. id .. '/rename',
 				\ {'name': a:name},
 				\ {},
-				\ function('s:container_rename', [a:ctx, a:updatefunc])
+				\ function('s:container_rename_cb', [a:ctx, a:updatefunc])
 				\ )
 endfunction
 
