@@ -95,6 +95,10 @@ function! s:container_delete_cb(ctx, updatefunc, response) abort
 		call window#util#notification_success('deleted ' .. a:ctx.content[a:ctx.select].Id)
 	endif
 
+	if a:ctx.select ==# len(a:ctx.content) - 1
+		call feedkeys('k')
+	endif
+
 	call a:updatefunc(a:ctx)
 endfunction
 
