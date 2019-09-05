@@ -112,7 +112,7 @@ endfunction
 
 " pull image
 function! docker#image#pull() abort
-	let image = input("image:")
+	let image = input("image name:")
 	if image ==# ''
 		call docker#util#echo_err('please input command')
 		return
@@ -159,7 +159,7 @@ endfunction
 
 " search image
 function! docker#image#search() abort
-	let term = input("image:")
+	let term = input("image name:")
 	if term ==# ''
 		call docker#util#echo_err('please input command')
 		return
