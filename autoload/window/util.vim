@@ -194,7 +194,9 @@ function! s:popup_filter(ctx, id, key) abort
 		endif
 	endif
 
+	echo ''
 	redraw
+
 	return 1
 endfunction
 
