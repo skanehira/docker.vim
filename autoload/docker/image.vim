@@ -104,7 +104,7 @@ endfunction
 " this is popup window filter function
 function! docker#image#functions(ctx, key) abort
 	let l:entry = a:ctx.content[a:ctx.select]
-	if a:key ==# ''
+	if a:key ==# "\<C-d>"
 		call s:delete_image(a:ctx)
 	elseif a:key ==# 'R'
 		call s:update_contents(a:ctx)
