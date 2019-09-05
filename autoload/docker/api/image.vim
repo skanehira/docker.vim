@@ -37,7 +37,6 @@ function! s:image_delete_cb(ctx, updatefunc, response) abort
 		call window#util#notification_success('deleted ' .. a:ctx.content[a:ctx.select].Id)
 	endif
 	call a:updatefunc(a:ctx)
-	let a:ctx.disable_filter = 0
 endfunction
 
 " delete image

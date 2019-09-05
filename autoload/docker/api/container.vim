@@ -96,7 +96,6 @@ function! s:container_delete_cb(ctx, updatefunc, response) abort
 	endif
 
 	call a:updatefunc(a:ctx)
-	let a:ctx.disable_filter = 0
 endfunction
 
 " delete container
@@ -106,11 +105,9 @@ function! docker#api#container#delete(ctx, updatefunc) abort
 	try
 		if docker#api#container#is_running(id)
 			call window#util#notification_failed('the container is running')
-			let a:ctx.disable_filter = 0
 			return
 		endif
 	catch /.*/
-		let a:ctx.disable_filter = 0
 		call window#util#notification_failed(v:exception)
 		return
 	endtry
@@ -166,7 +163,6 @@ function! s:container_rename_cb(ctx, updatefunc, response) abort
 	else
 		call window#util#notification_success('renamed ' .. a:ctx.content[a:ctx.select].Id)
 	endif
-	let a:ctx.disable_filter = 0
 	call a:updatefunc(a:ctx)
 endfunction
 

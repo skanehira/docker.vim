@@ -94,11 +94,11 @@ endfunction
 function! s:delete_container(ctx) abort
 	let a:ctx.disable_filter = 1
 	let result = input('do you want to delete the container? y/n:')
+	let a:ctx.disable_filter = 0
 
 	if result ==# 'y' || result ==# 'Y'
 		call docker#api#container#delete(a:ctx, function('s:update_contents'))
 	else
-		let a:ctx.disable_filter = 0
 		echo ''
 		redraw
 	endif
@@ -108,9 +108,9 @@ endfunction
 function! s:rename_container(ctx) abort
 	let a:ctx.disable_filter = 1
 	let name = input("new container name:")
+	let a:ctx.disable_filter = 0
 	if name ==# ''
 		call docker#util#echo_err('please input container name')
-		let a:ctx.disable_filter = 0
 		call s:update_contents(a:ctx)
 		return
 	endif
@@ -122,7 +122,6 @@ endfunction
 function! s:attach_container(ctx) abort
 	if !executable('docker')
 		call docker#util#echo_err('not exsists docker command')
-		let a:ctx.disable_filter = 0
 		return
 	endif
 
@@ -131,21 +130,19 @@ function! s:attach_container(ctx) abort
 		if !docker#api#container#is_running(id)
 			call docker#util#echo_err('the container is not running')
 			call s:update_contents(a:ctx)
-			let a:ctx.disable_filter = 0
 			return
 		endif
 	catch /.*/
 		call docker#util#echo_err(v:exception)
-		let a:ctx.disable_filter = 0
 		return
 	endtry
 
 	let a:ctx.disable_filter = 1
 	let cmd = input("command:")
+	let a:ctx.disable_filter = 0
 	if cmd ==# ''
 		call docker#util#echo_err('please input command')
 		call s:update_contents(a:ctx)
-		let a:ctx.disable_filter = 0
 		return
 	endif
 
