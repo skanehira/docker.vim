@@ -92,6 +92,7 @@ function! s:delete_image(ctx) abort
 	let a:ctx.disable_filter = 1
 	let result = input('do you want to delete the image? y/n:')
 	let a:ctx.disable_filter = 0
+
 	if result ==# 'y' || result ==# 'Y'
 		call docker#api#image#delete(a:ctx, function('s:update_contents'))
 	else
@@ -161,7 +162,7 @@ endfunction
 function! docker#image#search() abort
 	let term = input("image name:")
 	if term ==# ''
-		call docker#util#echo_err('please input command')
+		call docker#util#echo_err('please input image name')
 		return
 	endif
 
