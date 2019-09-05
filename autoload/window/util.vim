@@ -195,7 +195,8 @@ function! s:popup_filter(ctx, id, key) abort
 	return 1
 endfunction
 
-" update table contents
+" this functions is only update table contents
+" doesn't get data from docker engine
 function! s:update_view_content(ctx) abort
 	if a:ctx.type ==# 'image'
 		let l:image_table = s:TABLE.new({

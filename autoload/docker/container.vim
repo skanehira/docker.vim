@@ -76,7 +76,7 @@ function! docker#container#get() abort
 				\ )
 endfunction
 
-" uupdate every specified time
+" update every specified time
 function! s:update_contents_timer(ctx, timer) abort
 	let l:contents = s:container_get(a:ctx.offset, a:ctx.top)
 	let a:ctx.view_content = l:contents.view_content
