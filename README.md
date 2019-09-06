@@ -35,6 +35,7 @@ repo = 'skanehira/docker.vim'
 ```vim
 " open browser command, deafult is 'open'
 let g:docker_open_browser_cmd = 'open'
+
 " split temrinal windows, can use vert or tab, etc...
 " see :h vert
 let g:docker_terminal_open = 'bo'
@@ -91,37 +92,37 @@ show version info
 ## key bindings
 common operations in popup window.
 
-| operation          | key |
-|--------------------|-----|
-| scroll to top      | 0   |
-| scroll to bottom   | G   |
-| close popup window | q   |
+| key | operation          |
+|-----|--------------------|
+| 0   | scroll to top      |
+| G   | scroll to bottom   |
+| q   | close popup window |
 
 containers
 
-| operation                             | key    |
-|---------------------------------------|--------|
-| start container                       | u      |
-| stop container                        | s      |
-| restart container                     | r      |
-| refresh containers                    | R      |
-| kill container                        | K      |
-| attach container                      | a      |
-| monitor container's cpu nad mem usage | a      |
-| delete container                      | ctrl-d |
-| rename container                      | ctrl-r |
-| monitoring container logs             | l      |
+| key    | operation                             |
+|--------|---------------------------------------|
+| u      | start container                       |
+| s      | stop container                        |
+| r      | restart container                     |
+| R      | refresh containers                    |
+| K      | kill container                        |
+| a      | attach container                      |
+| a      | monitor container's cpu nad mem usage |
+| ctrl-d | delete container                      |
+| ctrl-r | rename container                      |
+| l      | monitoring container logs             |
 
 images
 
-| operation        | key    |
-|------------------|--------|
-| refresh images   | R      |
-| delete image     | ctrl-d |
+| key    | operation      |
+|--------|----------------|
+| R      | refresh images |
+| ctrl-d | delete image   |
 
 search images
 
-| operation                 | key |
-|---------------------------|-----|
-| pull image                | p   |
-| open DockerHub in browser | o   |
+| key | operation                 |
+|-----|---------------------------|
+| p   | pull image                |
+| o   | open DockerHub in browser |
