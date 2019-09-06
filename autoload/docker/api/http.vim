@@ -153,7 +153,7 @@ function! s:request_err_cb(ch, msg) abort
 endfunction
 
 " build http response
-" response is 
+" response is
 " {
 " 	'status': 200,
 " 	'headers': {
