@@ -39,8 +39,9 @@ function! docker#api#http#delete(url, param, data) abort
 endfunction
 
 " async http get
-function! docker#api#http#async_get(url, param, callback) abort
+function! docker#api#http#async_get(use_socket, url, param, callback) abort
 	let setting = {
+				\ 'use_socket': a:use_socket,
 				\ 'url': a:url,
 				\ 'method': 'GET',
 				\ 'param': a:param,
@@ -51,8 +52,9 @@ function! docker#api#http#async_get(url, param, callback) abort
 endfunction
 
 " async http post
-function! docker#api#http#async_post(url, param, data, callback) abort
+function! docker#api#http#async_post(use_socket, url, param, data, callback) abort
 	let setting = {
+				\ 'use_socket': a:use_socket,
 				\ 'url': a:url,
 				\ 'method': 'POST',
 				\ 'param': a:param,
@@ -64,8 +66,9 @@ function! docker#api#http#async_post(url, param, data, callback) abort
 endfunction
 
 " async http delete
-function! docker#api#http#async_delete(url, param, callback) abort
+function! docker#api#http#async_delete(use_socket, url, param, callback) abort
 	let setting = {
+				\ 'use_socket': a:use_socket,
 				\ 'url': a:url,
 				\ 'method': 'DELETE',
 				\ 'param': a:param,
@@ -78,6 +81,7 @@ endfunction
 " async http request function
 " setting object
 " {
+" 	'use_socket': 1,
 " 	'url': 'http://localhost',
 "	'method': 'POST',
 "	'param' : {
@@ -91,7 +95,12 @@ endfunction
 "	'callback': function('<SNR>_88_gorilla_cb'),
 " }
 function! s:async_request(setting) abort
-	let command = ['curl', '-s', '--unix-socket', '/var/run/docker.sock', '-X', a:setting.method]
+	let command = []
+	if a:setting.use_socket
+		let command = ['curl', '-s', '--unix-socket', '/var/run/docker.sock', '-X', a:setting.method]
+	else
+		let command = ['curl', '-s', '-X', a:setting.method]
+	endif
 
 	let dump = {
 				\ 'header': s:tempname(),
@@ -133,7 +142,8 @@ endfunction
 " job exit callback
 function! s:request_exit_cb(dump, callback, ch, status) abort
 	if a:status !=# 0
-		echoerr s:errcode[a:status]
+		call docker#util#echo_err(s:errcode[a:status])
+		return
 	endif
 	let response = s:build_response(s:readfile(a:dump.header), s:readfile(a:dump.body))
 
@@ -149,7 +159,7 @@ endfunction
 
 " job error callback
 function! s:request_err_cb(ch, msg) abort
-	echoerr a:msg
+	call docker#util#echo_err(a:msg)
 endfunction
 
 " build http response
@@ -181,20 +191,32 @@ function! s:build_response(header, body) abort
 		if head ==# ''
 			continue
 		endif
-		let h = split(head, ': ')
-		let response.headers[trim(h[0])] = trim(h[1])
+		let h = split(head, ':')
+		if len(h) ># 1
+			let response.headers[trim(h[0])] = trim(h[1])
+		else
+			let response.headers[trim(h[0])] = ''
+		endif
 	endfor
 
 	if len(a:body) > 1
 		let contents = []
 
 		for content in a:body
-			call add(contents, json_decode(content))
+			try
+				call add(contents, json_decode(content))
+			catch
+				call add(contents, content)
+			endtry
 		endfor
 
 		let response.content = contents
 	elseif len(a:body) == 1
-		let response.content = json_decode(a:body[0])
+		try
+			let response.content = json_decode(a:body[0])
+		catch
+			let response.content = a:body[0]
+		endtry
 	else
 		let response.connect = {}
 	endif

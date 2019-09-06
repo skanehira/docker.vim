@@ -35,7 +35,7 @@ endfunction
 function! docker#api#container#start(ctx, updatefunc) abort
 	let id = a:ctx.content[a:ctx.select].Id
 	call window#util#notification_normal('starting... ' .. id)
-	call docker#api#http#async_post('http://localhost/containers/' .. id .. '/start',
+	call docker#api#http#async_post(1, 'http://localhost/containers/' .. id .. '/start',
 				\ {},
 				\ {},
 				\ function('s:container_start_cb', [a:ctx, a:updatefunc])
@@ -58,7 +58,7 @@ endfunction
 function! docker#api#container#stop(ctx, updatefunc) abort
 	let id = a:ctx.content[a:ctx.select].Id
 	call window#util#notification_normal('stopping... ' .. id)
-	call docker#api#http#async_post('http://localhost/containers/' .. id .. '/stop',
+	call docker#api#http#async_post(1, 'http://localhost/containers/' .. id .. '/stop',
 				\ {},
 				\ {},
 				\ function('s:container_stop_cb', [a:ctx, a:updatefunc])
@@ -79,7 +79,7 @@ endfunction
 function! docker#api#container#restart(ctx, updatefunc) abort
 	let id = a:ctx.content[a:ctx.select].Id
 	call window#util#notification_normal('restaring... ' .. id)
-	call docker#api#http#async_post('http://localhost/containers/' .. id .. '/restart',
+	call docker#api#http#async_post(1, 'http://localhost/containers/' .. id .. '/restart',
 				\ {},
 				\ {},
 				\ function('s:container_restart_cb', [a:ctx, a:updatefunc])
@@ -116,7 +116,7 @@ function! docker#api#container#delete(ctx, updatefunc) abort
 	endtry
 
 	call window#util#notification_normal('deleting... ' .. id)
-	call docker#api#http#async_delete('http://localhost/containers/' .. id,
+	call docker#api#http#async_delete(1, 'http://localhost/containers/' .. id,
 				\ {},
 				\ function('s:container_delete_cb', [a:ctx, a:updatefunc])
 				\ )
@@ -152,7 +152,7 @@ endfunction
 function! docker#api#container#kill(ctx, updatefunc) abort
 	let id = a:ctx.content[a:ctx.select].Id
 	call window#util#notification_normal('killing... ' .. id)
-	call docker#api#http#async_post("http://localhost/containers/" .. id .. "/kill",
+	call docker#api#http#async_post(1, "http://localhost/containers/" .. id .. "/kill",
 				\ {},
 				\ {},
 				\ function('s:container_kill_cb', [a:ctx, a:updatefunc]),
@@ -174,7 +174,7 @@ function! docker#api#container#rename(ctx, name, updatefunc) abort
 	echo ''
 	let id = a:ctx.content[a:ctx.select].Id
 	call window#util#notification_normal(printf('renaming to %s...', a:name))
-	call docker#api#http#async_post('http://localhost/containers/' .. id .. '/rename',
+	call docker#api#http#async_post(1, 'http://localhost/containers/' .. id .. '/rename',
 				\ {'name': a:name},
 				\ {},
 				\ function('s:container_rename_cb', [a:ctx, a:updatefunc])

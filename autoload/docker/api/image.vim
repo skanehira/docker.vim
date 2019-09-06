@@ -47,7 +47,7 @@ endfunction
 function! docker#api#image#delete(ctx, updatefunc) abort
 	let id = a:ctx.content[a:ctx.select].Id
 	call window#util#notification_normal('deleting... ' .. id)
-	call docker#api#http#async_delete('http://localhost/images/' .. id,
+	call docker#api#http#async_delete(1, 'http://localhost/images/' .. id,
 				\ {},
 				\ function('s:image_delete_cb', [a:ctx, a:updatefunc]),
 				\ )
@@ -75,7 +75,7 @@ function! docker#api#image#pull(image) abort
 	let param = join(image_tag, ":")
 	call window#util#notification_normal('pulling... ' .. param)
 
-	call docker#api#http#async_post('http://localhost/images/create',
+	call docker#api#http#async_post(1, 'http://localhost/images/create',
 				\ {'fromImage': param},
 				\ {},
 				\ function('s:image_pull_cb', [param]),
