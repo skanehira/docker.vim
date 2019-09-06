@@ -218,5 +218,41 @@ function! docker#api#container#is_running(id) abort
 	return json_decode(l:response.content).State.Running
 endfunction
 
+" run container
+function! docker#api#container#run(ctx) abort
+	if !has('terminal')
+		call docker#util#echo_err('terminal is not support')
+		return
+	endif
+
+	if !executable('docker')
+		call docker#util#echo_err('there are no executable command: docker')
+		return
+	endif
+
+	let name = a:ctx.content[a:ctx.select].RepoTags[0]
+
+	let a:ctx.disable_filter = 1
+	let args = input('args:')
+	let cmd = input('cmd:')
+	let a:ctx.disable_filter = 0
+
+	call popup_close(a:ctx.id)
+
+	let excmd = g:docker_terminal_open .. ' term docker run'
+	if !empty(args)
+		let excmd = excmd .. ' ' .. args
+	endif
+
+	let excmd = excmd .. ' ' .. name
+
+	if !empty(cmd)
+		let excmd = excmd .. ' ' .. cmd
+	endif
+
+	exe excmd
+	nnoremap <silent> <buffer> q :close<CR>
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo
