@@ -10,6 +10,8 @@ scriptencoding utf-8
 " path separator
 let s:sep = fnamemodify('.', ':p')[-1:]
 
+let s:version_file = expand('<sfile>:p:h:h:h:h') .. s:sep .. 'docker.version.json'
+
 " version info url
 let s:version_info_url = 'https://raw.githubusercontent.com/skanehira/docker.vim/master/docker.version.json'
 
@@ -62,7 +64,7 @@ endfunction
 
 " check plugin's version
 function! docker#api#version#check_plugin_version() abort
-	let data = readfile(expand('<sfile>:p:h') .. s:sep .. 'docker.version.json')
+	let data = readfile(s:version_file)
 	let current_info = json_decode(join(data, "\n"))
 	call docker#api#http#async_get(0,
 				\ s:version_info_url,{},
