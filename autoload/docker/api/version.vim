@@ -11,7 +11,7 @@ scriptencoding utf-8
 let s:sep = fnamemodify('.', ':p')[-1:]
 
 " version info url
-let s:version_info_url = 'https://raw.githubusercontent.com/skanehira/docker.vim/develop/docker.version.json'
+let s:version_info_url = 'https://raw.githubusercontent.com/skanehira/docker.vim/master/docker.version.json'
 
 " get docker version info
 function! docker#api#version#info() abort
