@@ -89,7 +89,7 @@ show version info
 ```
 
 ## key bindings
-common operation
+common operations in popup window.
 
 | operation          | key |
 |--------------------|-----|
