@@ -39,6 +39,11 @@ let g:docker_open_browser_cmd = 'open'
 " split temrinal windows, can use vert or tab, etc...
 " see :h vert
 let g:docker_terminal_open = 'bo'
+
+" check plugin's version when plugin loading.
+" default is checking.
+" If you not want to check, please set 0 to this option.
+let g:docker_plugin_version_check = 1
 ```
 
 ## commands
