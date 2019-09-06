@@ -1,5 +1,4 @@
 " docker
-" Version: 0.2.0
 " Author: skanehira
 " License: MIT
 

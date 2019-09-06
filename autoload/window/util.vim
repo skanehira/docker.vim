@@ -1,5 +1,4 @@
 " docker.vim
-" Version: 0.1.0
 " Author : skanehira <sho19921005@gmail.com>
 " License: MIT
 
