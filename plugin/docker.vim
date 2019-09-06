@@ -24,9 +24,8 @@ if !exists('g:docker_terminal_open')
 endif
 
 " check plugins's version
-if !exists('g:docker_plugin_version_check')
+if get(g:, 'docker_plugin_version_check', 1)
 	call docker#api#version#check_plugin_version()
-	let g:docker_plugin_version_check = 1
 endif
 
 " load syntax
