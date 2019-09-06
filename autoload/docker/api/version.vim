@@ -45,9 +45,19 @@ function! s:check_plugin_version_cb(current_info, response) abort
 		return
 	endif
 
-	if a:current_info.version !=# a:response.content.version
-		call window#util#notification_success(printf("docker.vim: there have a new version: %s", a:response.content.version))
+	let current = split(a:current_info.version, '\.')
+	let latest = split(a:response.content.version, '\.')
+
+	if current[0] >= latest[0]
+		if current[1] >= latest[1]
+			if current[2] >= latest[2]
+				return
+			endif
+		endif
 	endif
+
+	let msg = printf("docker.vim: there have a new version: %s", a:response.content.version)
+	call window#util#notification_success(msg)
 endfunction
 
 " check plugin's version
