@@ -62,9 +62,12 @@ INTERFACE					*docker-interface*
 VARIABLES					*docker-variables*
 
 let g:docker_open_browser_cmd 			*g:docker_open_browser_cmd*
+	Set open browser command used in image search result window.
 	default value: "open"
 
 let g:docker_terminal_open 			*g:docker_terminal_open*
+	Set terminal open way used in :Docker command or
+	attaching running container.
 	default value: "bo"
 
 let g:docker_plugin_version_check 		*g:docker_plugin_version_check*
@@ -78,25 +81,27 @@ COMMANDS					*docker-commands*
 :Docker
 	Docker is wrap docker command.
 	Command result will display in terminal buffer.
-	e.g. `:Docker ps -a` is similar `docker ps -a` .
+	e.g. `:Docker ps -a` is similar `docker ps -a`
 							*:DockerImages*
 :DockerImages
-	Display docker images in popup window.(not inclued <none> images)
-	update list at interval of 5 second.
+	Display docker images in popup window(not inclued <none> images).
+	Update list at interval of 5 second.
+	Window have some keybinds, plase see *docker-images-mappings*
 
 							*:DockerContainers*
 :DockerContainers
 	Diplay docker containers in popup window.
 	update list at interval of 5 second.
-	Use <q> to close window.
+	Window have some keybinds, plase see *docker-containers-mappings*
 
 							*:DockerMonitorStart*
 :DockerMonitorStart {id} or {name}
-	Start monitoring container's mem and cpu usage at interval of 2 second..
+	Start monitoring container's mem and cpu
+	usage at interval of 2 second..
 
 							*:DockerMonitorStop*
 :DockerMonitorStop
-	Stop monitoring.
+	Stop monitoring and close window.
 
 							*:DockerMonitorWindowMove*
 :DockerMonitorWindowMove
@@ -110,24 +115,28 @@ COMMANDS					*docker-commands*
 :DockerContainerLogs {id} or {name}
 	Start monitoring container's log.
 	Use <C-c> to stop monitoring.
-	When container is not running, log wlll be display in buffer.
+	If container is not running,
+	log wlll be display in terminal buffer.
 
 							*:DockerVersion*
 :DockerVersion
 	Display docker engine version info.
+	Use <q> to close window.
 
 							*:DockerImageSearch*
 :DockerImageSearch
 	Search image from DockerHub.
+	If found some images, that will display in result window.
+	Window have some keybinds, plase see *docker-search-images-mappings*
 
 ------------------------------------------------------------------------------
 FUNCTIONS					*docker-functions*
 
-					*docker#api#container#attach()*
+						*docker#api#container#attach()*
 docker#api#container#attach({id}, {cmd})
 	Run {cmd} and attach container.
 	{id} can specify the container name.
-	This function is execute `docker exec -it {id} {cmd}` in terminal-job mode
+	This function is execute `docker exec -it {id} {cmd}` in terminal-job mode.
 
 docker#api#container#logs({id})			*docker#api#container#logs()*
 	Start monitoring container's log.
