@@ -66,6 +66,11 @@ let g:docker_open_browser_cmd 			*g:docker_open_browser_cmd*
 
 let g:docker_terminal_open 			*g:docker_terminal_open*
 	default value: "bo"
+
+let g:docker_plugin_version_check 		*g:docker_plugin_version_check*
+	Set whether to check plugin version when loading plugin.
+	1 is check, 0 do not check.
+	default value: 1
 ------------------------------------------------------------------------------
 COMMANDS					*docker-commands*
 
