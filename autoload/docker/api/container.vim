@@ -193,15 +193,13 @@ function! docker#api#container#logs(entry) abort
 	endif
 
 	try
-		let cmd = ''
 		let name = a:entry.Names[0][1:]
 		if docker#api#container#is_running(a:entry.Id)
-			let cmd = printf('bo term ++close docker logs -f %s', name)
+			exe printf('%s term ++close docker logs -f %s', g:docker_terminal_open, name)
 		else
-			let cmd = printf('bo term docker logs -f %s', name)
+			exe printf('%s term docker logs -f %s', g:docker_terminal_open, name)
+			nnoremap <silent> <buffer> q :close<CR>
 		endif
-		exe cmd
-		exe "wincmd k"
 	catch /.*/
 		call window#util#notification_failed(v:exception)
 	endtry
