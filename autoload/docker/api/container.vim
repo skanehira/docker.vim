@@ -234,6 +234,7 @@ function! docker#api#container#run(ctx) abort
 	let a:ctx.disable_filter = 1
 	let args = input('args:')
 	let cmd = input('cmd:')
+	echo ''
 	let a:ctx.disable_filter = 0
 
 	call popup_close(a:ctx.id)

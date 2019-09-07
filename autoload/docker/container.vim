@@ -93,6 +93,7 @@ function! s:delete_container(ctx) abort
 	let a:ctx.disable_filter = 1
 	let result = input('do you want to delete the container? y/n:')
 	let a:ctx.disable_filter = 0
+	echo ''
 
 	if result ==# 'y' || result ==# 'Y'
 		call docker#api#container#delete(a:ctx, function('s:update_contents'))
@@ -104,6 +105,7 @@ function! s:rename_container(ctx) abort
 	let a:ctx.disable_filter = 1
 	let name = input("new container name:")
 	let a:ctx.disable_filter = 0
+	echo ''
 
 	if name ==# ''
 		call docker#util#echo_err('please input container name')
@@ -137,6 +139,7 @@ function! s:attach_container(ctx) abort
 	let a:ctx.disable_filter = 1
 	let cmd = input("execute command:")
 	let a:ctx.disable_filter = 0
+	echo ''
 
 	if cmd ==# ''
 		call docker#util#echo_err('please input command')
