@@ -111,7 +111,8 @@ function! s:rename_container(ctx) abort
 		return
 	endif
 
-	call docker#api#container#rename(a:ctx, name, function('s:update_contents'))
+	let a:ctx['name'] = name
+	call docker#api#container#rename(a:ctx, function('s:update_contents'))
 endfunction
 
 " attach container
@@ -121,9 +122,9 @@ function! s:attach_container(ctx) abort
 		return
 	endif
 
-	let id = a:ctx.content[a:ctx.select].Id
+	let entry = a:ctx.content[a:ctx.select]
 	try
-		if !docker#api#container#is_running(id)
+		if !docker#api#container#is_running(entry.Id)
 			call docker#util#echo_err('the container is not running')
 			call s:update_contents(a:ctx)
 			return
@@ -144,7 +145,7 @@ function! s:attach_container(ctx) abort
 	endif
 
 	call popup_close(a:ctx.id)
-	call docker#api#container#attach(id, cmd)
+	call docker#api#container#attach(entry.Names[0], cmd)
 endfunction
 
 " this is popup window filter function
@@ -170,7 +171,7 @@ function! docker#container#functions(ctx, key) abort
 		call docker#api#container#kill(a:ctx, function('s:update_contents'))
 	elseif a:key ==# 'l'
 		call popup_close(a:ctx.id)
-		call docker#api#container#logs(a:ctx.content[a:ctx.select].Id)
+		call docker#api#container#logs(a:ctx.content[a:ctx.select])
 	endif
 endfunction
 

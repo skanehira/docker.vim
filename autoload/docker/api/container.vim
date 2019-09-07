@@ -26,16 +26,16 @@ function! s:container_start_cb(ctx, updatefunc, response) abort
 	elseif a:response.status !=# 204
 		call window#util#notification_failed(a:response.content.message)
 	else
-		call window#util#notification_success('started ' .. a:ctx.content[a:ctx.select].Id)
+		call window#util#notification_success('started ' .. a:ctx.content[a:ctx.select].Names[0][1:])
 	endif
 	call a:updatefunc(a:ctx)
 endfunction
 
 " start container
 function! docker#api#container#start(ctx, updatefunc) abort
-	let id = a:ctx.content[a:ctx.select].Id
-	call window#util#notification_normal('starting... ' .. id)
-	call docker#api#http#async_post(1, 'http://localhost/containers/' .. id .. '/start',
+	let entry = a:ctx.content[a:ctx.select]
+	call window#util#notification_normal('starting... ' .. entry.Names[0][1:])
+	call docker#api#http#async_post(1, 'http://localhost/containers/' .. entry.Id .. '/start',
 				\ {},
 				\ {},
 				\ function('s:container_start_cb', [a:ctx, a:updatefunc])
@@ -45,20 +45,20 @@ endfunction
 " container stop callback
 function! s:container_stop_cb(ctx, updatefunc, response) abort
 	if a:response.status ==# 304
-		call window#util#notification_success('container is already stopped')
+		call window#util#notification_success(a:ctx.content[a:ctx.select].Names[0][1:] .. ' is already stopped')
 	elseif a:response.status !=# 204
 		call window#util#notification_failed(a:response.content.message)
 	else
-		call window#util#notification_success('stopped ' .. a:ctx.content[a:ctx.select].Id)
+		call window#util#notification_success('stopped ' .. a:ctx.content[a:ctx.select].Names[0][1:])
 	endif
 	call a:updatefunc(a:ctx)
 endfunction
 
 " stop container
 function! docker#api#container#stop(ctx, updatefunc) abort
-	let id = a:ctx.content[a:ctx.select].Id
-	call window#util#notification_normal('stopping... ' .. id)
-	call docker#api#http#async_post(1, 'http://localhost/containers/' .. id .. '/stop',
+	let entry = a:ctx.content[a:ctx.select]
+	call window#util#notification_normal('stopping... ' .. entry.Names[0][1:])
+	call docker#api#http#async_post(1, 'http://localhost/containers/' .. entry.Id .. '/stop',
 				\ {},
 				\ {},
 				\ function('s:container_stop_cb', [a:ctx, a:updatefunc])
@@ -70,16 +70,16 @@ function! s:container_restart_cb(ctx, updatefunc, response) abort
 	if a:response.status !=# 204
 		call window#util#notification_failed(a:response.content.message)
 	else
-		call window#util#notification_success('restarted ' .. a:ctx.content[a:ctx.select].Id)
+		call window#util#notification_success('restarted ' .. a:ctx.content[a:ctx.select].Names[0][1:])
 	endif
 	call a:updatefunc(a:ctx)
 endfunction
 
 " restart container
 function! docker#api#container#restart(ctx, updatefunc) abort
-	let id = a:ctx.content[a:ctx.select].Id
-	call window#util#notification_normal('restaring... ' .. id)
-	call docker#api#http#async_post(1, 'http://localhost/containers/' .. id .. '/restart',
+	let entry = a:ctx.content[a:ctx.select]
+	call window#util#notification_normal('restaring... ' .. entry.Names[0][1:])
+	call docker#api#http#async_post(1, 'http://localhost/containers/' .. entry.Id .. '/restart',
 				\ {},
 				\ {},
 				\ function('s:container_restart_cb', [a:ctx, a:updatefunc])
@@ -91,7 +91,7 @@ function! s:container_delete_cb(ctx, updatefunc, response) abort
 	if a:response.status !=# 204
 		call window#util#notification_failed(a:response.content.message)
 	else
-		call window#util#notification_success('deleted ' .. a:ctx.content[a:ctx.select].Id)
+		call window#util#notification_success('deleted ' .. a:ctx.content[a:ctx.select].Names[0][1:])
 	endif
 
 	if a:ctx.select ==# len(a:ctx.content) - 1
@@ -103,11 +103,11 @@ endfunction
 
 " delete container
 function! docker#api#container#delete(ctx, updatefunc) abort
-	let id = a:ctx.content[a:ctx.select].Id
+	let entry = a:ctx.content[a:ctx.select]
 
 	try
-		if docker#api#container#is_running(id)
-			call window#util#notification_failed('the container is running')
+		if docker#api#container#is_running(entry.Id)
+			call window#util#notification_failed(entry.Names[0][1:] .. ' is running')
 			return
 		endif
 	catch /.*/
@@ -115,16 +115,15 @@ function! docker#api#container#delete(ctx, updatefunc) abort
 		return
 	endtry
 
-	call window#util#notification_normal('deleting... ' .. id)
-	call docker#api#http#async_delete(1, 'http://localhost/containers/' .. id,
+	call window#util#notification_normal('deleting... ' .. entry.Names[0][1:])
+	call docker#api#http#async_delete(1, 'http://localhost/containers/' .. entry.Id,
 				\ {},
 				\ function('s:container_delete_cb', [a:ctx, a:updatefunc])
 				\ )
 endfunction
 
 " attach to a container using docker command
-" TODO use attach api
-function! docker#api#container#attach(id, cmd) abort
+function! docker#api#container#attach(name, cmd) abort
 	echo ''
 	if !has('terminal')
 		call docker#util#echo_err('terminal is not support')
@@ -136,23 +135,23 @@ function! docker#api#container#attach(id, cmd) abort
 		return
 	endif
 
-	exe printf('%s term ++close docker exec -it %s %s', g:docker_terminal_open, a:id, a:cmd)
+	exe printf('%s term ++close docker exec -it %s %s', g:docker_terminal_open, a:name, a:cmd)
 endfunction
 
 function! s:container_kill_cb(ctx, updatefunc, response) abort
 	if a:response.status !=# 204
 		call window#util#notification_failed(a:response.content.message)
 	else
-		call window#util#notification_success('killed ' .. a:ctx.content[a:ctx.select].Id)
+		call window#util#notification_success('killed ' .. a:ctx.content[a:ctx.select].Names[0][1:])
 	endif
 	call a:updatefunc(a:ctx)
 endfunction
 
 " kill container
 function! docker#api#container#kill(ctx, updatefunc) abort
-	let id = a:ctx.content[a:ctx.select].Id
-	call window#util#notification_normal('killing... ' .. id)
-	call docker#api#http#async_post(1, "http://localhost/containers/" .. id .. "/kill",
+	let entry = a:ctx.content[a:ctx.select]
+	call window#util#notification_normal('killing... ' .. entry.Names[0][1:])
+	call docker#api#http#async_post(1, "http://localhost/containers/" .. entry.Id .. "/kill",
 				\ {},
 				\ {},
 				\ function('s:container_kill_cb', [a:ctx, a:updatefunc]),
@@ -164,18 +163,17 @@ function! s:container_rename_cb(ctx, updatefunc, response) abort
 	if a:response.status !=# 204
 		call window#util#notification_failed(a:response.content.message)
 	else
-		call window#util#notification_success('renamed ' .. a:ctx.content[a:ctx.select].Id)
+		call window#util#notification_success('renamed ' .. a:ctx.name)
 	endif
 	call a:updatefunc(a:ctx)
 endfunction
 
 " rename container
-function! docker#api#container#rename(ctx, name, updatefunc) abort
+function! docker#api#container#rename(ctx, updatefunc) abort
 	echo ''
-	let id = a:ctx.content[a:ctx.select].Id
-	call window#util#notification_normal(printf('renaming to %s...', a:name))
-	call docker#api#http#async_post(1, 'http://localhost/containers/' .. id .. '/rename',
-				\ {'name': a:name},
+	call window#util#notification_normal(printf('renaming to %s...', a:ctx.name))
+	call docker#api#http#async_post(1, 'http://localhost/containers/' .. a:ctx.content[a:ctx.select].Id .. '/rename',
+				\ {'name': a:ctx.name},
 				\ {},
 				\ function('s:container_rename_cb', [a:ctx, a:updatefunc])
 				\ )
@@ -183,7 +181,7 @@ endfunction
 
 " tail container logs
 " if container is not running, terminal does not close automatically
-function! docker#api#container#logs(id) abort
+function! docker#api#container#logs(entry) abort
 	if !has('terminal')
 		call window#util#notification_failed('terminal is not support')
 		return
@@ -196,10 +194,11 @@ function! docker#api#container#logs(id) abort
 
 	try
 		let cmd = ''
-		if docker#api#container#is_running(a:id)
-			let cmd = printf('bo term ++close docker logs -f %s', a:id)
+		let name = a:entry.Names[0][1:]
+		if docker#api#container#is_running(a:entry.Id)
+			let cmd = printf('bo term ++close docker logs -f %s', name)
 		else
-			let cmd = printf('bo term docker logs -f %s', a:id)
+			let cmd = printf('bo term docker logs -f %s', name)
 		endif
 		exe cmd
 		exe "wincmd k"

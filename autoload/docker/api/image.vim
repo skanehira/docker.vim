@@ -33,7 +33,7 @@ function! s:image_delete_cb(ctx, updatefunc, response) abort
 	if a:response.status !=# 200
 		call window#util#notification_failed(a:response.content.message)
 	else
-		call window#util#notification_success('deleted ' .. a:ctx.content[a:ctx.select].Id)
+		call window#util#notification_success('deleted ' .. a:ctx.content[a:ctx.select].RepoTags[0])
 	endif
 
 	if a:ctx.select ==# len(a:ctx.content) - 1
@@ -45,9 +45,9 @@ endfunction
 
 " delete image
 function! docker#api#image#delete(ctx, updatefunc) abort
-	let id = a:ctx.content[a:ctx.select].Id
-	call window#util#notification_normal('deleting... ' .. id)
-	call docker#api#http#async_delete(1, 'http://localhost/images/' .. id,
+	let entry = a:ctx.content[a:ctx.select]
+	call window#util#notification_normal('deleting... ' .. entry.RepoTags[0])
+	call docker#api#http#async_delete(1, 'http://localhost/images/' .. entry.Id,
 				\ {},
 				\ function('s:image_delete_cb', [a:ctx, a:updatefunc]),
 				\ )
