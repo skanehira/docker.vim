@@ -69,7 +69,6 @@ endfunction
 function! s:stats_out_cb(id, ch, result) abort
 	let res = json_decode(a:result)
 	if empty(res)
-		call docker#util#echo_err('response is empty')
 		call docker#monitor#stop()
 		return
 	endif
@@ -91,23 +90,35 @@ function! s:update_stats(id, timer) abort
 endfunction
 
 function! s:calculate_cpu(response) abort
-	let cpu_percent = 0
-	let cpu_stats = a:response.cpu_stats
-	let precpu_stats = a:response.precpu_stats
-	let cpu_delta = cpu_stats.cpu_usage.total_usage - precpu_stats.cpu_usage.total_usage
-	" if container not runnnig
-	if cpu_delta ==# 0
-		return 0
-	endif
-	let system_delta = cpu_stats.system_cpu_usage - precpu_stats.system_cpu_usage
-	let online_cpus  = cpu_stats.online_cpus
-	if online_cpus == 0
-		let online_cpus = len(cpu_stats.cpu_usage.percpu_usage)
-	endif
+	try
+		let cpu_percent = 0
+		let cpu_stats = a:response.cpu_stats
+		let precpu_stats = a:response.precpu_stats
+		let cpu_delta = cpu_stats.cpu_usage.total_usage - precpu_stats.cpu_usage.total_usage
+		" if container not runnnig
+		if cpu_delta ==# 0
+			return 0
+		endif
 
-	if system_delta > 0 && cpu_delta > 0
-		let cpu_percent = (cpu_delta * 1.0 / system_delta) * online_cpus * 100
-	endif
+		" issue #1
+		" an error occurs if the container stop while monitoring cpu/mem
+		" if stop container while monitoring, cpu_stats don't have system_cpu_usage value
+		if has_key(cpu_stats, 'system_cpu_usage')
+			return 0
+		endif
+		let system_delta = cpu_stats.system_cpu_usage - precpu_stats.system_cpu_usage
+		let online_cpus  = cpu_stats.online_cpus
+		if online_cpus == 0
+			let online_cpus = len(cpu_stats.cpu_usage.percpu_usage)
+		endif
+
+		if system_delta > 0 && cpu_delta > 0
+			let cpu_percent = (cpu_delta * 1.0 / system_delta) * online_cpus * 100
+		endif
+	catch
+		call docker#util#echo_err('docker.vim: ' .. v:exception)
+	endtry
+
 	return float2nr(cpu_percent)
 endfunction
 
