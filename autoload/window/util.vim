@@ -334,7 +334,7 @@ function! window#util#notification(text, type) abort
 				\ 'highlight': 'notification_normal',
 				\ 'col': 1,
 				\ 'line': 3,
-				\ 'minwidth': 20,
+				\ 'minwidth': strlen(a:text),
 				\ 'tabpage': -1,
 				\ 'zindex': 300,
 				\ 'drag': 1,
