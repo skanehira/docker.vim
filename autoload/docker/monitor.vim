@@ -103,7 +103,7 @@ function! s:calculate_cpu(response) abort
 		" issue #1
 		" an error occurs if the container stop while monitoring cpu/mem
 		" if stop container while monitoring, cpu_stats don't have system_cpu_usage value
-		if has_key(cpu_stats, 'system_cpu_usage')
+		if !has_key(cpu_stats, 'system_cpu_usage')
 			return 0
 		endif
 		let system_delta = cpu_stats.system_cpu_usage - precpu_stats.system_cpu_usage
