@@ -16,13 +16,13 @@ let s:TABLE = s:V.import('Text.Table')
 " 'content': {images},
 " 'view_content': {table}'
 " }
-function! s:image_get(offset, top) abort
+function! s:image_get(search_word, offset, top) abort
 	let l:table = s:TABLE.new({
 				\ 'columns': [{},{},{},{},{}],
 				\ 'header' : ['ID', 'REPOSITORY', 'TAG', 'CREATED', 'SIZE'],
 				\ })
 
-	let l:images = docker#api#image#get()
+	let l:images = filter(docker#api#image#get(), 'split(v:val.RepoTags[0], ":")[0] =~ a:search_word[1:]')
 
 	for row in l:images[a:offset: a:offset + a:top - 1]
 		let l:image = docker#util#parse_image(row)
@@ -44,7 +44,7 @@ endfunction
 function! docker#image#get() abort
 	let l:maxheight = 15
 	let l:top = l:maxheight - 4
-	let l:contents = s:image_get(0, l:top)
+	let l:contents = s:image_get('', 0, l:top)
 
 	if len(l:contents.content) ==# 0
 		call docker#util#echo_err('there are no images')
@@ -61,7 +61,9 @@ function! docker#image#get() abort
 				\ 'top': l:top,
 				\ 'offset': 0,
 				\ 'disable_filter': 0,
-				\ 'refresh_timer': 0
+				\ 'refresh_timer': 0,
+				\ 'search_word': '',
+				\ 'search_mode': 0
 				\ }
 
 	call window#util#create_popup_window(l:ctx)
@@ -75,12 +77,12 @@ endfunction
 
 " update every specified time
 function! s:update_contents_timer(ctx, timer) abort
-	call s:update_contents(a:ctx)
+	call docker#image#update_contents(a:ctx)
 endfunction
 
 " update contents
-function! s:update_contents(ctx) abort
-	let l:contents = s:image_get(a:ctx.offset, a:ctx.top)
+function! docker#image#update_contents(ctx) abort
+	let l:contents = s:image_get(a:ctx.search_word, a:ctx.offset, a:ctx.top)
 	let a:ctx.content = l:contents.content
 	let a:ctx.view_content = l:contents.view_content
 	call window#util#update_poup_window(a:ctx)
@@ -94,7 +96,7 @@ function! s:delete_image(ctx) abort
 	echo ''
 
 	if result ==# 'y' || result ==# 'Y'
-		call docker#api#image#delete(a:ctx, function('s:update_contents'))
+		call docker#api#image#delete(a:ctx, function('docker#image#update_contents'))
 	endif
 endfunction
 
@@ -103,7 +105,7 @@ function! docker#image#functions(ctx, key) abort
 	if a:key ==# "\<C-d>"
 		call s:delete_image(a:ctx)
 	elseif a:key ==# 'R'
-		call s:update_contents(a:ctx)
+		call docker#image#update_contents(a:ctx)
 	elseif a:key ==# 'r'
 		call docker#api#container#run(a:ctx)
 	endif

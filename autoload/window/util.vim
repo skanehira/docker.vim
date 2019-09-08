@@ -140,6 +140,47 @@ function! s:popup_filter(ctx, id, key) abort
 		return 0
 	endif
 
+	if a:ctx.search_mode
+		if a:key ==# "\<CursorHold>"
+			return 1
+		elseif a:key ==# "\<cr>"
+			let a:ctx.search_mode = 0
+			redraw
+			echo ''
+			return 1
+		elseif a:key ==# "\<bs>"
+			let a:ctx.search_word = a:ctx.search_word[:-2]
+			if strlen(a:ctx.search_word) ==# 0
+				let a:ctx.search_mode = 0
+			endif
+		else
+			let a:ctx.search_word = a:ctx.search_word .. a:key
+		endif
+		echo a:ctx.search_word
+		redraw
+
+		" update content
+		if a:ctx.type ==# 'image'
+			call docker#image#update_contents(a:ctx)
+		elseif a:ctx.type ==# 'container'
+			call docker#container#update_contents(a:ctx)
+		endif
+		return 1
+	endif
+
+	if a:key ==# '/'
+		let a:ctx.search_mode = 1
+		let a:ctx.search_word = a:key
+		echo a:ctx.search_word
+
+		if a:ctx.type ==# 'image'
+			call docker#image#update_contents(a:ctx)
+		elseif a:ctx.type ==# 'container'
+			call docker#container#update_contents(a:ctx)
+		endif
+		return 1
+	endif
+
 	if a:key ==# 'q' || a:key ==# 'x'
 		call popup_close(a:id)
 		call timer_stop(a:ctx.refresh_timer)

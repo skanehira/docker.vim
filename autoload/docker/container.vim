@@ -16,13 +16,13 @@ let s:TABLE = s:V.import('Text.Table')
 " 'content': {images},
 " 'view_content': {table}'
 " }
-function! s:container_get(offset, top) abort
+function! s:container_get(search_word, offset, top) abort
 	let l:table = s:TABLE.new({
 				\ 'columns': [{},{},{},{},{},{},{}],
 				\ 'header' : ['ID', 'NAME', 'IMAGE', 'COMMAND', 'STATUS', 'CREATED', 'PORTS'],
 				\ })
 
-	let l:containers = docker#api#container#get()
+	let l:containers = filter(docker#api#container#get(), 'v:val.Names[0][1:] =~ a:search_word[1:]')
 
 	for row in l:containers[a:offset: a:offset + a:top -1]
 		let l:container = docker#util#parse_container(row)
@@ -46,7 +46,7 @@ endfunction
 function! docker#container#get() abort
 	let l:maxheight = 15
 	let l:top = l:maxheight - 4
-	let l:contents = s:container_get(0, l:top)
+	let l:contents = s:container_get('', 0, l:top)
 
 	if len(l:contents.content) ==# 0
 		call docker#util#echo_err('there are no containers')
@@ -63,7 +63,9 @@ function! docker#container#get() abort
 				\ 'top': l:top,
 				\ 'offset': 0,
 				\ 'disable_filter': 0,
-				\ 'refresh_timer': 0
+				\ 'refresh_timer': 0,
+				\ 'search_word': '',
+				\ 'search_mode': 0
 				\ }
 
 	call window#util#create_popup_window(l:ctx)
@@ -77,12 +79,12 @@ endfunction
 
 " update every specified time
 function! s:update_contents_timer(ctx, timer) abort
-	call s:update_contents(a:ctx)
+	call docker#container#update_contents(a:ctx)
 endfunction
 
 " update contents
-function! s:update_contents(ctx) abort
-	let l:contents = s:container_get(a:ctx.offset, a:ctx.top)
+function! docker#container#update_contents(ctx) abort
+	let l:contents = s:container_get(a:ctx.search_word, a:ctx.offset, a:ctx.top)
 	let a:ctx.content = l:contents.content
 	let a:ctx.view_content = l:contents.view_content
 	call window#util#update_poup_window(a:ctx)
@@ -96,7 +98,7 @@ function! s:delete_container(ctx) abort
 	echo ''
 
 	if result ==# 'y' || result ==# 'Y'
-		call docker#api#container#delete(a:ctx, function('s:update_contents'))
+		call docker#api#container#delete(a:ctx, function('docker#container#update_contents'))
 	endif
 endfunction
 
@@ -109,12 +111,12 @@ function! s:rename_container(ctx) abort
 
 	if name ==# ''
 		call docker#util#echo_err('please input container name')
-		call s:update_contents(a:ctx)
+		call docker#container#update_contents(a:ctx)
 		return
 	endif
 
 	let a:ctx['name'] = name
-	call docker#api#container#rename(a:ctx, function('s:update_contents'))
+	call docker#api#container#rename(a:ctx, function('docker#container#update_contents'))
 endfunction
 
 " attach container
@@ -128,7 +130,7 @@ function! s:attach_container(ctx) abort
 	try
 		if !docker#api#container#is_running(entry.Id)
 			call docker#util#echo_err('the container is not running')
-			call s:update_contents(a:ctx)
+			call docker#container#update_contents(a:ctx)
 			return
 		endif
 	catch /.*/
@@ -143,7 +145,7 @@ function! s:attach_container(ctx) abort
 
 	if cmd ==# ''
 		call docker#util#echo_err('please input command')
-		call s:update_contents(a:ctx)
+		call docker#container#update_contents(a:ctx)
 		return
 	endif
 
@@ -154,24 +156,24 @@ endfunction
 " this is popup window filter function
 function! docker#container#functions(ctx, key) abort
 	if a:key ==# 'u'
-		call docker#api#container#start(a:ctx, function('s:update_contents'))
+		call docker#api#container#start(a:ctx, function('docker#container#update_contents'))
 	elseif a:key ==# 's'
-		call docker#api#container#stop(a:ctx, function('s:update_contents'))
+		call docker#api#container#stop(a:ctx, function('docker#container#update_contents'))
 	elseif a:key ==# "\<C-d>"
 		call s:delete_container(a:ctx)
 	elseif a:key ==# 'r'
-		call docker#api#container#restart(a:ctx, function('s:update_contents'))
+		call docker#api#container#restart(a:ctx, function('docker#container#update_contents'))
 	elseif a:key ==# "m"
 		call popup_close(a:ctx.id)
 		call docker#monitor#start(a:ctx.content[a:ctx.select].Id)
 	elseif a:key ==# 'R'
-		call s:update_contents(a:ctx)
+		call docker#container#update_contents(a:ctx)
 	elseif a:key ==# "\<C-r>"
 		call s:rename_container(a:ctx)
 	elseif a:key ==# 'a'
 		call s:attach_container(a:ctx)
 	elseif a:key ==# 'K'
-		call docker#api#container#kill(a:ctx, function('s:update_contents'))
+		call docker#api#container#kill(a:ctx, function('docker#container#update_contents'))
 	elseif a:key ==# 'l'
 		call popup_close(a:ctx.id)
 		call docker#api#container#logs(a:ctx.content[a:ctx.select])
