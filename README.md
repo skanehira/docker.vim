@@ -24,7 +24,8 @@ This is management plugin for docker.
 - docker command
 
 # Installation
-ex dein.vim
+e.g dein.vim
+
 ```toml
 [[plugins]]
 repo = 'skanehira/docker.vim'
