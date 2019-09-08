@@ -47,8 +47,8 @@ function! s:check_plugin_version_cb(current_info, response) abort
 		return
 	endif
 
-	let current = split(a:current_info.version, '\.')
-	let latest = split(a:response.content.version, '\.')
+	let current = map(split(a:current_info.version, '\.'), 'str2nr(v:val)')
+	let latest = map(split(a:response.content.version, '\.'), 'str2nr(v:val)')
 
 	if current[0] >= latest[0]
 		if current[1] >= latest[1]
