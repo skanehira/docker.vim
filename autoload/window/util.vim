@@ -123,7 +123,7 @@ endfunction
 
 " update table highlight
 function! s:update_highlight(ctx) abort
-	if len(a:ctx.content) ==# 0
+	if len(a:ctx.content) ==# 0 || len(a:ctx.content) < a:ctx.select
 		return
 	endif
 
