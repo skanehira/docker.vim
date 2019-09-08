@@ -118,13 +118,15 @@ containers
 | ctrl-d | delete container                      |
 | ctrl-r | rename container                      |
 | l      | monitoring container logs             |
+| /      | start filter mode                     |
 
 images
 
-| key    | operation      |
-|--------|----------------|
-| R      | refresh images |
-| ctrl-d | delete image   |
+| key    | operation         |
+|--------|-------------------|
+| R      | refresh images    |
+| ctrl-d | delete image      |
+| /      | start filter mode |
 
 search images
 

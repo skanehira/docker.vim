@@ -210,6 +210,12 @@ r		Create and run container with speficied image.
 		e.g:	args: `--rm -it --name ubuntu`
 			cmd: `bash`
 
+						*docker-images_/*
+/{pattern}	Start filter mode.
+		This is like Vim's search command `/`
+		You can filtering repository name.
+		When you press Enter, mode will be finish.
+
 						*docker-containers-mappings*
 docker containers window mappings ~
 
@@ -251,6 +257,9 @@ G		Scroll to bottom.
 
 						*docker-containers_q*
 q		close popup window.
+
+						*docker-containers_/*
+/{pattern}	Same as docker-images_/
 
 						*docker-search-images-mappings*
 docker search images window mappings ~
