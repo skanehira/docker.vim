@@ -115,7 +115,7 @@ show version info
 | R      | refresh containers                    |
 | K      | kill container                        |
 | a      | attach container                      |
-| a      | monitor container's cpu nad mem usage |
+| m      | monitor container's cpu nad mem usage |
 | ctrl-d | delete container                      |
 | ctrl-r | rename container                      |
 | l      | monitoring container logs             |
