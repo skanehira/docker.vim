@@ -15,13 +15,14 @@ This is management plugin for docker.
 - container list(udpate every 5 second)
 - start/stop/restart/kill container
 - delete container
-- attach container(require docker command)
+- attach container(require docker cli)
+- run container(like docker run {container})
 - monitoring container logs and CPU/MEM
 
 # Requirements
 - curl >= 7.40.0
 - Vim version >= 8.1.1799
-- docker command
+- docker cli
 
 # Installation
 e.g dein.vim
@@ -96,7 +97,7 @@ show version info
 ```
 
 ## key bindings
-common operations in popup window.
+### common operations in popup window.
 
 | key | operation          |
 |-----|--------------------|
@@ -104,7 +105,7 @@ common operations in popup window.
 | G   | scroll to bottom   |
 | q   | close popup window |
 
-containers
+### containers
 
 | key    | operation                             |
 |--------|---------------------------------------|
@@ -120,17 +121,19 @@ containers
 | l      | monitoring container logs             |
 | /      | start filter mode                     |
 
-images
+### images
 
 | key    | operation         |
 |--------|-------------------|
 | R      | refresh images    |
+| r      | run container     |
 | ctrl-d | delete image      |
 | /      | start filter mode |
 
-search images
+### search images
 
 | key | operation                 |
 |-----|---------------------------|
 | p   | pull image                |
 | o   | open DockerHub in browser |
+
