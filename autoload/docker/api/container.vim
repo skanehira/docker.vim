@@ -122,7 +122,7 @@ function! docker#api#container#delete(ctx, updatefunc) abort
 				\ )
 endfunction
 
-" attach to a container using docker command
+" attach to a container using docker cli
 function! docker#api#container#attach(name, cmd) abort
 	echo ''
 	if !has('terminal')

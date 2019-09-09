@@ -5,10 +5,10 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-" wrap docker command
+" wrap docker cli
 function! docker#docker#execute(...) abort
 	if !executable('docker')
-		call docker#util#echo_err('there are no docker command')
+		call docker#util#echo_err('there are no docker cli')
 		return
 	endif
 
