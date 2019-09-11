@@ -216,6 +216,9 @@ r		Create and run container with speficied image.
 		You can filtering repository name.
 		When you press Enter, mode will be finish.
 
+						*docker-images_ctrl-^*
+<CTRL-^>	Swith to containers popup window.
+
 						*docker-containers-mappings*
 docker containers window mappings ~
 
@@ -260,6 +263,9 @@ q		close popup window.
 
 						*docker-containers_/*
 /{pattern}	Same as |docker-images_/|
+
+						*docker-containers_ctrl-^*
+<CTRL-^>	Swith to images popup window.
 
 						*docker-search-images-mappings*
 docker search images window mappings ~
