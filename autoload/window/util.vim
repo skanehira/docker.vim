@@ -188,6 +188,15 @@ function! s:popup_filter(ctx, id, key) abort
 		call timer_stop(a:ctx.refresh_timer)
 		return 1
 
+	elseif a:key ==# "\<C-^>"
+		call popup_close(a:id)
+		call timer_stop(a:ctx.refresh_timer)
+		if a:ctx.type == 'container'
+			call docker#image#get()
+		else
+			call docker#container#get()
+		endif
+		return 1
 	elseif a:key ==# 'j'
 		let a:ctx.highlight_idx += a:ctx.highlight_idx ==# len(a:ctx.view_content) -1 ? 0 : 1
 		let a:ctx.select += a:ctx.select ==# len(a:ctx.content) -1 ? 0 : 1
