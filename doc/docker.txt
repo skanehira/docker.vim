@@ -86,13 +86,13 @@ COMMANDS					*docker-commands*
 :DockerImages
 	Display docker images in popup window(not inclued <none> images).
 	Update list at interval of 5 second.
-	Window have some keybinds, plase see docker-images-mappings
+	Window have some keybinds, plase see |docker-images-mappings|
 
 							*:DockerContainers*
 :DockerContainers
 	Diplay docker containers in popup window.
 	update list at interval of 5 second.
-	Window have some keybinds, plase see docker-containers-mappings
+	Window have some keybinds, plase see |docker-containers-mappings|
 
 							*:DockerMonitorStart*
 :DockerMonitorStart {id} or {name}
@@ -127,7 +127,7 @@ COMMANDS					*docker-commands*
 :DockerImageSearch
 	Search image from DockerHub.
 	If found some images, that will display in result window.
-	Window have some keybinds, plase see docker-search-images-mappings
+	Window have some keybinds, plase see |docker-search-images-mappings|
 
 ------------------------------------------------------------------------------
 FUNCTIONS					*docker-functions*
@@ -259,7 +259,7 @@ G		Scroll to bottom.
 q		close popup window.
 
 						*docker-containers_/*
-/{pattern}	Same as docker-images_/
+/{pattern}	Same as |docker-images_/|
 
 						*docker-search-images-mappings*
 docker search images window mappings ~
