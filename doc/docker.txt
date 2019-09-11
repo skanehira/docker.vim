@@ -47,7 +47,7 @@ https://github.com/skanehira/docker.vim
 INSTALL						*docker-install*
 
 Requirements:
-* Vim 8.1.1618 or above
+* Vim 8.1.1799 or above
 * curl 7.40.0 or above
 * docker cli
 
