@@ -120,15 +120,17 @@ show version info
 | ctrl-r | rename container                      |
 | l      | monitoring container logs             |
 | /      | start filter mode                     |
+| ctrl-^ | switch to images popup window         |
 
 ### images
 
-| key    | operation         |
-|--------|-------------------|
-| R      | refresh images    |
-| r      | run container     |
-| ctrl-d | delete image      |
-| /      | start filter mode |
+| key    | operation                         |
+|--------|-----------------------------------|
+| R      | refresh images                    |
+| r      | run container                     |
+| ctrl-d | delete image                      |
+| /      | start filter mode                 |
+| ctrl-^ | switch to containers popup window |
 
 ### search images
 
