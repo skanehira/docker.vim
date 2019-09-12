@@ -38,6 +38,7 @@ function! docker#api#container#start(ctx, updatefunc) abort
 	call docker#api#http#async_post(1, 'http://localhost/containers/' .. entry.Id .. '/start',
 				\ {},
 				\ {},
+				\ {},
 				\ function('s:container_start_cb', [a:ctx, a:updatefunc])
 				\ )
 endfunction
@@ -61,6 +62,7 @@ function! docker#api#container#stop(ctx, updatefunc) abort
 	call docker#api#http#async_post(1, 'http://localhost/containers/' .. entry.Id .. '/stop',
 				\ {},
 				\ {},
+				\ {},
 				\ function('s:container_stop_cb', [a:ctx, a:updatefunc])
 				\ )
 endfunction
@@ -80,6 +82,7 @@ function! docker#api#container#restart(ctx, updatefunc) abort
 	let entry = a:ctx.content[a:ctx.select]
 	call window#util#notification_normal('restaring... ' .. entry.Names[0][1:])
 	call docker#api#http#async_post(1, 'http://localhost/containers/' .. entry.Id .. '/restart',
+				\ {},
 				\ {},
 				\ {},
 				\ function('s:container_restart_cb', [a:ctx, a:updatefunc])
@@ -154,6 +157,7 @@ function! docker#api#container#kill(ctx, updatefunc) abort
 	call docker#api#http#async_post(1, "http://localhost/containers/" .. entry.Id .. "/kill",
 				\ {},
 				\ {},
+				\ {},
 				\ function('s:container_kill_cb', [a:ctx, a:updatefunc]),
 				\ )
 endfunction
@@ -174,6 +178,7 @@ function! docker#api#container#rename(ctx, updatefunc) abort
 	call window#util#notification_normal(printf('renaming to %s...', a:ctx.name))
 	call docker#api#http#async_post(1, 'http://localhost/containers/' .. a:ctx.content[a:ctx.select].Id .. '/rename',
 				\ {'name': a:ctx.name},
+				\ {},
 				\ {},
 				\ function('s:container_rename_cb', [a:ctx, a:updatefunc])
 				\ )

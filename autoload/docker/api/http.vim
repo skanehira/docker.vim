@@ -52,12 +52,13 @@ function! docker#api#http#async_get(use_socket, url, param, callback) abort
 endfunction
 
 " async http post
-function! docker#api#http#async_post(use_socket, url, param, data, callback) abort
+function! docker#api#http#async_post(use_socket, url, param, header, data, callback) abort
 	let setting = {
 				\ 'use_socket': a:use_socket,
 				\ 'url': a:url,
 				\ 'method': 'POST',
 				\ 'param': a:param,
+				\ 'header': a:header,
 				\ 'data': a:data,
 				\ 'callback': a:callback,
 				\ }
@@ -88,6 +89,9 @@ endfunction
 "		\ 'name': 'gorilla',
 "		\ 'age' : 26,
 "		\ },
+"	'header': {
+"		\ 'is_human': false,
+"		\ },
 "	'data' : {
 "		\ 'name': 'gorilla',
 "		\ 'age' : 26,
@@ -111,6 +115,12 @@ function! s:async_request(setting) abort
 
 	let command += ['--dump-header', dump.header]
 	let command += ['--output' , dump.body]
+
+	if has_key(a:setting, 'header') && !empty(a:setting.header)
+		for h in items(a:setting.header)
+			let command = command +  ['-H', join(h, ':')]
+		endfor
+	endif
 
 	if has_key(a:setting, 'param') && !empty(a:setting.param)
 		let idx = 0

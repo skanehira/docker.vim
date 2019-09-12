@@ -78,6 +78,7 @@ function! docker#api#image#pull(image) abort
 	call docker#api#http#async_post(1, 'http://localhost/images/create',
 				\ {'fromImage': param},
 				\ {},
+				\ {},
 				\ function('s:image_pull_cb', [param]),
 				\ )
 endfunction
