@@ -31,11 +31,6 @@ endfunction
 
 " create popup windows
 function! window#util#create_popup_window(ctx) abort
-	if !has("patch-8.1.1799")
-		call docker#util#echo_err("this version doesn't support popup window. please update version to 8.1.1799 or above")
-		return
-	endif
-
 	call popup_close(s:last_popup_window)
 
 	let a:ctx.id = popup_create(a:ctx.view_content, {
