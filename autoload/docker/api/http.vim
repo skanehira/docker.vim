@@ -154,6 +154,10 @@ function! s:request_exit_cb(dump, callback, ch, status) abort
 		endif
 	endfor
 
+	if empty(response)
+		return
+	endif
+
 	call call(a:callback, [response])
 endfunction
 
@@ -179,12 +183,14 @@ function! s:build_response(header, body) abort
 	let response = {
 				\ 'status': 200,
 				\ 'headers': {},
+				\ 'content': {},
 				\ }
 
 	if a:header[0] =~? '^HTTP'
 		let response.status = split(a:header[0], ' ')[1]
 	else
-		echoerr 'invalid header: ' .. join(a:header, ' ')
+		call docker#util#echo_err('invalid header: ' .. join(a:header, ' '))
+		return {}
 	endif
 
 	for head in a:header[1:]
@@ -218,7 +224,7 @@ function! s:build_response(header, body) abort
 			let response.content = a:body[0]
 		endtry
 	else
-		let response.connect = {}
+		let response.content['message'] = 'docker.vim: empty response body'
 	endif
 
 	return response
