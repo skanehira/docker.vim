@@ -123,10 +123,6 @@ endfunction
 
 " update table highlight
 function! s:update_highlight(ctx) abort
-	if len(a:ctx.content) ==# 0 || len(a:ctx.content) < a:ctx.select
-		return
-	endif
-
 	call s:select_highlight(a:ctx)
 	if a:ctx.type ==# 'container'
 		call s:status_highlight(a:ctx)
@@ -187,8 +183,9 @@ function! s:popup_filter(ctx, id, key) abort
 		call popup_close(a:id)
 		call timer_stop(a:ctx.refresh_timer)
 		return 1
+	endif
 
-	elseif a:key ==# "\<C-^>"
+	if a:key ==# "\<C-^>"
 		call popup_close(a:id)
 		call timer_stop(a:ctx.refresh_timer)
 		if a:ctx.type == 'container'
@@ -197,7 +194,13 @@ function! s:popup_filter(ctx, id, key) abort
 			call docker#container#get()
 		endif
 		return 1
-	elseif a:key ==# 'j'
+	endif
+
+	if len(a:ctx.content) ==# 0 || len(a:ctx.content) < a:ctx.select
+		return 1
+	endif
+
+	if a:key ==# 'j'
 		let a:ctx.highlight_idx += a:ctx.highlight_idx ==# len(a:ctx.view_content) -1 ? 0 : 1
 		let a:ctx.select += a:ctx.select ==# len(a:ctx.content) -1 ? 0 : 1
 		if a:ctx.select >= a:ctx.offset + a:ctx.top
@@ -225,6 +228,7 @@ function! s:popup_filter(ctx, id, key) abort
 		let a:ctx.offset = 0
 		let a:ctx.top = a:ctx.maxheight - 4
 		call s:update_view_content(a:ctx)
+
 	elseif a:key ==# 'G'
 		let a:ctx.highlight_idx = len(a:ctx.view_content) - 1
 		let a:ctx.select = len(a:ctx.content) - 1
