@@ -20,7 +20,7 @@ function! docker#api#version#info() abort
 	let l:response = docker#api#http#get("http://localhost/version", {})
 
 	if l:response.status !=# 200
-		call docker#util#echo_err(json_decode(l:response.content).message)
+		call docker#util#echo_err('docker.vim:' .. json_decode(l:response.content).message)
 		return []
 	endif
 

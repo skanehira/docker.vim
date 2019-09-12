@@ -49,7 +49,7 @@ function! docker#container#get() abort
 	let l:contents = s:container_get('', 0, l:top)
 
 	if len(l:contents.content) ==# 0
-		call docker#util#echo_err('there are no containers')
+		call docker#util#echo_err('docker.vim: there are no containers')
 		return
 	endif
 
@@ -110,7 +110,7 @@ function! s:rename_container(ctx) abort
 	echo ''
 
 	if name ==# ''
-		call docker#util#echo_err('please input container name')
+		call docker#util#echo_err('docker.vim: please input container name')
 		call docker#container#update_contents(a:ctx)
 		return
 	endif
@@ -128,12 +128,12 @@ function! s:attach_container(ctx) abort
 	let entry = a:ctx.content[a:ctx.select]
 	try
 		if !docker#api#container#is_running(entry.Id)
-			call docker#util#echo_err('the container is not running')
+			call docker#util#echo_err('docker.vim: the container is not running')
 			call docker#container#update_contents(a:ctx)
 			return
 		endif
 	catch /.*/
-		call docker#util#echo_err(v:exception)
+		call docker#util#echo_err('docker.vim: ' .. v:exception)
 		return
 	endtry
 
@@ -143,7 +143,7 @@ function! s:attach_container(ctx) abort
 	echo ''
 
 	if cmd ==# ''
-		call docker#util#echo_err('please input command')
+		call docker#util#echo_err('docker.vim: please input command')
 		call docker#container#update_contents(a:ctx)
 		return
 	endif

@@ -20,7 +20,7 @@ if !exists('s:loaded_highlight')
 		call prop_type_add('select', {'highlight': 'PmenuSel', 'priority':1})
 		call prop_type_add('status_running', {'highlight': 'DiffText'})
 	catch /.*/
-		call docker#util#echo_err(v:exception)
+		call docker#util#echo_err('docker.vim: ' .. v:exception)
 	endtry
 endif
 
@@ -375,7 +375,7 @@ endfunction
 function! s:move_notification(timer) abort
 	let opt = popup_getpos(s:last_notification_window)
 	if type(opt) !=# type({}) || empty(opt)
-		call docker#util#echo_err('cannot get notification window position')
+		call docker#util#echo_err('docker.vim: cannot get notification window position')
 		call timer_stopall(a:timer)
 		return
 	endif

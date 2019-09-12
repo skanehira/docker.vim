@@ -74,7 +74,7 @@ function! s:stats_out_cb(id, ch, result) abort
 	endif
 
 	if has_key(res, 'message')
-		call docker#util#echo_err(res.message)
+		call docker#util#echo_err('docker.vim: ' .. res.message)
 		call docker#monitor#stop()
 		return
 	endif
@@ -136,7 +136,7 @@ endfunction
 
 function! docker#monitor#move() abort
 	if s:monitor_window ==# 0
-		call docker#util#echo_err('no monitor window')
+		call docker#util#echo_err('docker.vim: no monitor window')
 		return
 	endif
 	echo '[move monitor window]... "h": left, "j": down, "k": up, "l": right, "Enter": finish'
@@ -144,7 +144,7 @@ function! docker#monitor#move() abort
 	while 1
 		let opt = popup_getpos(s:monitor_window)
 		if type(opt) !=# type({}) || empty(opt)
-			call docker#util#echo_err('cannot get monitor window position')
+			call docker#util#echo_err('docker.vim: cannot get monitor window position')
 			break
 		endif
 
@@ -173,7 +173,7 @@ function! docker#monitor#start(id) abort
 	" not support windows
 	if has('win32') || has ('win64')
 		" TODO support windows
-		call docker#util#echo_err('not support windows')
+		call docker#util#echo_err('docker.vim: doesn''t support windows')
 		return
 	endif
 

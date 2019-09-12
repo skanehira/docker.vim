@@ -105,12 +105,12 @@ function! docker#api#image#push(ctx) abort
 	let auth_config = get(g:, 'docker_registry_auth', {})
 
 	if type(auth_config) != v:t_dict
-		call docker#util#echo_err('g:docker_registry_auth is not dictionary')
+		call docker#util#echo_err('docker.vim: g:docker_registry_auth is not dictionary')
 		return
 	endif
 
 	if empty(auth_config)
-		call docker#util#echo_err('g:docker_registry_auth is empty, please set your auth info')
+		call docker#util#echo_err('docker.vim: g:docker_registry_auth is empty, please set your auth info')
 		return
 	endif
 

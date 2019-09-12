@@ -84,7 +84,7 @@ endfunction
 " open docker hub in browser
 function! docker#util#open_docker_hub(image) abort
 	if !executable(g:docker_open_browser_cmd)
-		call docker#util#echo_err('there are no executable command: ' .. g:docker_open_browser_cmd)
+		call docker#util#echo_err('docker.vim: there are no executable command: ' .. g:docker_open_browser_cmd)
 		return
 	endif
 

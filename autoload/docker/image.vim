@@ -47,7 +47,7 @@ function! docker#image#get() abort
 	let l:contents = s:image_get('', 0, l:top)
 
 	if len(l:contents.content) ==# 0
-		call docker#util#echo_err('there are no images')
+		call docker#util#echo_err('docker.vim: there are no images')
 		return
 	endif
 
@@ -120,13 +120,13 @@ function! s:tag_image(ctx) abort
 
 	let repoTag = split(repoTag, ':')
 	if len(repoTag) == 0
-		call docker#util#echo_err('repo and tag name is empty, please input repo and tag name')
+		call docker#util#echo_err('docker.vim: repo and tag name is empty, please input repo and tag name')
 		return
 	elseif len(repoTag) == 1
-		call docker#util#echo_err('repo or tag name is empty, please input repo and tag name')
+		call docker#util#echo_err('docker.vim: repo or tag name is empty, please input repo and tag name')
 		return
 	elseif len(repoTag) > 2
-		call docker#util#echo_err('invalid repo and tag name, please input format that is repo:tag')
+		call docker#util#echo_err('docker.vim: invalid repo and tag name, please input format that is repo:tag')
 		return
 	endif
 
@@ -134,12 +134,12 @@ function! s:tag_image(ctx) abort
 	let tag = repoTag[1]
 
 	if empty(repo)
-		call docker#util#echo_err('repo name is empty, please input repo')
+		call docker#util#echo_err('docker.vim: repo name is empty, please input repo')
 		return
 	endif
 
 	if empty(tag)
-		call docker#util#echo_err('tag name is empty, please input rag')
+		call docker#util#echo_err('docker.vim: tag name is empty, please input rag')
 		return
 	endif
 
@@ -217,7 +217,7 @@ function! docker#image#search() abort
 	let term = input("image name:")
 	echo ''
 	if term ==# ''
-		call docker#util#echo_err('please input image name')
+		call docker#util#echo_err('docker.vim: please input image name')
 		return
 	endif
 
@@ -226,7 +226,7 @@ function! docker#image#search() abort
 	let l:contents = s:image_search(term, 0, l:top)
 
 	if len(l:contents.content) ==# 0
-		call docker#util#echo_err('not found images')
+		call docker#util#echo_err('docker.vim: not found images')
 		return
 	endif
 

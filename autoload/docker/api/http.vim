@@ -174,7 +174,7 @@ endfunction
 
 " job error callback
 function! s:request_err_cb(ch, msg) abort
-	call docker#util#echo_err(a:msg)
+	call docker#util#echo_err('docker.vim: ' .. a:msg)
 endfunction
 
 " build http response
@@ -200,7 +200,7 @@ function! s:build_response(header, body) abort
 	if a:header[0] =~? '^HTTP'
 		let response.status = split(a:header[0], ' ')[1]
 	else
-		call docker#util#echo_err('invalid header: ' .. join(a:header, ' '))
+		call docker#util#echo_err('docker.vim: invalid header: ' .. join(a:header, ' '))
 		return {}
 	endif
 
