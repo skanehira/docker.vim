@@ -121,8 +121,7 @@ endfunction
 
 " attach container
 function! s:attach_container(ctx) abort
-	if !executable('docker')
-		call docker#util#echo_err('not exsists docker cli')
+	if !docker#util#have_docker_cli()
 		return
 	endif
 

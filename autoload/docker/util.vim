@@ -99,5 +99,21 @@ function! docker#util#open_docker_hub(image) abort
 	call job_start(printf('%s %s', g:docker_open_browser_cmd, s:url))
 endfunction
 
+function! docker#util#have_docker_cli() abort
+	if !executable('docker')
+		call docker#util#echo_err('docker.vim: not found docker cli, please refer to https://docs.docker.com/install/ to install')
+		return 0
+	endif
+	return 1
+endfunction
+
+function! docker#util#have_terminal() abort
+	if !has('terminal')
+		call docker#util#echo_err('docer.vim: this vim doesn''t support terminal')
+		return 0
+	endif
+	return 1
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

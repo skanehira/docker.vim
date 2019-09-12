@@ -7,13 +7,11 @@ set cpo&vim
 
 " wrap docker cli
 function! docker#docker#execute(...) abort
-	if !executable('docker')
-		call docker#util#echo_err('there are no docker cli')
+	if !docker#util#have_docker_cli()
 		return
 	endif
 
-	if !has('terminal')
-		call docker#util#echo_err('terminal is not support')
+	if !docker#util#have_terminal()
 		return
 	endif
 

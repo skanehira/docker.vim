@@ -128,13 +128,11 @@ endfunction
 " attach to a container using docker cli
 function! docker#api#container#attach(name, cmd) abort
 	echo ''
-	if !has('terminal')
-		call docker#util#echo_err('terminal is not support')
+	if !docker#util#have_terminal()
 		return
 	endif
 
-	if !executable('docker')
-		call docker#util#echo_err('no executable command: docker')
+	if !docker#util#have_docker_cli()
 		return
 	endif
 
@@ -187,13 +185,12 @@ endfunction
 " tail container logs
 " if container is not running, terminal does not close automatically
 function! docker#api#container#logs(entry) abort
-	if !has('terminal')
+	if !docker#util#have_terminal()
 		call window#util#notification_failed('terminal is not support')
 		return
 	endif
 
-	if !executable('docker')
-		call docker#util#echo_err('no executable command: docker')
+	if !docker#util#have_docker_cli()
 		return
 	endif
 
@@ -222,13 +219,11 @@ endfunction
 
 " run container
 function! docker#api#container#run(ctx) abort
-	if !has('terminal')
-		call docker#util#echo_err('terminal is not support')
+	if !docker#util#have_terminal()
 		return
 	endif
 
-	if !executable('docker')
-		call docker#util#echo_err('there are no executable command: docker')
+	if !docker#util#have_docker_cli()
 		return
 	endif
 
