@@ -125,6 +125,30 @@ function! docker#api#image#push(ctx) abort
 				\ )
 endfunction
 
+" tag an image callback
+function! s:image_tag_cb(ctx, updatefunc, response) abort
+	if a:response.status !=# 201
+		call window#util#notification_failed(a:response.content.message)
+	else
+		let repoTag = a:ctx.newRepo .. ':' .. a:ctx.newTag
+		call window#util#notification_success('tagged ' .. repoTag)
+	endif
+
+	call a:updatefunc(a:ctx)
+endfunction
+
+" tag an image
+function! docker#api#image#tag(ctx, updatefunc) abort
+	let entry = a:ctx.content[a:ctx.select]
+
+	call docker#api#http#async_post(1, 'http://localhost/images/' .. entry.Id .. '/tag',
+				\ {'repo': a:ctx.newRepo, 'tag': a:ctx.newTag},
+				\ {},
+				\ {},
+				\ function('s:image_tag_cb', [a:ctx, a:updatefunc]),
+				\ )
+endfunction
+
 " search images
 function! docker#api#image#search(term) abort
 	redraw

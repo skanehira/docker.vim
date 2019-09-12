@@ -112,6 +112,43 @@ function! s:push_image(ctx) abort
 	endif
 endfunction
 
+function! s:tag_image(ctx) abort
+	let a:ctx.disable_filter = 1
+	let repoTag = input('repo and tag name:')
+	let a:ctx.disable_filter = 0
+	echo ''
+
+	let repoTag = split(repoTag, ':')
+	if len(repoTag) == 0
+		call docker#util#echo_err('repo and tag name is empty, please input repo and tag name')
+		return
+	elseif len(repoTag) == 1
+		call docker#util#echo_err('repo or tag name is empty, please input repo and tag name')
+		return
+	elseif len(repoTag) > 2
+		call docker#util#echo_err('invalid repo and tag name, please input format that is repo:tag')
+		return
+	endif
+
+	let repo = repoTag[0]
+	let tag = repoTag[1]
+
+	if empty(repo)
+		call docker#util#echo_err('repo name is empty, please input repo')
+		return
+	endif
+
+	if empty(tag)
+		call docker#util#echo_err('tag name is empty, please input rag')
+		return
+	endif
+
+	let a:ctx['newRepo'] = repo
+	let a:ctx['newTag'] = tag
+
+	call docker#api#image#tag(a:ctx, function('docker#image#update_contents'))
+endfunction
+
 " this is popup window filter function
 function! docker#image#functions(ctx, key) abort
 	if a:key ==# "\<C-d>"
@@ -122,6 +159,8 @@ function! docker#image#functions(ctx, key) abort
 		call docker#api#container#run(a:ctx)
 	elseif a:key ==# 'p'
 		call s:push_image(a:ctx)
+	elseif a:key ==# 't'
+		call s:tag_image(a:ctx)
 	endif
 endfunction
 
