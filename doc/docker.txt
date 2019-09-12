@@ -74,6 +74,19 @@ let g:docker_plugin_version_check 		*g:docker_plugin_version_check*
 	Set whether to check plugin version when loading plugin.
 	1 is check, 0 do not check.
 	default value: 1
+
+let g:docker_registry_auth 			*g:docker_registry_auth*
+	Set docker registry auth info
+	if you want push image to registry.
+	The fllowing is a sampple setting.
+
+	let g:docker_registry_auth = {
+			\ 'username': 'your name',
+			\ 'password': 'your password',
+			\ 'email': 'your email',
+			\ 'serveraddress': 'https://index.docker.io/v1/',
+			\ }
+
 ------------------------------------------------------------------------------
 COMMANDS					*docker-commands*
 
@@ -218,6 +231,10 @@ r		Create and run container with speficied image.
 
 						*docker-images_ctrl-^*
 <CTRL-^>	Swith to containers popup window.
+
+						*docker-images_p*
+p		Push an image to registry.
+		That have to set auth info to |g:docker_registry_auth|
 
 						*docker-containers-mappings*
 docker containers window mappings ~

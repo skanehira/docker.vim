@@ -11,6 +11,7 @@ This is management plugin for docker.
 - pull image
 - search image
 - open DockerHub in browser
+- push an image
 
 ## containers
 - container list(udpate every 5 second)
@@ -47,6 +48,16 @@ let g:docker_terminal_open = 'bo'
 " default is checking.
 " If you not want to check, please set 0 to this option.
 let g:docker_plugin_version_check = 1
+
+" this is registry auth info.
+" if you want to push an image, please set your auth info.
+let g:docker_registry_auth = {
+	\ 'username': 'your name',
+	\ 'password': 'your password',
+	\ 'email': 'your email',
+	\ 'serveraddress': 'https://index.docker.io/v1/',
+	\ }
+
 ```
 
 ## commands
