@@ -38,7 +38,7 @@ CHANGELOG			|docker-changelog|
 ==============================================================================
 INTRODUCTION					*docker-introduction*
 
-*docker* is a Vim plugin
+*docker.vim* is a Vim plugin
 
 Latest version:
 https://github.com/skanehira/docker.vim
