@@ -123,6 +123,9 @@ endfunction
 
 " update table highlight
 function! s:update_highlight(ctx) abort
+	if len(a:ctx.content) ==# 0 || len(a:ctx.content) < a:ctx.select
+		return
+	endif
 	call s:select_highlight(a:ctx)
 	if a:ctx.type ==# 'container'
 		call s:status_highlight(a:ctx)
