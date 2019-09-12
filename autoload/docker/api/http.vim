@@ -165,6 +165,7 @@ function! s:request_exit_cb(dump, callback, ch, status) abort
 	endfor
 
 	if empty(response)
+		call docker#util#echo_err('docker.vim: cannot get response: body is empty')
 		return
 	endif
 
