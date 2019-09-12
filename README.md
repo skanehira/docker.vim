@@ -12,6 +12,8 @@ This is management plugin for docker.
 - search image
 - open DockerHub in browser
 - push an image
+- tag an image
+
 
 ## containers
 - container list(udpate every 5 second)
@@ -143,6 +145,7 @@ show version info
 | ctrl-d | delete image                      |
 | /      | start filter mode                 |
 | ctrl-^ | switch to containers popup window |
+| t      | tag an image                      |
 
 ### search images
 

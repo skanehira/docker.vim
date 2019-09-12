@@ -236,6 +236,9 @@ r		Create and run container with speficied image.
 p		Push an image to registry.
 		That have to set auth info to |g:docker_registry_auth|
 
+						*docker-images_t*
+t		Tag an image.
+
 						*docker-containers-mappings*
 docker containers window mappings ~
 
