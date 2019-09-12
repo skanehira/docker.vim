@@ -7,6 +7,9 @@ set cpo&vim
 
 scriptencoding utf-8
 
+let s:V = vital#docker#new()
+let s:Base64 = s:V.import('Data.Base64')
+
 " get images
 function! docker#api#image#get() abort
 	let l:response = docker#api#http#get('http://localhost/images/json', {})
@@ -80,6 +83,45 @@ function! docker#api#image#pull(image) abort
 				\ {},
 				\ {},
 				\ function('s:image_pull_cb', [param]),
+				\ )
+endfunction
+
+" push image callback
+function! s:image_push_cb(repoTag, response) abort
+	if a:response.status !=# 200
+		call window#util#notification_failed(a:response.content.message)
+	else
+		call window#util#notification_success('pushed ' .. a:repoTag)
+	endif
+endfunction
+
+" push image
+function! docker#api#image#push(ctx) abort
+	let entry = a:ctx.content[a:ctx.select]
+	let [name, tag] = split(entry.RepoTags[0], ':')
+	let repoTag = entry.RepoTags[0]
+
+	" get X-Registry-Auth config
+	let auth_config = get(g:, 'docker_registry_auth', {})
+
+	if type(auth_config) != v:t_dict
+		call docker#util#echo_err('g:docker_registry_auth is not dictionary')
+		return
+	endif
+
+	if empty(auth_config)
+		call docker#util#echo_err('g:docker_registry_auth is empty, please set your auth info')
+		return
+	endif
+
+	let auth_config_encoded = s:Base64.encode(json_encode(auth_config))
+
+	call window#util#notification_normal('pushing... ' .. repoTag)
+	call docker#api#http#async_post(1, 'http://localhost/images/' .. name .. '/push',
+				\ {'tag': tag, },
+				\ {'X-Registry-Auth': auth_config_encoded},
+				\ {},
+				\ function('s:image_push_cb', [repoTag]),
 				\ )
 endfunction
 

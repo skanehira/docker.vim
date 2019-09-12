@@ -100,6 +100,18 @@ function! s:delete_image(ctx) abort
 	endif
 endfunction
 
+" push image
+function! s:push_image(ctx) abort
+	let a:ctx.disable_filter = 1
+	let result = input('do you want to push the image? y/n:')
+	let a:ctx.disable_filter = 0
+	echo ''
+
+	if result ==# 'y' || result ==# 'Y'
+		call docker#api#image#push(a:ctx)
+	endif
+endfunction
+
 " this is popup window filter function
 function! docker#image#functions(ctx, key) abort
 	if a:key ==# "\<C-d>"
@@ -108,6 +120,8 @@ function! docker#image#functions(ctx, key) abort
 		call docker#image#update_contents(a:ctx)
 	elseif a:key ==# 'r'
 		call docker#api#container#run(a:ctx)
+	elseif a:key ==# 'p'
+		call s:push_image(a:ctx)
 	endif
 endfunction
 
