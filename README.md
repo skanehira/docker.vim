@@ -14,7 +14,6 @@ This is management plugin for docker.
 - push an image
 - tag an image
 
-
 ## containers
 - container list(udpate every 5 second)
 - start/stop/restart/kill container
@@ -22,6 +21,9 @@ This is management plugin for docker.
 - attach container(require docker cli)
 - run container(like docker run {container})
 - monitoring container logs and CPU/MEM
+
+## others
+- monitoring docker engine's events
 
 # Requirements
 - curl >= 7.40.0
@@ -103,6 +105,11 @@ monitoring container logs
 ```vim
 " if contaienr is not running, terminal does not close automatically
 :DockerContainerLogs {id or name}
+```
+
+monitoring docker engine's events
+```vim
+:DockerEvents
 ```
 
 show version info

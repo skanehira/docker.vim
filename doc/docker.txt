@@ -142,6 +142,10 @@ COMMANDS					*docker-commands*
 	If found some images, that will display in result window.
 	Window have some keybinds, plase see |docker-search-images-mappings|
 
+:DockerEvents						*:DockerEvents*
+	Monitoring docker engine's events.
+	This is same as `docker events`
+
 ------------------------------------------------------------------------------
 FUNCTIONS					*docker-functions*
 
