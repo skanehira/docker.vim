@@ -29,7 +29,6 @@ function! docker#docker#event() abort
 	endif
 
 	exe printf('%s term ++close docker events', g:docker_terminal_open)
-	nnoremap <silent> <buffer> q :close<CR>
 endfunction
 
 let &cpo = s:save_cpo
