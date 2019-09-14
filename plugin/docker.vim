@@ -51,6 +51,7 @@ command! DockerMonitorWindowMove call docker#monitor#move()
 command! -nargs=1 DockerContainerLogs call docker#api#container#logs(<f-args>)
 command! DockerVersion call docker#version#info()
 command! -nargs=+ Docker call docker#docker#execute(<f-args>)
+command! DockerEvents call docker#docker#evnet()
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
