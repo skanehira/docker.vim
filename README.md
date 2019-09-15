@@ -31,11 +31,17 @@ This is management plugin for docker.
 - docker cli
 
 # Installation
-e.g dein.vim
+e.g using dein.vim
 
 ```toml
 [[plugins]]
 repo = 'skanehira/docker.vim'
+```
+
+e.g using docker
+
+```sh
+$ docker run --rm -itv /var/run/docker.sock:/var/run/docker.sock skanehira/docker.vim
 ```
 
 # Usage
