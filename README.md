@@ -2,7 +2,7 @@
 
 This is management plugin for docker.
 
-![](screenshots/docker.vim.gif)
+![](https://imgur.com/5h1FufL.gif)
 
 # Features
 ## images
