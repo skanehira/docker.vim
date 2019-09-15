@@ -12,13 +12,15 @@ RUN apk --no-cache --update add git && \
 	git clone https://github.com/cocopon/iceberg.vim.git
 
 FROM thinca/vim
-COPY --from=fetch_docker /root/docker/docker /usr/local/bin/
-COPY --from=fetch_vim_iceberg /root/iceberg.vim/colors /root/.vim/colors
 
 ENV TERM xterm-256color
 RUN apk --no-cache --update add curl
 
 COPY . /root/.vim/pack/plugins/start/docker.vim
 COPY vimrc /root/.vimrc
+
+# COPY from other stages at last for concurrent building using BuildKit
+COPY --from=fetch_docker /root/docker/docker /usr/local/bin/
+COPY --from=fetch_vim_iceberg /root/iceberg.vim/colors /root/.vim/colors
 
 ENTRYPOINT ["vim"]
