@@ -222,7 +222,7 @@ q		Close popup window.
 
 						*docker-images_r*
 r		Create and run container with speficied image.
-		This is like executing `docker run {args} {cmd}`
+		This is like executing `docker run {args} {cmd} ubntu`
 		in the terminal-job mode.
 		e.g:	args: `--rm -it --name ubuntu`
 			cmd: `bash`
