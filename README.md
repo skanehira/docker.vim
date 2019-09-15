@@ -18,9 +18,10 @@ This is management plugin for docker.
 - container list(udpate every 5 second)
 - start/stop/restart/kill container
 - delete container
-- attach container(require docker cli)
+- attach container
 - run container(like docker run {container})
 - monitoring container logs and CPU/MEM
+- copy file/folders between containers and local filesystem
 
 ## others
 - monitoring docker engine's events
@@ -134,20 +135,21 @@ show version info
 
 ### containers
 
-| key    | operation                             |
-|--------|---------------------------------------|
-| u      | start container                       |
-| s      | stop container                        |
-| r      | restart container                     |
-| R      | refresh containers                    |
-| K      | kill container                        |
-| a      | attach container                      |
-| m      | monitor container's cpu nad mem usage |
-| ctrl-d | delete container                      |
-| ctrl-r | rename container                      |
-| l      | monitoring container logs             |
-| /      | start filter mode                     |
-| ctrl-^ | switch to images popup window         |
+| key    | operation                                                  |
+|--------|------------------------------------------------------------|
+| u      | start container                                            |
+| s      | stop container                                             |
+| r      | restart container                                          |
+| R      | refresh containers                                         |
+| K      | kill container                                             |
+| a      | attach container                                           |
+| m      | monitor container's cpu nad mem usage                      |
+| ctrl-d | delete container                                           |
+| ctrl-r | rename container                                           |
+| l      | monitoring container logs                                  |
+| /      | start filter mode                                          |
+| ctrl-^ | switch to images popup window                              |
+| c      | copy file/folters between containers and local file system |
 
 ### images
 

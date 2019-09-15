@@ -291,6 +291,17 @@ q		close popup window.
 						*docker-containers_ctrl-^*
 <CTRL-^>	Swith to images popup window.
 
+						*docker-containers_c*
+c		Copy file/folders between containers
+		and local file system.
+		This is same as `docker cp src container:dest` or
+		`docker cp container:src dest`
+		e.g 	from or to container(from/to): from
+			container resource: gorilla.txt
+			local restriction: gorilla.txt
+			Then this will run same as
+			`docker cp {container}:gorilla.txt gorilla.txt`
+
 						*docker-search-images-mappings*
 docker search images window mappings ~
 
