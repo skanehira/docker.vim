@@ -252,5 +252,67 @@ function! docker#api#container#run(ctx) abort
 	nnoremap <silent> <buffer> q :close<CR>
 endfunction
 
+function! s:docker_cp_exit_cb(msg, ch, status) abort
+	if a:status !=# 0
+		return
+	endif
+	call window#util#notification_success(a:msg .. ' is successed')
+endfunction
+
+function! s:docker_cp_err_cb(ch, msg) abort
+	call docker#util#echo_err('copy is failed: ' .. a:msg)
+endfunction
+
+function! docker#api#container#cp(ctx) abort
+	if !docker#util#have_terminal()
+		return
+	endif
+
+	let a:ctx.disable_filter = 1
+
+	" from is mean copy resource from container
+	" to is mean copy resource to container
+	let from_or_to = input('from or to container(from/to):')
+	if from_or_to ==# '' || (from_or_to !=# 'to' && from_or_to !=# 'from')
+		call docker#util#echo_err('docker.vim: please input "from" or "to"')
+		let a:ctx.disable_filter = 0
+		return
+	endif
+
+	let con_src = input('container resource:')
+	if con_src ==# ''
+		call docker#util#echo_err('docker.vim: please input container resource')
+		let a:ctx.disable_filter = 0
+		return
+	endif
+
+	let loc_src = input('local resource:')
+	if loc_src ==# ''
+		call docker#util#echo_err('docker.vim: please input local resource')
+		let a:ctx.disable_filter = 0
+		return
+	endif
+
+	let a:ctx.disable_filter = 0
+
+	let id = a:ctx.content[a:ctx.select].Id
+	let cmd = ['docker', 'cp']
+	let msg = ''
+
+	if from_or_to ==# 'from'
+		let cmd = cmd + [id .. ':' .. con_src, loc_src]
+		let msg = printf('copy %s to %s', con_src, loc_src)
+	else
+		let cmd = cmd + [loc_src, id .. ':' .. con_src]
+		let msg = printf('copy %s to %s', loc_src, con_src)
+	endif
+
+	call window#util#notification_normal(msg)
+	call job_start(cmd, {
+				\ 'exit_cb': function('s:docker_cp_exit_cb', [msg]),
+				\ 'err_cb': function('s:docker_cp_err_cb'),
+				\ })
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

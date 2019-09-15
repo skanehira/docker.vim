@@ -176,6 +176,8 @@ function! docker#container#functions(ctx, key) abort
 	elseif a:key ==# 'l'
 		call popup_close(a:ctx.id)
 		call docker#api#container#logs(a:ctx.content[a:ctx.select])
+	elseif a:key ==# 'c'
+		call docker#api#container#cp(a:ctx)
 	endif
 endfunction
 
