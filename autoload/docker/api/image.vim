@@ -26,7 +26,16 @@ function! docker#api#image#get() abort
 			continue
 		endif
 
-		call add(l:images, content)
+		if len(content.RepoTags) > 1
+			for repo_tag in content.RepoTags
+				let con = copy(content)
+				let con.RepoTags = [repo_tag]
+				call add(l:images, con)
+			endfor
+		else
+			call add(l:images, content)
+		endif
+
 	endfor
 	return l:images
 endfunction
