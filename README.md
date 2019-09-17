@@ -125,7 +125,7 @@ build an image
 :DockerImageBuild -t {tag_name} .
 
 " build an image use buffer's contents
-'<,'>:DockerImageBuild -t {tag_name} -
+:'<,'>DockerImageBuild -t {tag_name} -
 ```
 
 show version info
