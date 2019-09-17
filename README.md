@@ -13,6 +13,7 @@ This is management plugin for docker.
 - open DockerHub in browser
 - push an image
 - tag an image
+- build an image
 
 ## containers
 - container list(udpate every 5 second)
