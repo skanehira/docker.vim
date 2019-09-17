@@ -119,6 +119,15 @@ monitoring docker engine's events
 :DockerEvents
 ```
 
+build an image
+```vim
+" build an image use Dockerfile
+:DockerImageBuild -t {tag_name} .
+
+" build an image use buffer's contents
+'<,'>:DockerImageBuild -t {tag_name} -
+```
+
 show version info
 ```vim
 :DockerVersion

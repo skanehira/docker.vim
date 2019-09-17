@@ -146,6 +146,16 @@ COMMANDS					*docker-commands*
 	Monitoring docker engine's events.
 	This is same as `docker events`
 
+:DockerImageBuild					*:DockerImageBuild*
+	Build an image.
+	This is same as `docker build`
+	Also this command can use buffer's contents to build an image.
+	If use buffer's contents, last argment must be '-'.
+	e.g. use the Dockerfile
+		:DockerImageBuild -t {tag_name} .
+	e.g. use buffer's contents
+		:'<,'>:DockerImageBuild -t {tag_name} -
+
 ------------------------------------------------------------------------------
 FUNCTIONS					*docker-functions*
 
