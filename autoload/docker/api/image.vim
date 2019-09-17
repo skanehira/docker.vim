@@ -9,6 +9,7 @@ scriptencoding utf-8
 
 let s:V = vital#docker#new()
 let s:Base64 = s:V.import('Data.Base64')
+let s:build_result_buffer_name = '[DOCKER BUILD]'
 
 " get images
 function! docker#api#image#get() abort
@@ -171,6 +172,56 @@ function! docker#api#image#search(term) abort
 
 	echo ''
 	return json_decode(l:response.content)
+endfunction
+
+function! s:docker_build_buffer_number() abort
+	return bufnr('\' .. s:build_result_buffer_name[:-2] .. '\]')
+endfunction
+
+function! docker#api#image#build(first, last, ...) abort
+	if !docker#util#have_terminal()
+		return
+	endif
+
+	if !docker#util#have_docker_cli()
+		return
+	endif
+
+	let build_result_winid = win_findbuf(s:docker_build_buffer_number())
+	let current_winid = win_getid(winnr())
+	let current_buf = bufnr("%")
+
+	" if have no result window
+	if empty(build_result_winid)
+		exe "new | e " .. s:build_result_buffer_name
+		set buftype=nofile
+		nnoremap <buffer> <silent> q :bw<CR>
+	else
+		" if result window already opened, delete contents
+		call win_gotoid(build_result_winid[0])
+		exe "%d_"
+	endif
+	call win_gotoid(current_winid)
+
+	let cmd = ['docker', 'build'] + a:000
+	let opt = {
+				\ 'out_io': 'buffer',
+				\ 'out_name': s:build_result_buffer_name,
+				\ 'out_msg': 0,
+				\ 'err_io': 'buffer',
+				\ 'err_name': s:build_result_buffer_name,
+				\ 'err_msg': 0,
+				\ }
+
+	" is last arg is '-', stdin from buffer
+	if a:000[-1] ==# '-'
+		let opt['in_io']  = 'buffer'
+		let opt['in_buf'] = current_buf
+		let opt['in_top'] = a:first
+		let opt['in_bot'] = a:last
+	endif
+
+	call job_start(cmd, opt)
 endfunction
 
 let &cpo = s:save_cpo
