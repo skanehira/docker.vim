@@ -253,6 +253,9 @@ p		Push an image to registry.
 						*docker-images_t*
 t		Tag an image.
 
+s						*docer-images-s*
+		Save an image to tarball.
+
 						*docker-containers-mappings*
 docker containers window mappings ~
 

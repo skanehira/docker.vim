@@ -14,6 +14,7 @@ This is management plugin for docker.
 - push an image
 - tag an image
 - build an image
+- save an image to tarball
 
 ## containers
 - container list(udpate every 5 second)
@@ -171,6 +172,7 @@ show version info
 | /      | start filter mode                 |
 | ctrl-^ | switch to containers popup window |
 | t      | tag an image                      |
+| s      | save an image to tarball          |
 
 ### search images
 
