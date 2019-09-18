@@ -224,5 +224,24 @@ function! docker#api#image#build(first, last, ...) abort
 	call job_start(cmd, opt)
 endfunction
 
+function! s:image_save_cb(tarball_name, ch, status) abort
+	if a:status !=# 0
+		call window#util#notification_failed("cannot save to " .. a:tarball_name)
+	else
+		call window#util#notification_success('saved to ' .. a:tarball_name)
+	endif
+endfunction
+
+function! docker#api#image#save(ctx) abort
+	let image_name = a:ctx.content[a:ctx.select].RepoTags[0]
+	let tarball_name = a:ctx.tarball_name
+
+	let cmd = ['docker', 'save' ,'-o ' .. tarball_name, image_name]
+
+	call job_start(cmd, {
+				\ 'exit_cb': function('s:image_save_cb', [tarball_name]),
+				\ })
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo
