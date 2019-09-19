@@ -244,5 +244,31 @@ function! docker#api#image#save(ctx) abort
 				\ })
 endfunction
 
+function! s:image_load_cb(ctx, updatefunc, ch, status) abort
+	if a:status !=# 0
+		call window#util#notification_failed("cannot load from " .. a:ctx.file)
+	else
+		call window#util#notification_success('loaded from ' .. a:ctx.file)
+	endif
+
+	call a:updatefunc(a:ctx)
+endfunction
+
+function! s:image_load_out(ch, msg) abort
+	" do nothing
+endfunction
+
+function! docker#api#image#load(ctx, updatefunc) abort
+	let cmd = ['docker', 'load', '-i', a:ctx.file]
+
+	call window#util#notification_normal('loading... ' .. a:ctx.file)
+	" TODO fix
+	" if out_cb is doesn't set, status code is -1
+	call job_start(cmd, {
+				\ 'exit_cb': function('s:image_load_cb', [a:ctx, a:updatefunc]),
+				\ 'out_cb': function('s:image_load_out'),
+				\ })
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

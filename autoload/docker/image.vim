@@ -164,6 +164,21 @@ function! s:save_image(ctx) abort
 	call docker#api#image#save(a:ctx)
 endfunction
 
+function! s:load_image(ctx) abort
+	let a:ctx.disable_filter = 1
+	let result = input('file:')
+	let a:ctx.disable_filter = 0
+	echo ''
+
+	if result ==# ''
+		call docker#util#echo_err('docker.vim: please input file path')
+		return
+	endif
+
+	let a:ctx["file"] = result
+	call docker#api#image#load(a:ctx, function('docker#image#update_contents'))
+endfunction
+
 " this is popup window filter function
 function! docker#image#functions(ctx, key) abort
 	if a:key ==# "\<C-d>"
@@ -178,6 +193,8 @@ function! docker#image#functions(ctx, key) abort
 		call s:tag_image(a:ctx)
 	elseif a:key ==# 's'
 		call s:save_image(a:ctx)
+	elseif a:key ==# 'l'
+		call s:load_image(a:ctx)
 	endif
 endfunction
 
