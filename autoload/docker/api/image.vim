@@ -236,7 +236,7 @@ function! docker#api#image#save(ctx) abort
 	let image_name = a:ctx.content[a:ctx.select].RepoTags[0]
 	let tarball_name = a:ctx.tarball_name
 
-	let cmd = ['docker', 'save' ,'-o ' .. tarball_name, image_name]
+	let cmd = ['docker', 'save' ,'-o' .. tarball_name, image_name]
 
 	call job_start(cmd, {
 				\ 'exit_cb': function('s:image_save_cb', [tarball_name]),
