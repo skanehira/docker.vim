@@ -238,6 +238,7 @@ function! docker#api#image#save(ctx) abort
 
 	let cmd = ['docker', 'save' ,'-o' .. tarball_name, image_name]
 
+	call window#util#notification_normal('saving... ' .. tarball_name)
 	call job_start(cmd, {
 				\ 'exit_cb': function('s:image_save_cb', [tarball_name]),
 				\ })
