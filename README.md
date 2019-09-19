@@ -173,6 +173,7 @@ show version info
 | ctrl-^ | switch to containers popup window |
 | t      | tag an image                      |
 | s      | save an image to tarball          |
+| l      | load an image from tarball        |
 
 ### search images
 
