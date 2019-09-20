@@ -154,6 +154,12 @@ function! s:popup_filter(ctx, id, key) abort
 			echo a:ctx.search_word
 			redraw
 
+			" when search mode is enable, cursor move to top
+			let a:ctx.highlight_idx = 4
+			let a:ctx.select = 0
+			let a:ctx.offset = 0
+			let a:ctx.top = a:ctx.maxheight - 4
+
 			" update content
 			if a:ctx.type ==# 'image'
 				call docker#image#update_contents(a:ctx)
