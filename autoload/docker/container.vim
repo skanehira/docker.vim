@@ -152,6 +152,19 @@ function! s:attach_container(ctx) abort
 	call docker#api#container#attach(entry.Names[0], cmd)
 endfunction
 
+function! s:commit_container(ctx) abort
+	let a:ctx.disable_filter = 1
+	let repotag = input("repo tag:")
+	let a:ctx.disable_filter = 0
+
+	if repotag ==# ''
+		call docker#util#echo_err('docker.vim: please input repo and tag')
+		return
+	endif
+	let a:ctx.repotag = repotag
+	call docker#api#container#commit(a:ctx)
+endfunction
+
 " this is popup window filter function
 function! docker#container#functions(ctx, key) abort
 	if a:key ==# 'u'
@@ -180,6 +193,8 @@ function! docker#container#functions(ctx, key) abort
 		call docker#api#container#logs(a:ctx.content[a:ctx.select])
 	elseif a:key ==# 'c'
 		call docker#api#container#cp(a:ctx)
+	elseif a:key ==# 'C'
+		call s:commit_container(a:ctx)
 	endif
 endfunction
 

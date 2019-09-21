@@ -314,5 +314,34 @@ function! docker#api#container#cp(ctx) abort
 				\ })
 endfunction
 
+function! s:docker_commit_exit_cb(repotag, ch, status) abort
+	if a:status != 0
+		return
+	endif
+
+	call window#util#notification_success('commited to ' .. a:repotag)
+endfunction
+
+function! s:docker_commit_err_cb(ch, msg) abort
+	call window#util#notification_failed('commit is failed ' .. a:msg)
+endfunction
+
+function! docker#api#container#commit(ctx) abort
+	if !docker#util#have_terminal()
+		return
+	endif
+
+	let name = a:ctx.content[a:ctx.select].Names[0][1:]
+	let cmd = ['docker', 'commit', name, a:ctx.repotag]
+
+	call window#util#notification_normal('committing to ' .. a:ctx.repotag .. '...')
+
+	call job_start(cmd, {
+				\ 'exit_cb': function('s:docker_commit_exit_cb', [a:ctx.repotag]),
+				\ 'err_cb': function('s:docker_commit_err_cb'),
+				\ })
+endfunction
+
+
 let &cpo = s:save_cpo
 unlet s:save_cpo
