@@ -318,6 +318,9 @@ c		Copy file/folders between containers
 			Then this will run same as
 			`docker cp {container}:gorilla.txt gorilla.txt`
 
+C		Create a new image from a container.
+		This is same as `docker commit {container} {repo}:{tag}`
+
 						*docker-search-images-mappings*
 docker search images window mappings ~
 

@@ -161,6 +161,7 @@ show version info
 | /      | start filter mode                                          |
 | ctrl-^ | switch to images popup window                              |
 | c      | copy file/folters between containers and local file system |
+| C      | create a new image from container                          |
 
 ### images
 
