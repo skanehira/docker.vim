@@ -59,8 +59,14 @@ endfunction
 " delete image
 function! docker#api#image#delete(ctx, updatefunc) abort
 	let entry = a:ctx.content[a:ctx.select]
-	call window#util#notification_normal('deleting... ' .. entry.RepoTags[0])
-	call docker#api#http#async_delete(1, 'http://localhost/images/' .. entry.RepoTags[0],
+	let name = entry.RepoTags[0]
+	let target = name
+	if name =~ '<none>'
+		let target = entry.Id
+	endif
+
+	call window#util#notification_normal('deleting... ' .. name)
+	call docker#api#http#async_delete(1, 'http://localhost/images/' .. target,
 				\ {},
 				\ function('s:image_delete_cb', [a:ctx, a:updatefunc]),
 				\ )
