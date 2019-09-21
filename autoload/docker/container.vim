@@ -165,6 +165,8 @@ function! docker#container#functions(ctx, key) abort
 	elseif a:key ==# "m"
 		call popup_close(a:ctx.id)
 		call docker#monitor#start(a:ctx.content[a:ctx.select].Id)
+		redraw
+		call docker#monitor#move()
 	elseif a:key ==# 'R'
 		call docker#container#update_contents(a:ctx)
 	elseif a:key ==# "\<C-r>"
