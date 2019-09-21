@@ -24,9 +24,11 @@ function! docker#api#version#info() abort
 		return []
 	endif
 
-	let info = json_decode(l:response.content)
-
 	let l:infos = []
+	let plugin_info = json_decode(join(readfile(s:version_file), "\n"))
+	call add(l:infos, {'item' :'Plugin Version', 'value': plugin_info.version})
+
+	let info = json_decode(l:response.content)
 	call add(l:infos, {'item' :'Platform', 'value': info.Platform.Name})
 	call add(l:infos, {'item' :'Version', 'value': info.Version})
 	call add(l:infos, {'item' :'API version', 'value': info.ApiVersion})
