@@ -2,6 +2,8 @@
 
 This is management plugin for docker.
 
+If you want to manage docker-compose, you can use [docker-compose.vim](https://github.com/skanehira/docker-compose.vim).
+
 ![](https://imgur.com/5h1FufL.gif)
 
 # Features
