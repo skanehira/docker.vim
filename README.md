@@ -142,46 +142,46 @@ show version info
 
 | key | operation          |
 |-----|--------------------|
-| 0   | scroll to top      |
-| G   | scroll to bottom   |
-| q   | close popup window |
+| `0` | scroll to top      |
+| `G` | scroll to bottom   |
+| `q` | close popup window |
 
 ### containers
 
-| key    | operation                                                  |
-|--------|------------------------------------------------------------|
-| u      | start container                                            |
-| s      | stop container                                             |
-| r      | restart container                                          |
-| R      | refresh containers                                         |
-| K      | kill container                                             |
-| a      | attach container                                           |
-| m      | monitor container's cpu nad mem usage                      |
-| ctrl-d | delete container                                           |
-| ctrl-r | rename container                                           |
-| l      | monitoring container logs                                  |
-| /      | start filter mode                                          |
-| ctrl-^ | switch to images popup window                              |
-| c      | copy file/folters between containers and local file system |
-| C      | create a new image from container                          |
+| key      | operation                                                  |
+|----------|------------------------------------------------------------|
+| `u`      | start container                                            |
+| `s`      | stop container                                             |
+| `r`      | restart container                                          |
+| `R`      | refresh containers                                         |
+| `K`      | kill container                                             |
+| `a`      | attach container                                           |
+| `m`      | monitor container's cpu nad mem usage                      |
+| `ctrl-d` | delete container                                           |
+| `ctrl-r` | rename container                                           |
+| `l`      | monitoring container logs                                  |
+| `/`      | start filter mode                                          |
+| `p`      | switch to images popup window                              |
+| `c`      | copy file/folters between containers and local file system |
+| `C`      | create a new image from container                          |
 
 ### images
 
-| key    | operation                         |
-|--------|-----------------------------------|
-| R      | refresh images                    |
-| r      | run container                     |
-| ctrl-d | delete image                      |
-| /      | start filter mode                 |
-| ctrl-^ | switch to containers popup window |
-| t      | tag an image                      |
-| s      | save an image to tarball          |
-| l      | load an image from tarball        |
+| key      | operation                         |
+|----------|-----------------------------------|
+| `R`      | refresh images                    |
+| `r`      | run container                     |
+| `ctrl-d` | delete image                      |
+| `/`      | start filter mode                 |
+| `ctrl-^` | switch to containers popup window |
+| `t`      | tag an image                      |
+| `s`      | save an image to tarball          |
+| `l`      | load an image from tarball        |
 
 ### search images
 
 | key | operation                 |
 |-----|---------------------------|
-| p   | pull image                |
-| o   | open DockerHub in browser |
+| `p` | pull image                |
+| `o` | open DockerHub in browser |
 
