@@ -266,6 +266,9 @@ s						*docer-images-s*
 l						*docer-images-l*
 		Load an image from tarball.
 
+<CR>						*docker-images-<cr>*
+		Inspect an image.
+
 						*docker-containers-mappings*
 docker containers window mappings ~
 

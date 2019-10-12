@@ -17,6 +17,7 @@ If you want to manage docker-compose, you can use [docker-compose.vim](https://g
 - tag an image
 - build an image
 - save an image to tarball
+- inspect an image
 
 ## containers
 - container list(udpate every 5 second)
@@ -167,16 +168,17 @@ show version info
 
 ### images
 
-| key      | operation                         |
-|----------|-----------------------------------|
-| `R`      | refresh images                    |
-| `r`      | run container                     |
-| `ctrl-d` | delete image                      |
-| `/`      | start filter mode                 |
-| `ctrl-^` | switch to containers popup window |
-| `t`      | tag an image                      |
-| `s`      | save an image to tarball          |
-| `l`      | load an image from tarball        |
+| key                    | operation                         |
+|------------------------|-----------------------------------|
+| `R`                    | refresh images                    |
+| `r`                    | run container                     |
+| `ctrl-d`               | delete image                      |
+| `/`                    | start filter mode                 |
+| `ctrl-^`               | switch to containers popup window |
+| `t`                    | tag an image                      |
+| `s`                    | save an image to tarball          |
+| `l`                    | load an image from tarball        |
+| `<CR>` (same as Enter) | inspect an image                  |
 
 ### search images
 
