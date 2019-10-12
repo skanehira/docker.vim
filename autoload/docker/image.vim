@@ -195,6 +195,9 @@ function! docker#image#functions(ctx, key) abort
 		call s:save_image(a:ctx)
 	elseif a:key ==# 'l'
 		call s:load_image(a:ctx)
+	elseif a:key ==# "\<CR>"
+		call popup_close(a:ctx.id)
+		call docker#api#image#inspect(a:ctx)
 	endif
 endfunction
 

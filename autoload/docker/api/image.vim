@@ -276,5 +276,11 @@ function! docker#api#image#load(ctx, updatefunc) abort
 				\ })
 endfunction
 
+function! docker#api#image#inspect(ctx) abort
+	let image_name = a:ctx.content[a:ctx.select].RepoTags[0]
+	exe printf('%s term docker inspect %s', g:docker_terminal_open, image_name)
+	nnoremap <silent> <buffer> q :close<CR>
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo
