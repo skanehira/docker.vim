@@ -71,9 +71,14 @@ let g:docker_registry_auth = {
 	\ 'username': 'your name',
 	\ 'password': 'your password',
 	\ 'email': 'your email',
-	\ 'serveraddress': 'https://index.docker.io/v1/',
+	\ 'serveraddress': 'https://docker.io/',
 	\ }
 
+" you can also read auth info from json file.
+" if you manage vimrc on GitHub, we recommend using json file.
+let s:docker_auth_file = expand('~/.docker/docker.vim.json')
+let g:docker_registry_auth = \
+	json_decode(join(readfile(s:docker_auth_file), "\n"))
 ```
 
 ## commands
