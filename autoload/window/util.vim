@@ -14,6 +14,12 @@ let s:last_buffer = 0
 let s:last_popup_window = 0
 let s:last_notification_window = 0
 
+let s:window_list = {
+			\ 'idx': 0,
+			\ 'windows': [function('docker#image#get'), function('docker#container#get'),
+			\ function('docker#network#get')],
+			\ }
+
 if !exists('s:loaded_highlight')
 	let s:loaded_highlight = 1
 	try
@@ -192,11 +198,11 @@ function! s:popup_filter(ctx, id, key) abort
 	if a:key ==# "\<C-^>"
 		call popup_close(a:id)
 		call timer_stop(a:ctx.refresh_timer)
-		if a:ctx.type == 'container'
-			call docker#image#get()
-		else
-			call docker#container#get()
-		endif
+		let length = len(s:window_list.windows) -1
+		let idx = s:window_list.idx
+		let s:window_list.idx = length == idx ? 0 : idx + 1
+
+		call s:window_list.windows[s:window_list.idx]()
 		return 1
 	endif
 
