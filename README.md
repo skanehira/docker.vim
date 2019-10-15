@@ -149,11 +149,12 @@ show version info
 ## key bindings
 ### common operations in popup window.
 
-| key | operation          |
-|-----|--------------------|
-| `0` | scroll to top      |
-| `G` | scroll to bottom   |
-| `q` | close popup window |
+| key      | operation                    |
+|----------|------------------------------|
+| `0`      | scroll to top                |
+| `G`      | scroll to bottom             |
+| `q`      | close popup window           |
+| `ctrl-^` | switch to other popup window |
 
 ### containers
 
@@ -182,7 +183,6 @@ show version info
 | `r`                    | run container                     |
 | `ctrl-d`               | delete image                      |
 | `/`                    | start filter mode                 |
-| `ctrl-^`               | switch to containers popup window |
 | `t`                    | tag an image                      |
 | `s`                    | save an image to tarball          |
 | `l`                    | load an image from tarball        |
