@@ -28,6 +28,9 @@ If you want to manage docker-compose, you can use [docker-compose.vim](https://g
 - monitoring container logs and CPU/MEM
 - copy file/folders between containers and local filesystem
 
+## networks
+- network list(update every 5 second)
+
 ## others
 - monitoring docker engine's events
 

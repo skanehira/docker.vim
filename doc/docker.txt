@@ -163,6 +163,11 @@ COMMANDS					*docker-commands*
 	e.g. use buffer's contents
 		:'<,'>:DockerImageBuild -t {tag_name} -
 
+							*:DockerNetworks*
+:DockerNetworks
+	Display docker networks in popup window.
+	Update list at interval of 5 second.
+
 ------------------------------------------------------------------------------
 FUNCTIONS					*docker-functions*
 
