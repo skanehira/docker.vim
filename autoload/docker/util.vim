@@ -93,6 +93,7 @@ function! docker#util#parse_network(net) abort
 				\ 'Name': a:net.Name,
 				\ 'Driver': a:net.Driver,
 				\ 'Scope': a:net.Scope,
+				\ 'Containers': join(a:net.Containers),
 				\ }
 
 	return _net

@@ -18,6 +18,29 @@ function! docker#api#network#get() abort
 		return []
 	endif
 
+	let networks = sort(json_decode(l:response.content))
+
+	for net in networks
+		let detail = docker#api#network#inspect(net.Id)
+		let containers = []
+		for con in values(detail.Containers)
+			call add(containers, con.Name)
+		endfor
+
+		let net['Containers'] = containers
+	endfor
+
+	return networks
+endfunction
+
+function! docker#api#network#inspect(id) abort
+	let l:response = docker#api#http#get('http://localhost/networks/' .. a:id, {})
+
+	if l:response.status !=# 200
+		call window#util#notification_failed(json_decode(l:response.content).message)
+		return []
+	endif
+
 	return json_decode(l:response.content)
 endfunction
 

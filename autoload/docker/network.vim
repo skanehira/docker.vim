@@ -12,8 +12,8 @@ let s:TABLE = s:V.import('Text.Table')
 
 function! s:network_get(search_word, offset, top) abort
 	let l:table = s:TABLE.new({
-				\ 'columns': [{},{},{},{}],
-				\ 'header' : ['ID', 'NAME', 'DRIVER', 'SCOPE'],
+				\ 'columns': [{},{},{},{},{}],
+				\ 'header' : ['ID', 'NAME', 'DRIVER', 'SCOPE', 'CONTAINERS'],
 				\ })
 
 	let l:networks = filter(docker#api#network#get(), 'v:val.Name =~ a:search_word[1:]')
@@ -25,6 +25,7 @@ function! s:network_get(search_word, offset, top) abort
 					\ net.Name,
 					\ net.Driver,
 					\ net.Scope,
+					\ net.Containers,
 					\ ])
 	endfor
 
