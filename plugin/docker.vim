@@ -53,6 +53,7 @@ command! DockerVersion call docker#version#info()
 command! -nargs=+ Docker call docker#docker#execute(<f-args>)
 command! DockerEvents call docker#docker#event()
 command! -nargs=+ -range DockerImageBuild call docker#api#image#build("<line1>", "<line2>", <f-args>)
+command! DockerNetworks call docker#network#get()
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

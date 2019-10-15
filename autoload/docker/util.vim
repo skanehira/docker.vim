@@ -81,6 +81,23 @@ function! docker#util#parse_container(container) abort
 	return _new
 endfunction
 
+" parse network id
+function! docker#util#parse_network_id(id) abort
+	return a:id[0:11]
+endfunction
+
+" parse network
+function! docker#util#parse_network(net) abort
+	let _net = {
+				\ 'Id': docker#util#parse_network_id(a:net.Id),
+				\ 'Name': a:net.Name,
+				\ 'Driver': a:net.Driver,
+				\ 'Scope': a:net.Scope,
+				\ }
+
+	return _net
+endfunction
+
 " open docker hub in browser
 function! docker#util#open_docker_hub(image) abort
 	if !executable(g:docker_open_browser_cmd)
