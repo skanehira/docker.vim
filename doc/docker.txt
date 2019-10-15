@@ -224,6 +224,27 @@ docker#version#info()				*docker#version#info()*
 ------------------------------------------------------------------------------
 MAPPINGS					*docker-mappings*
 
+						*docker-common-mappings*
+images, containers, networks window mappings ~
+
+						*docker-common_0*
+0		Scroll to top.
+
+						*docker-common_G*
+G		Scroll to bottom.
+
+						*docker-common_q*
+q		Close popup window.
+
+						*docker-images_/*
+/{pattern}	Start filter mode.
+		This is like Vim's search command `/`
+		You can filtering entry's name.
+		When you press Enter, mode will be finish.
+
+						*docker-common_ctrl-^*
+<CTRL-^>	Swith to next popup window.
+
 						*docker-images-mappings*
 docker images window mappings ~
 
@@ -233,30 +254,12 @@ R		Update image list.
 						*docker-images_ctrl-d*
 <CTRL-d>	Delete image.
 
-						*docker-images_0*
-0		Scroll to top.
-
-						*docker-images_G*
-G		Scroll to bottom.
-
-						*docker-images_q*
-q		Close popup window.
-
 						*docker-images_r*
 r		Create and run container with speficied image.
 		This is like executing `docker run {args} {cmd} ubntu`
 		in the terminal-job mode.
 		e.g:	args: `--rm -it --name ubuntu`
 			cmd: `bash`
-
-						*docker-images_/*
-/{pattern}	Start filter mode.
-		This is like Vim's search command `/`
-		You can filtering repository name.
-		When you press Enter, mode will be finish.
-
-						*docker-images_ctrl-^*
-<CTRL-^>	Swith to containers popup window.
 
 						*docker-images_p*
 p		Push an image to registry.
@@ -307,21 +310,6 @@ l		Start monitoring container log.
 						*docker-containers_m*
 m		Start monitoring container's cpu and mem usage.
 
-						*docker-containers_0*
-0		Scroll to top.
-
-						*docker-containers_G*
-G		Scroll to bottom.
-
-						*docker-containers_q*
-q		close popup window.
-
-						*docker-containers_/*
-/{pattern}	Same as |docker-images_/|
-
-						*docker-containers_ctrl-^*
-<CTRL-^>	Swith to images popup window.
-
 						*docker-containers_c*
 c		Copy file/folders between containers
 		and local file system.
@@ -341,15 +329,6 @@ docker search images window mappings ~
 
 						*docker-search-images_p*
 p		Pull image.
-
-						*docker-search-images_0*
-0		Scroll to top.
-
-						*docker-search-images_G*
-G		Scroll to bottom.
-
-						*docker-search-images_q*
-q		Close popup window.
 
 						*docker-search-images_o*
 o		Open Docker Hub in default browser
