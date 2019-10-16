@@ -44,5 +44,11 @@ function! docker#api#network#inspect(id) abort
 	return json_decode(l:response.content)
 endfunction
 
+function! docker#api#network#inspect_term(ctx) abort
+	let network_name = a:ctx.content[a:ctx.select].Name
+	exe printf('%s term docker network inspect %s', g:docker_terminal_open, network_name)
+	nnoremap <silent> <buffer> q :close<CR>
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

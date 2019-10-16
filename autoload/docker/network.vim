@@ -79,5 +79,12 @@ function! docker#network#update_contents(ctx) abort
 	call window#util#update_poup_window(a:ctx)
 endfunction
 
+function! docker#network#functions(ctx, key) abort
+	if a:key ==# "\<CR>"
+		call popup_close(a:ctx.id)
+		call docker#api#network#inspect_term(a:ctx)
+	endif
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

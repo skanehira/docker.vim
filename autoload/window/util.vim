@@ -248,6 +248,8 @@ function! s:popup_filter(ctx, id, key) abort
 		call docker#container#functions(a:ctx, a:key)
 	elseif a:ctx.type == 'image'
 		call docker#image#functions(a:ctx, a:key)
+	elseif a:ctx.type == 'network'
+		call docker#network#functions(a:ctx, a:key)
 	elseif a:ctx.type == 'search'
 		if a:key ==# 'p'
 			call popup_close(a:id)
