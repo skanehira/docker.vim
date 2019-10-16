@@ -325,6 +325,9 @@ c		Copy file/folders between containers
 C		Create a new image from a container.
 		This is same as `docker commit {container} {repo}:{tag}`
 
+<CR>						*docker-containers_<cr>*
+		Inspect a containers.
+
 						*docker-search-images-mappings*
 docker search images window mappings ~
 
@@ -343,7 +346,7 @@ q		Close popup window.
 						*docker-networks-mappings*
 docker networks window mappings ~
 
-<CR>						*docker-networks-<cr>*
+<CR>						*docker-networks_<cr>*
 		Inspect a network.
 
 ==============================================================================

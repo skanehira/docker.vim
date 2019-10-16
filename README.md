@@ -158,22 +158,23 @@ show version info
 
 ### containers
 
-| key      | operation                                                  |
-|----------|------------------------------------------------------------|
-| `u`      | start container                                            |
-| `s`      | stop container                                             |
-| `r`      | restart container                                          |
-| `R`      | refresh containers                                         |
-| `K`      | kill container                                             |
-| `a`      | attach container                                           |
-| `m`      | monitor container's cpu nad mem usage                      |
-| `ctrl-d` | delete container                                           |
-| `ctrl-r` | rename container                                           |
-| `l`      | monitoring container logs                                  |
-| `/`      | start filter mode                                          |
-| `p`      | switch to images popup window                              |
-| `c`      | copy file/folters between containers and local file system |
-| `C`      | create a new image from container                          |
+| key                    | operation                                                  |
+|------------------------|------------------------------------------------------------|
+| `u`                    | start container                                            |
+| `s`                    | stop container                                             |
+| `r`                    | restart container                                          |
+| `R`                    | refresh containers                                         |
+| `K`                    | kill container                                             |
+| `a`                    | attach container                                           |
+| `m`                    | monitor container's cpu nad mem usage                      |
+| `ctrl-d`               | delete container                                           |
+| `ctrl-r`               | rename container                                           |
+| `l`                    | monitoring container logs                                  |
+| `/`                    | start filter mode                                          |
+| `p`                    | switch to images popup window                              |
+| `c`                    | copy file/folters between containers and local file system |
+| `C`                    | create a new image from container                          |
+| `<CR>` (same as Enter) | inspect a container                                        |
 
 ### images
 
