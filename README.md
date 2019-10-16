@@ -188,6 +188,11 @@ show version info
 | `l`                    | load an image from tarball        |
 | `<CR>` (same as Enter) | inspect an image                  |
 
+### networks
+| key                    | operation         |
+|------------------------|-------------------|
+| `<CR>` (same as Enter) | inspect a network |
+
 ### search images
 
 | key | operation                 |

@@ -167,6 +167,7 @@ COMMANDS					*docker-commands*
 :DockerNetworks
 	Display docker networks in popup window.
 	Update list at interval of 5 second.
+	Window have some keybinds, plase see |docker-networks-mappings|
 
 ------------------------------------------------------------------------------
 FUNCTIONS					*docker-functions*
@@ -337,7 +338,13 @@ o		Open Docker Hub in default browser
 docker version info window mappings ~
 
 						*docker-version-info_q*
-q		close popup window.
+q		Close popup window.
+
+						*docker-networks-mappings*
+docker networks window mappings ~
+
+<CR>						*docker-networks-<cr>*
+		Inspect a network.
 
 ==============================================================================
 TODO						*docker-todo*
