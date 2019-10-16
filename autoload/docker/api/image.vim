@@ -268,8 +268,7 @@ function! docker#api#image#load(ctx, updatefunc) abort
 	let cmd = ['docker', 'load', '-i', a:ctx.file]
 
 	call window#util#notification_normal('loading... ' .. a:ctx.file)
-	" TODO fix
-	" if out_cb is doesn't set, status code is -1
+	" NOTE: if out_cb is doesn't set, status code is -1
 	call job_start(cmd, {
 				\ 'exit_cb': function('s:image_load_cb', [a:ctx, a:updatefunc]),
 				\ 'out_cb': function('s:image_load_out'),

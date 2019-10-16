@@ -66,21 +66,6 @@ function! window#util#update_poup_window(ctx) abort
 	call s:update_highlight(a:ctx)
 endfunction
 
-" create buffer window
-" TODO support buffer window
-function! window#util#create_buffer_window(content) abort
-	let l:buf_window_id = win_findbuf(s:last_buffer)
-	if empty(l:buf_window_id)
-		new
-		let s:last_buffer = bufnr('%')
-		set buftype=nofile
-	else
-		call win_gotoid(l:buf_window_id[0])
-	endif
-	%d _
-	call setline(1, a:content)
-endfunction
-
 " highlight table in popup window
 function! s:select_highlight(ctx) abort
 	let l:buf = winbufnr(a:ctx.id)
