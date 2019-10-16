@@ -16,9 +16,16 @@ let s:last_notification_window = 0
 
 let s:window_list = {
 			\ 'idx': 0,
-			\ 'windows': [function('docker#image#get'), function('docker#container#get'),
-			\ function('docker#network#get')],
-			\ }
+			\ 'types': {
+				\ 'image': 0,
+				\ 'container': 1,
+				\ 'network': 2,
+			\ },
+			\ 'windows': [
+				\ function('docker#image#get'),
+				\ function('docker#container#get'),
+				\ function('docker#network#get'),
+			\ ]}
 
 if !exists('s:loaded_highlight')
 	let s:loaded_highlight = 1
@@ -46,6 +53,8 @@ function! window#util#create_popup_window(ctx) abort
 				\ 'callback': function('s:popup_window_close_cb', [a:ctx]),
 				\ 'mapping': 0,
 				\ })
+
+	let s:window_list.idx = s:window_list.types[a:ctx.type]
 
 	let s:last_popup_window = a:ctx.id
 	call s:update_highlight(a:ctx)
