@@ -195,6 +195,9 @@ function! docker#container#functions(ctx, key) abort
 		call docker#api#container#cp(a:ctx)
 	elseif a:key ==# 'C'
 		call s:commit_container(a:ctx)
+	elseif a:key ==# "\<CR>"
+		call popup_close(a:ctx.id)
+		call docker#api#container#inspect_term(a:ctx)
 	endif
 endfunction
 

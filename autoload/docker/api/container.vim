@@ -342,6 +342,12 @@ function! docker#api#container#commit(ctx) abort
 				\ })
 endfunction
 
+function! docker#api#container#inspect_term(ctx) abort
+	let container_name = a:ctx.content[a:ctx.select].Names[0][1:]
+	exe printf('%s term docker container inspect %s', g:docker_terminal_open, container_name)
+	nnoremap <silent> <buffer> q :close<CR>
+endfunction
+
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
