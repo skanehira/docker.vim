@@ -54,7 +54,9 @@ function! window#util#create_popup_window(ctx) abort
 				\ 'mapping': 0,
 				\ })
 
-	let s:window_list.idx = s:window_list.types[a:ctx.type]
+	if a:ctx.type !=# 'search'
+		let s:window_list.idx = s:window_list.types[a:ctx.type]
+	endif
 
 	let s:last_popup_window = a:ctx.id
 	call s:update_highlight(a:ctx)
