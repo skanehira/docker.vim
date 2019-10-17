@@ -165,6 +165,8 @@ function! s:popup_filter(ctx, id, key) abort
 				call docker#image#update_contents(a:ctx)
 			elseif a:ctx.type ==# 'container'
 				call docker#container#update_contents(a:ctx)
+			elseif a:ctx.type ==# 'network'
+				call docker#network#update_contents(a:ctx)
 			endif
 			return 1
 		endif
@@ -178,6 +180,8 @@ function! s:popup_filter(ctx, id, key) abort
 				call docker#image#update_contents(a:ctx)
 			elseif a:ctx.type ==# 'container'
 				call docker#container#update_contents(a:ctx)
+			elseif a:ctx.type ==# 'network'
+				call docker#network#update_contents(a:ctx)
 			endif
 			return 1
 		endif
