@@ -151,7 +151,7 @@ show version info
 
 | key      | operation                    |
 |----------|------------------------------|
-| `0`      | scroll to top                |
+| `g`      | scroll to top                |
 | `G`      | scroll to bottom             |
 | `q`      | close popup window           |
 | `ctrl-^` | switch to other popup window |
