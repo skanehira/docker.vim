@@ -228,8 +228,8 @@ MAPPINGS					*docker-mappings*
 						*docker-common-mappings*
 images, containers, networks window mappings ~
 
-						*docker-common_0*
-0		Scroll to top.
+						*docker-common_g*
+g		Scroll to top.
 
 						*docker-common_G*
 G		Scroll to bottom.
