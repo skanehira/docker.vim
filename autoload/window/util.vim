@@ -232,7 +232,7 @@ function! s:popup_filter(ctx, id, key) abort
 		endif
 
 		call window#util#update_poup_window(a:ctx)
-	elseif a:key ==# '0'
+	elseif a:key ==# 'g'
 		let a:ctx.highlight_idx = 4
 		let a:ctx.select = 0
 		let a:ctx.offset = 0
