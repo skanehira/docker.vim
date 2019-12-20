@@ -22,21 +22,26 @@ function! docker#api#image#get() abort
 
 	let l:images = []
 	for content in json_decode(l:response.content)
-		" if repo is null not add to list
+		" if repo is null don't add
 		if content.RepoTags is v:null
 			continue
 		endif
 
 		if len(content.RepoTags) > 1
 			for repo_tag in content.RepoTags
+				if repo_tag is '<none>:<none>'
+					continue
+				endif
 				let con = copy(content)
 				let con.RepoTags = [repo_tag]
 				call add(l:images, con)
 			endfor
 		else
+			if content.RepoTags[0] is '<none>:<none>'
+				continue
+			endif
 			call add(l:images, content)
 		endif
-
 	endfor
 	return l:images
 endfunction
