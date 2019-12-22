@@ -32,8 +32,11 @@ function! docker#api#version#info() abort
 	call add(l:infos, {'item' :'Platform', 'value': info.Platform.Name})
 	call add(l:infos, {'item' :'Version', 'value': info.Version})
 	call add(l:infos, {'item' :'API version', 'value': info.ApiVersion})
+	call add(l:infos, {'item' :'Min API version', 'value': info.MinAPIVersion})
 	call add(l:infos, {'item' :'OS', 'value': printf('%s %s', info.Os, info.Arch)})
 	call add(l:infos, {'item' :'Kernel version', 'value': info.KernelVersion})
+	call add(l:infos, {'item' :'Go Version', 'value': info.GoVersion})
+	call add(l:infos, {'item' :'Experimental', 'value': info.Experimental ? 'true': 'false'})
 
 	return l:infos
 endfunction
