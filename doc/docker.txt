@@ -269,10 +269,10 @@ p		Push an image to registry.
 						*docker-images_t*
 t		Tag an image.
 
-s						*docer-images-s*
+s						*docker-images-s*
 		Save an image to tarball.
 
-l						*docer-images-l*
+l						*docker-images-l*
 		Load an image from tarball.
 
 <CR>						*docker-images-<cr>*
