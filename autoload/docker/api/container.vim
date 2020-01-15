@@ -16,7 +16,7 @@ function! docker#api#container#get() abort
 		return []
 	endif
 
-	return json_decode(l:response.content)
+	return sort(json_decode(l:response.content))
 endfunction
 
 " container start callback

@@ -43,7 +43,7 @@ function! docker#api#image#get() abort
 			call add(l:images, content)
 		endif
 	endfor
-	return l:images
+	return sort(l:images)
 endfunction
 
 " delete image callback
