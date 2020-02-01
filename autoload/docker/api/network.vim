@@ -18,7 +18,7 @@ function! docker#api#network#get() abort
 		return []
 	endif
 
-	let networks = sort(json_decode(l:response.content))
+	let networks = sort(json_decode(l:response.content), {a, b -> a.Name > b.Name })
 
 	for net in networks
 		let detail = docker#api#network#inspect(net.Id)

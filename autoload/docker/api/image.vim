@@ -43,7 +43,7 @@ function! docker#api#image#get() abort
 			call add(l:images, content)
 		endif
 	endfor
-	return sort(l:images)
+	return sort(l:images, {a, b -> a.RepoTags[0] > b.RepoTags[0] })
 endfunction
 
 " delete image callback

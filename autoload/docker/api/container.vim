@@ -16,7 +16,7 @@ function! docker#api#container#get() abort
 		return []
 	endif
 
-	return sort(json_decode(l:response.content))
+  return sort(json_decode(l:response.content), {a, b -> a.Names[0][1:] > b.Names[0][1:] })
 endfunction
 
 " container start callback
