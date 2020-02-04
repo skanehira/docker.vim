@@ -1,6 +1,6 @@
-*docker.txt*	a summary
+*docker.txt*	The management plugin for Docker
 
-Version : 0.2.1
+Version : 1.17.8
 Author  : skanehira
 License : MIT license  {{{
     Permission is hereby granted, free of charge, to any person obtaining
@@ -79,21 +79,21 @@ let g:docker_registry_auth 			*g:docker_registry_auth*
 	Set docker registry auth info
 	if you want push image to registry.
 	The fllowing is a sampple setting.
-
+>
 	let g:docker_registry_auth = {
 			\ 'username': 'your name',
 			\ 'password': 'your password',
 			\ 'email': 'your email',
 			\ 'serveraddress': 'https://docker.io/',
 			\ }
-
+<
 	You can also read auth info from json file.
 	If you manage vimrc on GitHub, we recommend using json file.
-
+>
 	let s:docker_auth_file = expand('~/.docker/docker.vim.json')
 	let g:docker_registry_auth = \
 		json_decode(join(readfile(s:docker_auth_file), "\n"))
-
+<
 ------------------------------------------------------------------------------
 COMMANDS					*docker-commands*
 
@@ -156,12 +156,18 @@ COMMANDS					*docker-commands*
 :DockerImageBuild					*:DockerImageBuild*
 	Build an image.
 	This is same as `docker build`
+
 	Also this command can use buffer's contents to build an image.
 	If use buffer's contents, last argment must be '-'.
+
 	e.g. use the Dockerfile
+>
 		:DockerImageBuild -t {tag_name} .
+<
 	e.g. use buffer's contents
+>
 		:'<,'>:DockerImageBuild -t {tag_name} -
+<
 
 							*:DockerNetworks*
 :DockerNetworks
