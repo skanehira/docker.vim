@@ -223,9 +223,10 @@ function! s:image_search(term, offset, top) abort
 
 	let l:images = []
 	for row in l:search_images
+    let des = substitute(row.description, "\\n", ' ', '')
 		let image = {
 					\ 'name': row.name,
-					\ 'description': len(row.description) > 30 ? row.description[:30] .. "..." : row.description,
+					\ 'description': len(des) > 30 ? des[:30] .. "..." : des,
 					\ 'stars': printf("%d", row.star_count),
 					\ 'official': row.is_official ? "[OK]" : "",
 					\ 'automated': row.is_automated ? "[OK]": ""
