@@ -179,10 +179,10 @@ COMMANDS					*docker-commands*
 FUNCTIONS					*docker-functions*
 
 						*docker#api#container#attach()*
-docker#api#container#attach({id}, {cmd})
-	Run {cmd} and attach container.
+docker#api#container#attach({id})
+	Run `sh` or `bash` container.
 	{id} can specify the container name.
-	This function is execute `docker exec -it {id} {cmd}` in terminal-job mode.
+	This function is execute `docker exec -it {id}` in terminal-job mode.
 
 docker#api#container#logs({id})			*docker#api#container#logs()*
 	Start monitoring container's log.
