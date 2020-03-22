@@ -137,19 +137,8 @@ function! s:attach_container(ctx) abort
 		return
 	endtry
 
-	let a:ctx.disable_filter = 1
-	let cmd = input("execute command:")
-	let a:ctx.disable_filter = 0
-	echo ''
-
-	if cmd ==# ''
-		call docker#util#echo_err('docker.vim: please input command')
-		call docker#container#update_contents(a:ctx)
-		return
-	endif
-
 	call popup_close(a:ctx.id)
-	call docker#api#container#attach(entry.Names[0], cmd)
+	call docker#api#container#attach(entry.Names[0])
 endfunction
 
 function! s:commit_container(ctx) abort

@@ -126,7 +126,7 @@ function! docker#api#container#delete(ctx, updatefunc) abort
 endfunction
 
 " attach to a container using docker cli
-function! docker#api#container#attach(name, cmd) abort
+function! docker#api#container#attach(name) abort
 	echo ''
 	if !docker#util#have_terminal()
 		return
@@ -136,7 +136,8 @@ function! docker#api#container#attach(name, cmd) abort
 		return
 	endif
 
-	exe printf('%s term ++close docker exec -it %s %s', g:docker_terminal_open, a:name, a:cmd)
+	let cmd = 'sh -c "[ -e /bin/bash ] && /bin/bash || sh"'
+	exe printf('%s term ++close docker exec -it %s %s', g:docker_terminal_open, a:name, cmd)
 endfunction
 
 function! s:container_kill_cb(ctx, updatefunc, response) abort
