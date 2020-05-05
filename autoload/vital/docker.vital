@@ -5,3 +5,4 @@ Web.HTTP
 Text.Table
 DateTime
 Data.Base64
+Async.Promise
