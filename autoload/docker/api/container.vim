@@ -238,7 +238,11 @@ function! docker#api#container#run(ctx) abort
 
   call popup_close(a:ctx.id)
 
-  let excmd = g:docker_terminal_open .. ' term docker run'
+  if has('patch-8.1.2251')
+    let excmd = g:docker_terminal_open .. ' term ++shell docker run'
+  else
+    let excmd = g:docker_terminal_open .. ' term docker run'
+  endif
   if !empty(args)
     let excmd = excmd .. ' ' .. args
   endif

@@ -263,9 +263,13 @@ R		Update image list.
 
 						*docker-images_r*
 r		Create and run container with speficied image.
-		This is like executing `docker run {args} {cmd} ubntu`
+		This is like executing `docker run {args} {cmd} ubuntu`
 		in the terminal-job mode.
 		e.g:	args: `--rm -it --name ubuntu`
+			cmd: `bash`
+		If vim version is 8.1.2251 or above, you can use
+		enviroment variables.
+		e.g:	args: `--rm -it --name ubuntu -v $PWD:/some`
 			cmd: `bash`
 
 						*docker-images_p*
