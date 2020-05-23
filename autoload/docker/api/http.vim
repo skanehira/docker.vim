@@ -12,251 +12,251 @@ let s:HTTP = s:V.import('Web.HTTP')
 
 " http get
 function! docker#api#http#get(url, param) abort
-	return s:HTTP.request(a:url, {
-				\ 'unixSocket': '/var/run/docker.sock',
-				\ 'param': a:param
-				\ })
+  return s:HTTP.request(a:url, {
+        \ 'unixSocket': '/var/run/docker.sock',
+        \ 'param': a:param
+        \ })
 endfunction
 
 " http post
 function! docker#api#http#post(url, param, data) abort
-	return s:HTTP.request(a:url, {
-				\ 'unixSocket': '/var/run/docker.sock',
-				\ 'method': 'POST',
-				\ 'param': a:param,
-				\ 'data' : a:data,
-				\ })
+  return s:HTTP.request(a:url, {
+        \ 'unixSocket': '/var/run/docker.sock',
+        \ 'method': 'POST',
+        \ 'param': a:param,
+        \ 'data' : a:data,
+        \ })
 endfunction
 
 " http delete
 function! docker#api#http#delete(url, param, data) abort
-	return s:HTTP.request(a:url, {
-				\ 'unixSocket': '/var/run/docker.sock',
-				\ 'method': 'DELETE',
-				\ 'param': a:param,
-				\ 'data' : a:data,
-				\ })
+  return s:HTTP.request(a:url, {
+        \ 'unixSocket': '/var/run/docker.sock',
+        \ 'method': 'DELETE',
+        \ 'param': a:param,
+        \ 'data' : a:data,
+        \ })
 endfunction
 
 " async http get
 function! docker#api#http#async_get(use_socket, url, param, callback) abort
-	let setting = {
-				\ 'use_socket': a:use_socket,
-				\ 'url': a:url,
-				\ 'method': 'GET',
-				\ 'param': a:param,
-				\ 'callback': a:callback,
-				\ }
+  let setting = {
+        \ 'use_socket': a:use_socket,
+        \ 'url': a:url,
+        \ 'method': 'GET',
+        \ 'param': a:param,
+        \ 'callback': a:callback,
+        \ }
 
-	call s:async_request(setting)
+  call s:async_request(setting)
 endfunction
 
 " async http post
 function! docker#api#http#async_post(use_socket, url, param, header, data, callback) abort
-	let setting = {
-				\ 'use_socket': a:use_socket,
-				\ 'url': a:url,
-				\ 'method': 'POST',
-				\ 'param': a:param,
-				\ 'header': a:header,
-				\ 'data': a:data,
-				\ 'callback': a:callback,
-				\ }
+  let setting = {
+        \ 'use_socket': a:use_socket,
+        \ 'url': a:url,
+        \ 'method': 'POST',
+        \ 'param': a:param,
+        \ 'header': a:header,
+        \ 'data': a:data,
+        \ 'callback': a:callback,
+        \ }
 
-	call s:async_request(setting)
+  call s:async_request(setting)
 endfunction
 
 " async http delete
 function! docker#api#http#async_delete(use_socket, url, param, callback) abort
-	let setting = {
-				\ 'use_socket': a:use_socket,
-				\ 'url': a:url,
-				\ 'method': 'DELETE',
-				\ 'param': a:param,
-				\ 'callback': a:callback,
-				\ }
+  let setting = {
+        \ 'use_socket': a:use_socket,
+        \ 'url': a:url,
+        \ 'method': 'DELETE',
+        \ 'param': a:param,
+        \ 'callback': a:callback,
+        \ }
 
-	call s:async_request(setting)
+  call s:async_request(setting)
 endfunction
 
 " async http request function
 " setting object
 " {
-" 	'use_socket': 1,
-" 	'url': 'http://localhost',
-"	'method': 'POST',
-"	'param' : {
-"		\ 'name': 'gorilla',
-"		\ 'age' : 26,
-"		\ },
-"	'header': {
-"		\ 'is_human': false,
-"		\ },
-"	'data' : {
-"		\ 'name': 'gorilla',
-"		\ 'age' : 26,
-"		\ },
-"	'callback': function('<SNR>_88_gorilla_cb'),
+"   'use_socket': 1,
+"   'url': 'http://localhost',
+"  'method': 'POST',
+"  'param' : {
+"    \ 'name': 'gorilla',
+"    \ 'age' : 26,
+"    \ },
+"  'header': {
+"    \ 'is_human': false,
+"    \ },
+"  'data' : {
+"    \ 'name': 'gorilla',
+"    \ 'age' : 26,
+"    \ },
+"  'callback': function('<SNR>_88_gorilla_cb'),
 " }
 function! s:async_request(setting) abort
-	let command = []
-	if a:setting.use_socket
-		let command = ['curl', '-s', '--unix-socket', '/var/run/docker.sock', '-X', a:setting.method]
-	else
-		let command = ['curl', '-s', '-X', a:setting.method]
-	endif
+  let command = []
+  if a:setting.use_socket
+    let command = ['curl', '-s', '--unix-socket', '/var/run/docker.sock', '-X', a:setting.method]
+  else
+    let command = ['curl', '-s', '-X', a:setting.method]
+  endif
 
-	let dump = {
-				\ 'header': s:tempname(),
-				\ 'body': s:tempname(),
-				\ }
+  let dump = {
+        \ 'header': s:tempname(),
+        \ 'body': s:tempname(),
+        \ }
 
-	let quote = s:quote()
+  let quote = s:quote()
 
-	let command += ['--dump-header', dump.header]
-	let command += ['--output' , dump.body]
+  let command += ['--dump-header', dump.header]
+  let command += ['--output' , dump.body]
 
-	if has_key(a:setting, 'header') && !empty(a:setting.header)
-		for h in items(a:setting.header)
-			let command = command +  ['-H', join(h, ':')]
-		endfor
-	endif
+  if has_key(a:setting, 'header') && !empty(a:setting.header)
+    for h in items(a:setting.header)
+      let command = command +  ['-H', join(h, ':')]
+    endfor
+  endif
 
-	if has_key(a:setting, 'param') && !empty(a:setting.param)
-		let idx = 0
-		let url = a:setting.url
-		for p in items(a:setting.param)
-			if idx ==# 0
-				let url = url .. '?' .. join(p, '=')
-			else
-				let url = url .. '&' .. join(p, '=')
-			endif
-			let idx += 1
-		endfor
-		call add(command,  url)
-	else
-		call add(command,  a:setting.url)
-	endif
+  if has_key(a:setting, 'param') && !empty(a:setting.param)
+    let idx = 0
+    let url = a:setting.url
+    for p in items(a:setting.param)
+      if idx ==# 0
+        let url = url .. '?' .. join(p, '=')
+      else
+        let url = url .. '&' .. join(p, '=')
+      endif
+      let idx += 1
+    endfor
+    call add(command,  url)
+  else
+    call add(command,  a:setting.url)
+  endif
 
-	if has_key(a:setting, 'data') && !empty(a:setting.data)
-		let command += ['-d', json_encode(a:setting.data)]
-	endif
+  if has_key(a:setting, 'data') && !empty(a:setting.data)
+    let command += ['-d', json_encode(a:setting.data)]
+  endif
 
-	call job_start(command, {
-				\ 'err_cb': function('s:request_err_cb'),
-				\ 'exit_cb': function('s:request_exit_cb', [dump, a:setting.callback]),
-				\ })
+  call job_start(command, {
+        \ 'err_cb': function('s:request_err_cb'),
+        \ 'exit_cb': function('s:request_exit_cb', [dump, a:setting.callback]),
+        \ })
 
 endfunction
 
 " job exit callback
 function! s:request_exit_cb(dump, callback, ch, status) abort
-	if a:status !=# 0
-		call docker#util#echo_err(s:errcode[a:status])
-		return
-	endif
-	let response = s:build_response(s:readfile(a:dump.header), s:readfile(a:dump.body))
+  if a:status !=# 0
+    call docker#util#echo_err(s:errcode[a:status])
+    return
+  endif
+  let response = s:build_response(s:readfile(a:dump.header), s:readfile(a:dump.body))
 
-	" delete dump file
-	for file in values(a:dump)
-		if filereadable(file)
-			call delete(file)
-		endif
-	endfor
+  " delete dump file
+  for file in values(a:dump)
+    if filereadable(file)
+      call delete(file)
+    endif
+  endfor
 
-	if empty(response)
-		call docker#util#echo_err('docker.vim: cannot get response: body is empty')
-		return
-	endif
+  if empty(response)
+    call docker#util#echo_err('docker.vim: cannot get response: body is empty')
+    return
+  endif
 
-	call call(a:callback, [response])
+  call call(a:callback, [response])
 endfunction
 
 " job error callback
 function! s:request_err_cb(ch, msg) abort
-	call docker#util#echo_err('docker.vim: ' .. a:msg)
+  call docker#util#echo_err('docker.vim: ' .. a:msg)
 endfunction
 
 " build http response
 " response is
 " {
-" 	'status': 200,
-" 	'headers': {
-" 		'Date': 'Mon, 15 Jul 2019 01:34:19 GMT',
-" 		'Content-type': 'application/json',
-" 	},
-" 	content: {
-" 		'name': 'gorilla',
-" 		'age': 26,
-" 	},
+"   'status': 200,
+"   'headers': {
+"     'Date': 'Mon, 15 Jul 2019 01:34:19 GMT',
+"     'Content-type': 'application/json',
+"   },
+"   content: {
+"     'name': 'gorilla',
+"     'age': 26,
+"   },
 " }
 function! s:build_response(header, body) abort
-	let response = {
-				\ 'status': 200,
-				\ 'headers': {},
-				\ 'content': {},
-				\ }
+  let response = {
+        \ 'status': 200,
+        \ 'headers': {},
+        \ 'content': {},
+        \ }
 
-	if a:header[0] =~? '^HTTP'
-		let response.status = split(a:header[0], ' ')[1]
-	else
-		call docker#util#echo_err('docker.vim: invalid header: ' .. join(a:header, ' '))
-		return {}
-	endif
+  if a:header[0] =~? '^HTTP'
+    let response.status = split(a:header[0], ' ')[1]
+  else
+    call docker#util#echo_err('docker.vim: invalid header: ' .. join(a:header, ' '))
+    return {}
+  endif
 
-	for head in a:header[1:]
-		if head ==# ''
-			continue
-		endif
-		let h = split(head, ':')
-		if len(h) ># 1
-			let response.headers[trim(h[0])] = trim(h[1])
-		else
-			let response.headers[trim(h[0])] = ''
-		endif
-	endfor
+  for head in a:header[1:]
+    if head ==# ''
+      continue
+    endif
+    let h = split(head, ':')
+    if len(h) ># 1
+      let response.headers[trim(h[0])] = trim(h[1])
+    else
+      let response.headers[trim(h[0])] = ''
+    endif
+  endfor
 
-	if len(a:body) > 1
-		let contents = []
+  if len(a:body) > 1
+    let contents = []
 
-		for content in a:body
-			try
-				call add(contents, json_decode(content))
-			catch
-				call add(contents, content)
-			endtry
-		endfor
+    for content in a:body
+      try
+        call add(contents, json_decode(content))
+      catch
+        call add(contents, content)
+      endtry
+    endfor
 
-		let response.content = contents
-	elseif len(a:body) == 1
-		try
-			let response.content = json_decode(a:body[0])
-		catch
-			let response.content = a:body[0]
-		endtry
-	else
-		let response.content['message'] = 'docker.vim: empty response body'
-	endif
+    let response.content = contents
+  elseif len(a:body) == 1
+    try
+      let response.content = json_decode(a:body[0])
+    catch
+      let response.content = a:body[0]
+    endtry
+  else
+    let response.content['message'] = 'docker.vim: empty response body'
+  endif
 
-	return response
+  return response
 endfunction
 
 " make a temp file path
 function! s:tempname() abort
-	return tr(tempname(), '\', '/')
+  return tr(tempname(), '\', '/')
 endfunction
 
 " read file
 function! s:readfile(file) abort
-	if filereadable(a:file)
-		return readfile(a:file)
-	endif
-	return ''
+  if filereadable(a:file)
+    return readfile(a:file)
+  endif
+  return ''
 endfunction
 
 " quote
 function! s:quote() abort
-	return &shell =~# 'sh$' ? "'" : '"'
+  return &shell =~# 'sh$' ? "'" : '"'
 endfunction
 
 " curl error messages

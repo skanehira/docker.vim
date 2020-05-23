@@ -8,34 +8,34 @@ set cpo&vim
 scriptencoding utf-8
 
 if exists('g:loaded_docker')
-	finish
+  finish
 endif
 
 let g:loaded_docker = 1
 
 if has('nvim')
-	call docker#util#echo_err('docker.vim: doesn''t support neovim. please use vim that version is 8.1.1799 or above')
-	finish
+  call docker#util#echo_err('docker.vim: doesn''t support neovim. please use vim that version is 8.1.1799 or above')
+  finish
 endif
 
 if !executable('curl')
-	call docker#util#echo_err('docker.vim: doesn''t have curl, please install curl that version is 7.40.0 or above')
-	finish
+  call docker#util#echo_err('docker.vim: doesn''t have curl, please install curl that version is 7.40.0 or above')
+  finish
 endif
 
 " open browser command
 if !exists('g:docker_open_browser_cmd')
-	let g:docker_open_browser_cmd = 'open'
+  let g:docker_open_browser_cmd = 'open'
 endif
 
 " open terminla way
 if !exists('g:docker_terminal_open')
-	let g:docker_terminal_open = 'bo'
+  let g:docker_terminal_open = 'bo'
 endif
 
 " check plugins's version
 if get(g:, 'docker_plugin_version_check', 1)
-	call docker#api#version#check_plugin_version()
+  call docker#api#version#check_plugin_version()
 endif
 
 " load syntax
