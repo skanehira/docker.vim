@@ -196,7 +196,11 @@ function! docker#api#container#logs(entry) abort
   endif
 
   try
-    let name = a:entry.Names[0][1:]
+    if type(a:entry) is# v:t_string
+      let name = a:entry
+    else
+      let name = a:entry.Names[0][1:]
+    endif
     if docker#api#container#is_running(a:entry.Id)
       exe printf('%s term ++close docker logs -f %s', g:docker_terminal_open, name)
     else
