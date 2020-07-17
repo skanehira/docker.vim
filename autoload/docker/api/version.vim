@@ -56,15 +56,12 @@ function! s:check_plugin_version_cb(current_info, response) abort
     return
   endif
 
-  let current = map(split(a:current_info.version, '\.'), 'str2nr(v:val)')
-  let latest = map(split(a:response.content.version, '\.'), 'str2nr(v:val)')
+  let current = str2nr(substitute(a:current_info.version, '\.', '', 'g'))
+  let latest = str2nr(substitute(a:response.content.version, '\.', '', 'g'))
 
-  if current[0] >= latest[0]
-    if current[1] >= latest[1]
-      if current[2] >= latest[2]
-        return
-      endif
-    endif
+  echom current latest
+  if current > latest
+    return
   endif
 
   let msg = printf("docker.vim: there have a new version: %s", a:response.content.version)
