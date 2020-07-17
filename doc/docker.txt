@@ -1,6 +1,6 @@
 *docker.txt*	The management plugin for Docker
 
-Version : 1.19.2
+Version : 1.20.0
 Author  : skanehira
 License : MIT license  {{{
     Permission is hereby granted, free of charge, to any person obtaining
@@ -69,6 +69,10 @@ let g:docker_terminal_open 			*g:docker_terminal_open*
 	Set terminal open way used in :Docker or
 	attaching running container.
 	default value: "bo"
+
+let g:docker_use_tmux				*g:docker_use_tmux*
+	Set value to 1 can enable using tmux to attach container.
+	default value: 0
 
 let g:docker_plugin_version_check 		*g:docker_plugin_version_check*
 	Set whether to check plugin version when loading plugin.

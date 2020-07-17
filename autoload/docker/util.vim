@@ -125,6 +125,14 @@ function! docker#util#have_docker_cli() abort
   return 1
 endfunction
 
+function! docker#util#have_tmux() abort
+  if !executable('tmux')
+    call docker#util#echo_err('docker.vim: not found tmux, use vim terminal instead')
+    return 0
+  endif
+  return 1
+endfunction
+
 function! docker#util#have_terminal() abort
   if !has('terminal')
     call docker#util#echo_err('docer.vim: this vim doesn''t support terminal')

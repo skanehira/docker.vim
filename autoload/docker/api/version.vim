@@ -59,8 +59,7 @@ function! s:check_plugin_version_cb(current_info, response) abort
   let current = str2nr(substitute(a:current_info.version, '\.', '', 'g'))
   let latest = str2nr(substitute(a:response.content.version, '\.', '', 'g'))
 
-  echom current latest
-  if current > latest
+  if current >= latest
     return
   endif
 

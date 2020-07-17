@@ -137,7 +137,12 @@ function! docker#api#container#attach(name) abort
   endif
 
   let cmd = 'sh -c "[ -e /bin/bash ] && /bin/bash || sh"'
-  exe printf('%s term ++close docker exec -it %s %s', g:docker_terminal_open, a:name, cmd)
+
+  if get(g:, 'docker_use_tmux', 0) && docker#util#have_tmux()
+    call system(printf('tmux split-window %s docker exec -it %s %s', s:tmux_split_way(), a:name, cmd))
+  else
+    exe printf('%s term ++close docker exec -it %s %s', g:docker_terminal_open, a:name, cmd)
+  endif
 endfunction
 
 function! s:container_kill_cb(ctx, updatefunc, response) abort
@@ -357,6 +362,9 @@ function! docker#api#container#inspect_term(ctx) abort
   nnoremap <silent> <buffer> q :close<CR>
 endfunction
 
+function! s:tmux_split_way() abort
+    return g:docker_terminal_open ==# 'bo' ? '-v' : '-h'
+endfunction
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
