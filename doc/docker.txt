@@ -265,6 +265,10 @@ R		Update image list.
 						*docker-images_ctrl-d*
 <CTRL-d>	Delete image.
 
+						*docker-images_ctrl-r*
+<CTRL-r>	Quick run container with specified image.
+		This is like execute `docker run -it {image} sh`
+
 						*docker-images_r*
 r		Create and run container with speficied image.
 		This is like executing `docker run {args} {cmd} ubuntu`

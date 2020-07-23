@@ -18,6 +18,7 @@ If you want to manage docker-compose, you can use [docker-compose.vim](https://g
 - build an image
 - save an image to tarball
 - inspect an image
+- quick run container(like `docker run -it`)
 
 ## containers
 - container list(udpate every 5 second)
@@ -178,16 +179,17 @@ show version info
 
 ### images
 
-| key                    | operation                         |
-|------------------------|-----------------------------------|
-| `R`                    | refresh images                    |
-| `r`                    | run container                     |
-| `ctrl-d`               | delete image                      |
-| `/`                    | start filter mode                 |
-| `t`                    | tag an image                      |
-| `s`                    | save an image to tarball          |
-| `l`                    | load an image from tarball        |
-| `<CR>` (same as Enter) | inspect an image                  |
+| key                    | operation                                  |
+|------------------------|--------------------------------------------|
+| `R`                    | refresh images                             |
+| `r`                    | run container                              |
+| `ctrl-d`               | delete image                               |
+| `ctrl-r`               | quick run container(like `docker run -it`) |
+| `/`                    | start filter mode                          |
+| `t`                    | tag an image                               |
+| `s`                    | save an image to tarball                   |
+| `l`                    | load an image from tarball                 |
+| `<CR>` (same as Enter) | inspect an image                           |
 
 ### networks
 | key                    | operation         |
