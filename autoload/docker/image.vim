@@ -183,6 +183,9 @@ endfunction
 function! docker#image#functions(ctx, key) abort
   if a:key ==# "\<C-d>"
     call s:delete_image(a:ctx)
+  elseif a:key ==# "\<C-r>"
+    call popup_close(a:ctx.id)
+    call docker#api#container#simple_run(a:ctx)
   elseif a:key ==# 'R'
     call docker#image#update_contents(a:ctx)
   elseif a:key ==# 'r'

@@ -227,6 +227,27 @@ function! docker#api#container#is_running(id) abort
   return json_decode(l:response.content).State.Running
 endfunction
 
+" simple run container
+function! docker#api#container#simple_run(ctx) abort
+  echo ''
+  if !docker#util#have_terminal()
+    return
+  endif
+
+  if !docker#util#have_docker_cli()
+    return
+  endif
+
+  let cmd = 'sh -c "[ -e /bin/bash ] && /bin/bash || sh"'
+
+  let name = a:ctx.content[a:ctx.select].RepoTags[0]
+  if get(g:, 'docker_use_tmux', 0) && docker#util#have_tmux()
+    call system(printf('tmux split-window %s docker run -it %s %s', s:tmux_split_way(), name, cmd))
+  else
+    exe printf('%s term ++close docker run -it %s %s', g:docker_terminal_open, name, cmd)
+  endif
+endfunction
+
 " run container
 function! docker#api#container#run(ctx) abort
   if !docker#util#have_terminal()
