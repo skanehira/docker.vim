@@ -54,6 +54,9 @@ function! window#util#create_popup_window(ctx) abort
         \ 'mapping': 0,
         \ })
 
+  " nowrap line
+  call win_execute(a:ctx.id, 'set nowrap')
+
   if a:ctx.type !=# 'search'
     let s:window_list.idx = s:window_list.types[a:ctx.type]
   endif
