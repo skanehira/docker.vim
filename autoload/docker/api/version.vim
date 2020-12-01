@@ -36,7 +36,7 @@ function! docker#api#version#info() abort
   call add(l:infos, {'item' :'OS', 'value': printf('%s %s', info.Os, info.Arch)})
   call add(l:infos, {'item' :'Kernel version', 'value': info.KernelVersion})
   call add(l:infos, {'item' :'Go Version', 'value': info.GoVersion})
-  if info.Version ==# '19.03.12'
+  if info.Version >=# '19.03.12'
     call add(l:infos, {'item' :'Experimental', 'value': info.Components[0].Details.Experimental ? 'true': 'false'})
   else
     call add(l:infos, {'item' :'Experimental', 'value': info.Experimental ? 'true': 'false'})
