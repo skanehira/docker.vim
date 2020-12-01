@@ -69,6 +69,10 @@ let g:docker_terminal_open = 'bo'
 " If you not want to check, please set 0 to this option.
 let g:docker_plugin_version_check = 1
 
+" Set value to 1 can enable using tmux to attach container.
+" default value: 0
+let g:docker_use_tmux = 1
+
 " this is registry auth info.
 " if you want to push an image, please set your auth info.
 let g:docker_registry_auth = {
