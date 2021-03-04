@@ -59,7 +59,7 @@ function! docker#util#parse_container_ports(ports) abort
     if !has_key(port, 'PublicPort')
       let _port .= printf("%d/%s ", port.PrivatePort, port.Type)
     else
-      let _port .= printf("%s:%d->%d/%s ", port.IP, port.PrivatePort, port.PublicPort, port.Type)
+      let _port .= printf("%s:%d->%d/%s ", port.IP, port.PublicPort, port.PrivatePort, port.Type)
     endif
   endfor
   return _port
