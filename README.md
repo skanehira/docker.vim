@@ -1,5 +1,7 @@
 # docker.vim [![Powered by vital.vim](https://img.shields.io/badge/powered%20by-vital.vim-80273f.svg)](https://github.com/vim-jp/vital.vim)
 
+## docker.vim is stopped development, please use [denops-docker.vim](https://github.com/skanehira/denops-docker.vim).
+
 This is management plugin for docker.
 
 If you want to manage docker-compose, you can use [docker-compose.vim](https://github.com/skanehira/docker-compose.vim).
